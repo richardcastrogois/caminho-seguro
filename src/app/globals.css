@@ -58,3 +58,33 @@ a {
 ::selection {
   background: rgba(14, 152, 223, 0.2);
 }
+
+/* Scroll interno de modais */
+.modal-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203 213 225 / 0.55) transparent;
+  scrollbar-gutter: stable;
+}
+
+.modal-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgb(203 213 225 / 0.5);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(148 163 184 / 0.7);
+}
+
+.modal-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
