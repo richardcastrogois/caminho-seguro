@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { blockchainService } from "@/services/blockchain.service";
+import { blockchainService } from "@/features/blockchain/blockchain.service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

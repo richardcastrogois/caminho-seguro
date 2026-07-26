@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { blockchainService } from "@/services/blockchain.service";
+import { blockchainService } from "@/features/blockchain/blockchain.service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

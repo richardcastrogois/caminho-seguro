@@ -1,4 +1,10 @@
-import { Connection, Keypair, Transaction } from "@solana/web3.js";
+import {
+  Connection,
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  Transaction,
+} from "@solana/web3.js";
 import { createMemoInstruction } from "@solana/spl-memo";
 import bs58 from "bs58";
 import { createHash } from "node:crypto";
@@ -176,18 +182,15 @@ export const blockchainService = {
 
   async requestAirdrop(publicKey: string): Promise<string> {
     const connection = getConnection();
-    const pubkey = new (await import("@solana/web3.js")).PublicKey(publicKey);
-    const txHash = await connection.requestAirdrop(
-      pubkey,
-      2 * (await import("@solana/web3.js")).LAMPORTS_PER_SOL,
-    );
+    const pubkey = new PublicKey(publicKey);
+    const txHash = await connection.requestAirdrop(pubkey, 2 * LAMPORTS_PER_SOL);
     await connection.confirmTransaction(txHash, "confirmed");
     return txHash;
   },
 
   async getBalance(publicKey: string): Promise<number> {
     const connection = getConnection();
-    const pubkey = new (await import("@solana/web3.js")).PublicKey(publicKey);
+    const pubkey = new PublicKey(publicKey);
     return connection.getBalance(pubkey);
   },
 };
