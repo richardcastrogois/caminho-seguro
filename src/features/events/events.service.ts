@@ -169,6 +169,16 @@ export const eventsService = {
       prisma.protectionEvent.count({ where }),
     ]);
 
-    return { events, total };
+    const sanitized = events.map((event) => ({
+      ...event,
+      blockchainRecord: event.blockchainRecord
+        ? {
+            ...event.blockchainRecord,
+            slot: event.blockchainRecord.slot?.toString() ?? null,
+          }
+        : null,
+    }));
+
+    return { events: sanitized, total };
   },
 };
