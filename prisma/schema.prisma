@@ -1,0 +1,519 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  GUARDIAN
+  INSTITUTION_MEMBER
+  TRANSPORT_MEMBER
+  PUBLIC_AGENT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+  PENDING
+}
+
+enum GuardianRelationship {
+  MOTHER
+  FATHER
+  GRANDMOTHER
+  GRANDFATHER
+  SIBLING
+  LEGAL_GUARDIAN
+  OTHER
+}
+
+enum InstitutionType {
+  SCHOOL
+  TRANSPORT
+  PROTECTION_AGENCY
+  UBS
+  CRAS
+  NGO
+  PARTNER_BUSINESS
+}
+
+enum InstitutionMemberRole {
+  ADMIN
+  OPERATOR
+  DRIVER
+  MONITOR
+  HEALTH_AGENT
+  SOCIAL_WORKER
+  PROTECTION_AGENT
+}
+
+enum ChildStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum IdentifierType {
+  QR_CODE
+  BLE
+  NFC
+}
+
+enum IdentifierStatus {
+  ACTIVE
+  REVOKED
+  LOST
+  EXPIRED
+  MAINTENANCE
+}
+
+enum EventType {
+  SCHOOL_ARRIVAL
+  SCHOOL_EXIT
+  BUS_BOARDING
+  DISEMBARKING_BUS
+  HELP_REQUEST
+  CHILD_FOUND
+  CHILD_AT_RISK
+  MANUAL_CHECK_IN
+}
+
+enum EventSource {
+  BLE_GATEWAY
+  QR_PUBLIC_SCAN
+  QR_INSTITUTION_SCAN
+  NFC_SCAN
+  MANUAL
+  SYSTEM
+}
+
+enum EventSeverity {
+  INFORMATIONAL
+  ATTENTION
+  CRITICAL
+}
+
+enum EventStatus {
+  RECEIVED
+  VALIDATED
+  REJECTED
+  CANCELLED
+}
+
+enum AlertType {
+  HELP_REQUEST
+  CHILD_FOUND
+  CHILD_AT_RISK
+  EXPECTED_EVENT_MISSING
+  IDENTIFIER_PROBLEM
+  SYSTEM
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  DISMISSED
+}
+
+enum NotificationChannel {
+  DASHBOARD
+  EMAIL
+  BROWSER_PUSH
+  TELEGRAM
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  READ
+}
+
+enum BlockchainStatus {
+  PENDING
+  SUBMITTED
+  CONFIRMED
+  FAILED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  VIEW_SENSITIVE_DATA
+  ACKNOWLEDGE_ALERT
+  RESOLVE_ALERT
+  REVOKE_IDENTIFIER
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String?
+  phone        String?
+  role         UserRole
+  status       UserStatus @default(PENDING)
+
+  guardian           Guardian?
+  institutionMembers InstitutionMember[]
+  createdEvents      ProtectionEvent[]   @relation("EventCreatedBy")
+  acknowledgedAlerts Alert[]             @relation("AlertAcknowledgedBy")
+  resolvedAlerts     Alert[]             @relation("AlertResolvedBy")
+  notifications      Notification[]
+  auditLogs          AuditLog[]          @relation("AuditActor")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([role])
+  @@index([status])
+}
+
+model Guardian {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  children        ChildGuardian[]
+  notificationOpt NotificationPreference?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Child {
+  id            String      @id @default(cuid())
+  publicId      String      @unique @default(cuid())
+  firstName     String
+  lastName      String
+  birthDate     DateTime
+  status        ChildStatus @default(ACTIVE)
+  medicalNotes  String?
+  emergencyNote String?
+
+  guardians   ChildGuardian[]
+  enrollments ChildInstitution[]
+  identifiers ChildIdentifier[]
+  events      ProtectionEvent[]
+  alerts      Alert[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([lastName, firstName])
+}
+
+model ChildGuardian {
+  id               String               @id @default(cuid())
+  childId          String
+  guardianId       String
+  relationship     GuardianRelationship
+  isPrimary        Boolean              @default(false)
+  canReceiveAlerts Boolean              @default(true)
+
+  child    Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+  guardian Guardian @relation(fields: [guardianId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([childId, guardianId])
+  @@index([guardianId])
+}
+
+model Institution {
+  id        String          @id @default(cuid())
+  publicId  String          @unique @default(cuid())
+  name      String
+  type      InstitutionType
+  document  String?
+  phone     String?
+  email     String?
+  address   String?
+  latitude  Decimal?        @db.Decimal(10, 7)
+  longitude Decimal?        @db.Decimal(10, 7)
+  active    Boolean         @default(true)
+
+  members         InstitutionMember[]
+  children        ChildInstitution[]
+  identifiers     GatewayIdentifier[]
+  events          ProtectionEvent[]
+  alerts          Alert[]
+  transportRoutes TransportRoute[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([active])
+}
+
+model InstitutionMember {
+  id            String                @id @default(cuid())
+  userId        String
+  institutionId String
+  role          InstitutionMemberRole
+  active        Boolean               @default(true)
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, institutionId])
+  @@index([institutionId])
+}
+
+model ChildInstitution {
+  id            String  @id @default(cuid())
+  childId       String
+  institutionId String
+  referenceCode String?
+  active        Boolean @default(true)
+
+  child       Child       @relation(fields: [childId], references: [id], onDelete: Cascade)
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([childId, institutionId])
+  @@index([institutionId, active])
+}
+
+model ChildIdentifier {
+  id          String           @id @default(cuid())
+  publicToken String           @unique
+  type        IdentifierType
+  status      IdentifierStatus @default(ACTIVE)
+  childId     String
+  label       String?
+  issuedAt    DateTime         @default(now())
+  expiresAt   DateTime?
+  revokedAt   DateTime?
+  lastSeenAt  DateTime?
+
+  child  Child             @relation(fields: [childId], references: [id], onDelete: Cascade)
+  events ProtectionEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([childId, status])
+  @@index([type, status])
+}
+
+model GatewayIdentifier {
+  id            String           @id @default(cuid())
+  publicToken   String           @unique
+  type          IdentifierType
+  status        IdentifierStatus @default(ACTIVE)
+  institutionId String
+  name          String
+  lastSeenAt    DateTime?
+
+  institution Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  events      ProtectionEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([institutionId, status])
+}
+
+model TransportRoute {
+  id                    String    @id @default(cuid())
+  institutionId         String
+  name                  String
+  vehiclePlate          String?
+  driverName            String?
+  expectedDepartureTime DateTime?
+  expectedArrivalTime   DateTime?
+  active                Boolean   @default(true)
+
+  institution Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  events      ProtectionEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([institutionId, active])
+}
+
+model ProtectionEvent {
+  id               String  @id @default(cuid())
+  publicId         String  @unique @default(cuid())
+  childId          String
+  identifierId     String?
+  gatewayId        String?
+  institutionId    String?
+  transportRouteId String?
+  createdByUserId  String?
+
+  type     EventType
+  source   EventSource
+  severity EventSeverity @default(INFORMATIONAL)
+  status   EventStatus   @default(RECEIVED)
+
+  latitude      Decimal?  @db.Decimal(10, 7)
+  longitude     Decimal?  @db.Decimal(10, 7)
+  locationLabel String?
+  notes         String?
+  metadata      Json?
+  occurredAt    DateTime
+  receivedAt    DateTime  @default(now())
+  validatedAt   DateTime?
+
+  child          Child              @relation(fields: [childId], references: [id], onDelete: Restrict)
+  identifier     ChildIdentifier?   @relation(fields: [identifierId], references: [id], onDelete: SetNull)
+  gateway        GatewayIdentifier? @relation(fields: [gatewayId], references: [id], onDelete: SetNull)
+  institution    Institution?       @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+  transportRoute TransportRoute?    @relation(fields: [transportRouteId], references: [id], onDelete: SetNull)
+  createdBy      User?              @relation("EventCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  alerts           Alert[]
+  blockchainRecord BlockchainRecord?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([childId, occurredAt])
+  @@index([institutionId, occurredAt])
+  @@index([type, occurredAt])
+  @@index([severity, status])
+}
+
+model Alert {
+  id            String  @id @default(cuid())
+  publicId      String  @unique @default(cuid())
+  childId       String
+  eventId       String?
+  institutionId String?
+
+  type     AlertType
+  severity AlertSeverity
+  status   AlertStatus   @default(OPEN)
+  title    String
+  message  String
+
+  acknowledgedByUserId String?
+  acknowledgedAt       DateTime?
+  resolvedByUserId     String?
+  resolvedAt           DateTime?
+  resolutionNotes      String?
+
+  child       Child            @relation(fields: [childId], references: [id], onDelete: Restrict)
+  event       ProtectionEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  institution Institution?     @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+
+  acknowledgedBy User? @relation("AlertAcknowledgedBy", fields: [acknowledgedByUserId], references: [id], onDelete: SetNull)
+  resolvedBy     User? @relation("AlertResolvedBy", fields: [resolvedByUserId], references: [id], onDelete: SetNull)
+
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([childId, status])
+  @@index([institutionId, status])
+  @@index([severity, status])
+}
+
+model Notification {
+  id            String              @id @default(cuid())
+  userId        String
+  alertId       String?
+  channel       NotificationChannel
+  status        NotificationStatus  @default(PENDING)
+  recipient     String
+  subject       String?
+  content       String
+  sentAt        DateTime?
+  deliveredAt   DateTime?
+  readAt        DateTime?
+  failureReason String?
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alert Alert? @relation(fields: [alertId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, status])
+  @@index([alertId])
+}
+
+model NotificationPreference {
+  id             String  @id @default(cuid())
+  guardianId     String  @unique
+  dashboard      Boolean @default(true)
+  email          Boolean @default(true)
+  browserPush    Boolean @default(true)
+  telegram       Boolean @default(false)
+  telegramChatId String?
+
+  guardian Guardian @relation(fields: [guardianId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BlockchainRecord {
+  id              String           @id @default(cuid())
+  eventId         String           @unique
+  network         String           @default("solana-devnet")
+  status          BlockchainStatus @default(PENDING)
+  eventHash       String           @unique
+  transactionHash String?          @unique
+  slot            BigInt?
+  programVersion  String           @default("1")
+  submittedAt     DateTime?
+  confirmedAt     DateTime?
+  failureReason   String?
+
+  event ProtectionEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+model AuditLog {
+  id          String      @id @default(cuid())
+  actorUserId String?
+  action      AuditAction
+  entityType  String
+  entityId    String?
+  description String?
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?
+
+  actor User? @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([actorUserId, createdAt])
+  @@index([entityType, entityId])
+  @@index([action, createdAt])
+}
