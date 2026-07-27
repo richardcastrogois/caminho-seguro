@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 import { eventsService } from "@/features/events/events.service";
 
 export const runtime = "nodejs";
@@ -27,6 +28,19 @@ export async function POST(request: NextRequest) {
         { ok: false, error: "source é obrigatório" },
         { status: 400 },
       );
+    }
+
+    if (body.institutionId) {
+      const institution = await prisma.institution.findUnique({
+        where: { id: body.institutionId },
+        select: { id: true },
+      });
+      if (!institution) {
+        return NextResponse.json(
+          { ok: false, error: "institutionId não encontrado no banco de dados" },
+          { status: 400 },
+        );
+      }
     }
 
     const result = await eventsService.createEvent({

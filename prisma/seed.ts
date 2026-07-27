@@ -4,11 +4,9 @@ import {
   AlertSeverity,
   AlertStatus,
   AlertType,
-  BlockchainStatus,
   ChildStatus,
   EventSeverity,
   EventSource,
-  EventStatus,
   EventType,
   GuardianRelationship,
   IdentifierStatus,
@@ -19,6 +17,8 @@ import {
   UserRole,
   UserStatus,
 } from "../src/generated/prisma/client";
+import { eventsService } from "../src/features/events/events.service";
+import { authService } from "../src/features/auth/auth.service";
 
 dotenv.config({
   path: ".env.local",
@@ -44,6 +44,8 @@ const prisma = new PrismaClient({
 async function main() {
   console.log("Iniciando dados de demonstração do Caminho Seguro...");
 
+  const defaultPassword = await authService.hashPassword("123456");
+
   const guardianUser = await prisma.user.upsert({
     where: {
       email: "ana.responsavel@caminhoseguro.demo",
@@ -53,6 +55,7 @@ async function main() {
       phone: "+55 19 99999-1001",
       role: UserRole.GUARDIAN,
       status: UserStatus.ACTIVE,
+      passwordHash: defaultPassword,
     },
     create: {
       name: "Ana Souza",
@@ -60,6 +63,7 @@ async function main() {
       phone: "+55 19 99999-1001",
       role: UserRole.GUARDIAN,
       status: UserStatus.ACTIVE,
+      passwordHash: defaultPassword,
     },
   });
 
@@ -224,12 +228,14 @@ async function main() {
       name: "Carlos Lima",
       role: UserRole.INSTITUTION_MEMBER,
       status: UserStatus.ACTIVE,
+      passwordHash: defaultPassword,
     },
     create: {
       name: "Carlos Lima",
       email: "operador.escola@caminhoseguro.demo",
       role: UserRole.INSTITUTION_MEMBER,
       status: UserStatus.ACTIVE,
+      passwordHash: defaultPassword,
     },
   });
 
@@ -365,15 +371,15 @@ async function main() {
   const today = new Date();
   today.setHours(7, 2, 0, 0);
 
-  const boardingEvent = await prisma.protectionEvent.upsert({
-    where: {
-      publicId: "evento-demo-embarque-maria",
-    },
-    update: {
-      occurredAt: today,
-      status: EventStatus.VALIDATED,
-    },
-    create: {
+  const arrivalTime = new Date();
+  arrivalTime.setHours(7, 28, 0, 0);
+
+  const existingBoarding = await prisma.protectionEvent.findUnique({
+    where: { publicId: "evento-demo-embarque-maria" },
+  });
+
+  if (!existingBoarding) {
+    const boardingResult = await eventsService.createEvent({
       publicId: "evento-demo-embarque-maria",
       childId: child.id,
       identifierId: bleIdentifier.id,
@@ -382,29 +388,23 @@ async function main() {
       type: EventType.BUS_BOARDING,
       source: EventSource.BLE_GATEWAY,
       severity: EventSeverity.INFORMATIONAL,
-      status: EventStatus.VALIDATED,
       locationLabel: "Ponto comunitário Jardim Esperança",
       occurredAt: today,
-      validatedAt: today,
-      metadata: {
-        demonstration: true,
-        signalStrength: -54,
-      },
-    },
+      metadata: { demonstration: true, signalStrength: -54 },
+    });
+    console.log(
+      `Embarque: blockchain ${boardingResult.blockchain?.status} (tx: ${boardingResult.blockchain?.transactionHash ?? "nenhuma"})`,
+    );
+  } else {
+    console.log("Evento de embarque já existe, pulando.");
+  }
+
+  const existingArrival = await prisma.protectionEvent.findUnique({
+    where: { publicId: "evento-demo-chegada-escola-maria" },
   });
 
-  const arrivalTime = new Date();
-  arrivalTime.setHours(7, 28, 0, 0);
-
-  const arrivalEvent = await prisma.protectionEvent.upsert({
-    where: {
-      publicId: "evento-demo-chegada-escola-maria",
-    },
-    update: {
-      occurredAt: arrivalTime,
-      status: EventStatus.VALIDATED,
-    },
-    create: {
+  if (!existingArrival) {
+    const arrivalResult = await eventsService.createEvent({
       publicId: "evento-demo-chegada-escola-maria",
       childId: child.id,
       identifierId: bleIdentifier.id,
@@ -413,51 +413,22 @@ async function main() {
       type: EventType.SCHOOL_ARRIVAL,
       source: EventSource.BLE_GATEWAY,
       severity: EventSeverity.INFORMATIONAL,
-      status: EventStatus.VALIDATED,
       latitude: -22.9056,
       longitude: -47.0608,
       locationLabel: "Portão principal da escola",
       occurredAt: arrivalTime,
-      validatedAt: arrivalTime,
       metadata: {
         demonstration: true,
         detectionDurationSeconds: 8,
         signalStrength: -47,
       },
-    },
-  });
-
-  await prisma.blockchainRecord.upsert({
-    where: {
-      eventId: arrivalEvent.id,
-    },
-    update: {
-      status: BlockchainStatus.PENDING,
-    },
-    create: {
-      eventId: arrivalEvent.id,
-      network: "solana-devnet",
-      status: BlockchainStatus.PENDING,
-      eventHash: "demo_hash_chegada_escola_maria_2026",
-      programVersion: "1",
-    },
-  });
-
-  await prisma.blockchainRecord.upsert({
-    where: {
-      eventId: boardingEvent.id,
-    },
-    update: {
-      status: BlockchainStatus.PENDING,
-    },
-    create: {
-      eventId: boardingEvent.id,
-      network: "solana-devnet",
-      status: BlockchainStatus.PENDING,
-      eventHash: "demo_hash_embarque_maria_2026",
-      programVersion: "1",
-    },
-  });
+    });
+    console.log(
+      `Chegada: blockchain ${arrivalResult.blockchain?.status} (tx: ${arrivalResult.blockchain?.transactionHash ?? "nenhuma"})`,
+    );
+  } else {
+    console.log("Evento de chegada já existe, pulando.");
+  }
 
   const alert = await prisma.alert.upsert({
     where: {

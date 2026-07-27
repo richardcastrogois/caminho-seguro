@@ -8,6 +8,7 @@ export type CreateEventInput = {
   childId: string;
   type: EventType;
   source: EventSource;
+  publicId?: string;
   occurredAt?: Date;
   identifierId?: string;
   gatewayId?: string;

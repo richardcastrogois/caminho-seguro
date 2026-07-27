@@ -9,6 +9,7 @@ export const eventsService = {
         childId: input.childId,
         type: input.type,
         source: input.source,
+        publicId: input.publicId,
         occurredAt: input.occurredAt ?? new Date(),
         identifierId: input.identifierId,
         gatewayId: input.gatewayId,
@@ -61,7 +62,7 @@ export const eventsService = {
 
       await prisma.protectionEvent.update({
         where: { id: event.id },
-        data: { status: "VALIDATED" },
+        data: { status: "VALIDATED", validatedAt: new Date() },
       });
 
       blockchainResult = {

@@ -10,6 +10,7 @@ import {
   EventType,
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { blockchainService } from "@/features/blockchain/blockchain.service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -145,16 +146,77 @@ export async function POST(request: Request) {
       });
 
       return {
+        eventId: event.id,
         eventPublicId: event.publicId,
         alertPublicId: alert.publicId,
       };
     });
+
+    const fullEvent = await prisma.protectionEvent.findUniqueOrThrow({
+      where: { id: result.eventId },
+      include: { child: true },
+    });
+
+    let eventHash: string;
+    let blockchainRecord: Record<string, unknown> | null = null;
+
+    try {
+      eventHash = await blockchainService.hashEvent(fullEvent);
+      const submitResult = await blockchainService.submitEvent(eventHash);
+
+      blockchainRecord = await prisma.blockchainRecord.upsert({
+        where: { eventId: result.eventId },
+        update: {
+          eventHash,
+          transactionHash: submitResult.transactionHash,
+          slot: BigInt(submitResult.slot),
+          status: "CONFIRMED",
+          submittedAt: new Date(),
+          confirmedAt: new Date(),
+          network: "solana-devnet",
+        },
+        create: {
+          eventId: result.eventId,
+          eventHash,
+          transactionHash: submitResult.transactionHash,
+          slot: BigInt(submitResult.slot),
+          status: "CONFIRMED",
+          submittedAt: new Date(),
+          confirmedAt: new Date(),
+          network: "solana-devnet",
+        },
+      });
+    } catch {
+      try {
+        eventHash = await blockchainService.hashEvent(fullEvent);
+      } catch {
+        eventHash = "hash_error";
+      }
+
+      blockchainRecord = await prisma.blockchainRecord.upsert({
+        where: { eventId: result.eventId },
+        update: { eventHash, status: "PENDING" },
+        create: {
+          eventId: result.eventId,
+          eventHash,
+          status: "PENDING",
+          network: "solana-devnet",
+        },
+      });
+    }
 
     return NextResponse.json(
       {
         ok: true,
         message: "O alerta foi registrado e encaminhado à rede de proteção.",
         reference: result.alertPublicId,
+        blockchain: blockchainRecord
+          ? {
+              status: blockchainRecord.status,
+              transactionHash: blockchainRecord.transactionHash ?? null,
+              slot: blockchainRecord.slot?.toString() ?? null,
+            }
+          : null,
       },
       {
         status: 201,

@@ -74,8 +74,19 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    await prisma.protectionEvent.update({
+      where: { id: eventId },
+      data: { status: "VALIDATED", validatedAt: new Date() },
+    });
+
+    const updatedEvent = await prisma.protectionEvent.findUnique({
+      where: { id: eventId },
+      select: { status: true, validatedAt: true },
+    });
+
     return NextResponse.json({
       ok: true,
+      event: updatedEvent,
       record: {
         ...record,
         slot: record.slot?.toString(),
