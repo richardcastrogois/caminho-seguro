@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { authService } from "@/features/auth/auth.service";
+import { setDemoSession, type DemoProfileId } from "@/lib/demo-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,6 +35,19 @@ export async function POST(request: NextRequest) {
         { ok: false, error: "Email ou senha inválidos" },
         { status: 401 },
       );
+    }
+
+    const roleToProfileId: Record<string, DemoProfileId> = {
+      GUARDIAN: "guardian",
+      INSTITUTION_MEMBER: "school",
+      TRANSPORT_MEMBER: "transport",
+      PUBLIC_AGENT: "network",
+      ADMIN: "admin",
+    };
+
+    const profileId = roleToProfileId[result.user.role];
+    if (profileId) {
+      await setDemoSession(profileId);
     }
 
     return NextResponse.json({ ok: true, ...result });

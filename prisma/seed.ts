@@ -17,8 +17,7 @@ import {
   UserRole,
   UserStatus,
 } from "../src/generated/prisma/client";
-import { eventsService } from "../src/features/events/events.service";
-import { hashPassword } from "../src/lib/password";
+import bcrypt from "bcryptjs";
 
 dotenv.config({
   path: ".env.local",
@@ -43,7 +42,7 @@ const prisma = new PrismaClient({
 
 async function main() {
   console.log("Iniciando dados de demonstracao do Caminho Seguro...");
-  const demoPasswordHash = await hashPassword(process.env.DEMO_PASSWORD ?? "CaminhoSeguro@2026");
+  const demoPasswordHash = await bcrypt.hash("123456", 12);
 
   const guardianUser = await prisma.user.upsert({
     where: {
@@ -454,7 +453,8 @@ async function main() {
   });
 
   if (!existingBoarding) {
-    const boardingResult = await eventsService.createEvent({
+    const { eventsService: es } = await import("../src/features/events/events.service");
+    const boardingResult = await es.createEvent({
       publicId: "evento-demo-embarque-maria",
       childId: child.id,
       identifierId: bleIdentifier.id,
@@ -479,7 +479,8 @@ async function main() {
   });
 
   if (!existingArrival) {
-    const arrivalResult = await eventsService.createEvent({
+    const { eventsService: es } = await import("../src/features/events/events.service");
+    const arrivalResult = await es.createEvent({
       publicId: "evento-demo-chegada-escola-maria",
       childId: child.id,
       identifierId: bleIdentifier.id,

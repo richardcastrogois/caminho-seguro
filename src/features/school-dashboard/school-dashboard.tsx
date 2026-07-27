@@ -19,6 +19,7 @@ import {
   Users,
   Wifi,
 } from "lucide-react";
+import { authFetch } from "@/lib/auth-fetch";
 import type { SchoolDashboardData } from "@/types/school-dashboard";
 import { GsapReveal } from "@/components/shared/gsap-reveal";
 
@@ -118,7 +119,7 @@ export function SchoolDashboard({ data }: SchoolDashboardProps) {
 
       setSimulationStage("saving");
 
-      const response = await fetch("/api/institution/ble/detect", {
+      const response = await authFetch("/api/institution/ble/detect", {
         method: "POST",
       });
 
@@ -169,7 +170,7 @@ export function SchoolDashboard({ data }: SchoolDashboardProps) {
     setErrorMessage(null);
 
     try {
-      const response = await fetch("/api/institution/ble/reset", {
+      const response = await authFetch("/api/institution/ble/reset", {
         method: "POST",
       });
 

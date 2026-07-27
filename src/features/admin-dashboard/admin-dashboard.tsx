@@ -14,6 +14,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { GsapReveal } from "@/components/shared/gsap-reveal";
+import { authFetch } from "@/lib/auth-fetch";
 import type { AdminDashboardData } from "@/types/admin-dashboard";
 
 type AdminDashboardProps = { data: AdminDashboardData };
@@ -97,9 +98,8 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
     setError(null);
     setMessage(null);
     try {
-      const response = await fetch("/api/admin/identifiers", {
+      const response = await authFetch("/api/admin/identifiers", {
         method: "POST",
-        headers: { "content-type": "application/json" },
         body: JSON.stringify({ childPublicId: data.child.publicId, type, label }),
       });
       await parseResponse(response, "Não foi possível emitir o identificador.");
@@ -123,9 +123,8 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
     setError(null);
     setMessage(null);
     try {
-      const response = await fetch("/api/admin/institutions", {
+      const response = await authFetch("/api/admin/institutions", {
         method: "POST",
-        headers: { "content-type": "application/json" },
         body: JSON.stringify(institutionForm),
       });
       await parseResponse(response, "Não foi possível cadastrar a instituição.");
@@ -149,9 +148,8 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
     setError(null);
     setMessage(null);
     try {
-      const response = await fetch("/api/admin/children", {
+      const response = await authFetch("/api/admin/children", {
         method: "POST",
-        headers: { "content-type": "application/json" },
         body: JSON.stringify(childForm),
       });
       await parseResponse(response, "Não foi possível cadastrar a criança.");
@@ -184,7 +182,7 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
     setError(null);
     setMessage(null);
     try {
-      const response = await fetch(
+      const response = await authFetch(
         `/api/admin/identifiers/${encodeURIComponent(publicToken)}/revoke`,
         {
           method: "PATCH",

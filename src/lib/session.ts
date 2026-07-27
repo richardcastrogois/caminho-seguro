@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import type { InstitutionType, UserRole } from "@/generated/prisma/client";
 import { demoProfiles, getDemoSession, type DemoProfileId } from "@/lib/demo-auth";
 import { prisma } from "@/lib/prisma";
+import { authService } from "@/features/auth/auth.service";
 
 export type CurrentUser = {
   id: string;
@@ -26,28 +27,53 @@ export function accessForProfile(profileId: DemoProfileId) {
   return profileAccess[profileId];
 }
 
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+export async function getCurrentUser(request?: Request): Promise<CurrentUser | null> {
   const session = await getDemoSession();
 
-  if (!session) {
-    return null;
+  if (session) {
+    const access = profileAccess[session.profileId];
+    const user = await prisma.user.findUnique({
+      where: { email: access.email },
+      select: { id: true, name: true, email: true, role: true },
+    });
+
+    return {
+      id: user?.id ?? session.profileId,
+      name: user?.name ?? session.name,
+      email: user?.email ?? access.email,
+      role: access.role,
+      profileId: session.profileId,
+      label: session.label,
+      homePath: session.homePath,
+    };
   }
 
-  const access = profileAccess[session.profileId];
-  const user = await prisma.user.findUnique({
-    where: { email: access.email },
-    select: { id: true, name: true, email: true, role: true },
-  });
+  if (request) {
+    const authHeader = request.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.slice(7);
+      const payload = authService.verifyToken(token);
+      if (payload) {
+        const user = await prisma.user.findUnique({
+          where: { id: payload.userId },
+          select: { id: true, name: true, email: true, role: true },
+        });
+        if (user) {
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            profileId: "admin" as DemoProfileId,
+            label: user.name,
+            homePath: "/",
+          };
+        }
+      }
+    }
+  }
 
-  return {
-    id: user?.id ?? session.profileId,
-    name: user?.name ?? session.name,
-    email: user?.email ?? access.email,
-    role: access.role,
-    profileId: session.profileId,
-    label: session.label,
-    homePath: session.homePath,
-  };
+  return null;
 }
 
 export async function requireCurrentUser(
@@ -67,8 +93,8 @@ export async function requireCurrentUser(
   return user;
 }
 
-export async function authorizeRequest(allowedRoles: UserRole[]) {
-  const user = await getCurrentUser();
+export async function authorizeRequest(allowedRoles: UserRole[], request?: Request) {
+  const user = await getCurrentUser(request);
 
   if (!user || !allowedRoles.includes(user.role)) {
     return null;

@@ -14,7 +14,7 @@ const requestSchema = z.object({ childPublicId: z.string().min(8).max(200).optio
 
 export async function POST(request: Request) {
   try {
-    const user = await authorizeRequest(["INSTITUTION_MEMBER", "ADMIN"]);
+    const user = await authorizeRequest(["INSTITUTION_MEMBER", "ADMIN"], request);
     if (!user) return unauthorizedResponse("Acesso institucional necessario.");
 
     const school = await findUserInstitution(user, ["SCHOOL"]);

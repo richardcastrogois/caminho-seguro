@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BusFront, CheckCircle2, CircleDot, Clock3, LoaderCircle, MapPin, Route, Users } from "lucide-react";
 import { GsapReveal } from "@/components/shared/gsap-reveal";
+import { authFetch } from "@/lib/auth-fetch";
 import type { TransportChild, TransportDashboardData } from "@/types/transport-dashboard";
 
 type TransportDashboardProps = { data: TransportDashboardData };
@@ -34,9 +35,8 @@ export function TransportDashboard({ data }: TransportDashboardProps) {
     setError(null);
 
     try {
-      const response = await fetch("/api/transport/events", {
+      const response = await authFetch("/api/transport/events", {
         method: "POST",
-        headers: { "content-type": "application/json" },
         body: JSON.stringify({ action, childPublicId }),
       });
       const result: unknown = await response.json();

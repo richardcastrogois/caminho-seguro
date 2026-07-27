@@ -21,7 +21,7 @@ function publicHelpUrl(request: Request, token: string) {
 
 export async function POST(request: Request) {
   try {
-    const user = await authorizeRequest(["ADMIN"]);
+    const user = await authorizeRequest(["ADMIN"], request);
     if (!user) return unauthorizedResponse("Acesso administrativo necessario.");
 
     const parsedBody = requestSchema.safeParse(await request.json());

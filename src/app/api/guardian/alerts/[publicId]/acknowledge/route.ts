@@ -10,7 +10,7 @@ type RouteContext = { params: Promise<{ publicId: string }> };
 
 export async function PATCH(_request: Request, context: RouteContext) {
   try {
-    const user = await authorizeRequest(["GUARDIAN", "ADMIN"]);
+    const user = await authorizeRequest(["GUARDIAN", "ADMIN"], _request);
     if (!user) return unauthorizedResponse("Acesso do responsavel necessario.");
 
     const { publicId } = await context.params;

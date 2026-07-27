@@ -20,7 +20,7 @@ const eventConfig = {
 
 export async function POST(request: Request) {
   try {
-    const user = await authorizeRequest(["TRANSPORT_MEMBER", "ADMIN"]);
+    const user = await authorizeRequest(["TRANSPORT_MEMBER", "ADMIN"], request);
     if (!user) return unauthorizedResponse("Acesso do transporte necessario.");
 
     const transport = await findUserInstitution(user, ["TRANSPORT"]);

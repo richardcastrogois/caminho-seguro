@@ -23,6 +23,7 @@ import {
   type GuardianEventDetails,
 } from "@/features/guardian-dashboard/event-details-dialog";
 import { GsapReveal } from "@/components/shared/gsap-reveal";
+import { authFetch } from "@/lib/auth-fetch";
 
 export type GuardianDashboardData = {
   guardianName: string;
@@ -227,7 +228,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
     });
 
     try {
-      const response = await fetch(`/api/guardian/alerts/${alertPublicId}/${action}`, {
+      const response = await authFetch(`/api/guardian/alerts/${alertPublicId}/${action}`, {
         method: "PATCH",
       });
 
