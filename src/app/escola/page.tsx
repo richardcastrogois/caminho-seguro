@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BrandLogo } from "@/components/shared/brand-logo";
+import { AppNavigation } from "@/components/shared/app-navigation";
 import { SchoolDashboard } from "@/features/school-dashboard/school-dashboard";
 import { prisma } from "@/lib/prisma";
 import { getSaoPauloDayRange } from "@/lib/time";
@@ -209,15 +209,9 @@ export default async function SchoolPage() {
 
   return (
     <>
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10">
-          <BrandLogo />
-
-          <span className="rounded-full bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700">
-            Acesso institucional
-          </span>
-        </div>
-      </header>
+      <div data-gsap="nav">
+        <AppNavigation badge="Acesso institucional" />
+      </div>
 
       <SchoolDashboard data={dashboardData} />
     </>

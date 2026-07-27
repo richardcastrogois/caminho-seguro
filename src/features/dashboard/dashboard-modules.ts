@@ -3,12 +3,23 @@ import {
   BusFront,
   HeartHandshake,
   QrCode,
+  Route,
   ShieldCheck,
   Users,
 } from "lucide-react";
 import type { DashboardModule } from "@/types/dashboard";
 
 export const dashboardModules: DashboardModule[] = [
+  {
+    title: "Demo guiada",
+    description:
+      "Siga o roteiro principal do pitch: escola, responsável, QR público e tratamento do alerta.",
+    href: "/demo",
+    icon: Route,
+    badge: "Roteiro",
+    accent: "green",
+    status: "ready",
+  },
   {
     title: "Responsável",
     description:
@@ -17,6 +28,7 @@ export const dashboardModules: DashboardModule[] = [
     icon: Users,
     badge: "Família",
     accent: "blue",
+    status: "ready",
   },
   {
     title: "Escola",
@@ -26,24 +38,7 @@ export const dashboardModules: DashboardModule[] = [
     icon: Building2,
     badge: "Instituição",
     accent: "green",
-  },
-  {
-    title: "Transporte",
-    description:
-      "Registre embarques e desembarques automáticos ou manuais durante o trajeto.",
-    href: "/transporte",
-    icon: BusFront,
-    badge: "Mobilidade",
-    accent: "orange",
-  },
-  {
-    title: "Rede de proteção",
-    description:
-      "Painel de órgãos públicos, UBS, CRAS, ONGs e estabelecimentos parceiros.",
-    href: "/rede",
-    icon: ShieldCheck,
-    badge: "Gestão",
-    accent: "purple",
+    status: "ready",
   },
   {
     title: "Pedido de ajuda",
@@ -53,14 +48,36 @@ export const dashboardModules: DashboardModule[] = [
     icon: QrCode,
     badge: "Acesso público",
     accent: "blue",
+    status: "ready",
+  },
+  {
+    title: "Transporte",
+    description:
+      "Registrará embarques e desembarques automáticos ou assistidos durante o trajeto.",
+    href: "/transporte",
+    icon: BusFront,
+    badge: "Etapa 2",
+    accent: "orange",
+    status: "soon",
+  },
+  {
+    title: "Rede de proteção",
+    description:
+      "Mostrará órgãos públicos, UBS, CRAS, ONGs, pontos parceiros e alertas autorizados.",
+    href: "/rede",
+    icon: ShieldCheck,
+    badge: "Etapa 2",
+    accent: "purple",
+    status: "soon",
   },
   {
     title: "Administração",
     description:
-      "Cadastre crianças, responsáveis, instituições e identificadores protegidos.",
+      "Centralizará cadastro de crianças, responsáveis, instituições e identificadores protegidos.",
     href: "/admin",
     icon: HeartHandshake,
-    badge: "Operação",
+    badge: "Etapa 2",
     accent: "green",
+    status: "soon",
   },
 ];

@@ -22,6 +22,7 @@ import {
   EventDetailsDialog,
   type GuardianEventDetails,
 } from "@/features/guardian-dashboard/event-details-dialog";
+import { GsapReveal } from "@/components/shared/gsap-reveal";
 
 export type GuardianDashboardData = {
   guardianName: string;
@@ -211,7 +212,8 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <GsapReveal>
+      <div className="page-enter min-h-screen bg-slate-50">
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-7 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-10">
           <div>
@@ -253,7 +255,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
 
       <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
         <section className="grid gap-5 lg:grid-cols-[0.75fr_1.25fr]">
-          <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="motion-card rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-slate-500">Criança protegida</p>
@@ -317,7 +319,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="motion-card rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-100 text-red-700">
                 <BellRing className="h-5 w-5" />
@@ -599,13 +601,14 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
         </section>
       </main>
 
-      <EventDetailsDialog
-        event={selectedEvent}
-        eventLabel={
-          selectedEvent ? (eventLabels[selectedEvent.type] ?? selectedEvent.type) : ""
-        }
-        onClose={() => setSelectedEvent(null)}
-      />
-    </div>
+        <EventDetailsDialog
+          event={selectedEvent}
+          eventLabel={
+            selectedEvent ? (eventLabels[selectedEvent.type] ?? selectedEvent.type) : ""
+          }
+          onClose={() => setSelectedEvent(null)}
+        />
+      </div>
+    </GsapReveal>
   );
 }

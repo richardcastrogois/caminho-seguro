@@ -2,8 +2,8 @@
 @import "@heroui/styles";
 
 :root {
-  --background: #f5f7fb;
-  --foreground: #14213d;
+  --background: #f8fbf8;
+  --foreground: #17332f;
 
   --brand-50: #eff8ff;
   --brand-100: #dff1ff;
@@ -42,10 +42,7 @@ html {
 body {
   min-height: 100vh;
   margin: 0;
-  background:
-    radial-gradient(circle at 10% 10%, rgba(14, 152, 223, 0.1), transparent 32%),
-    radial-gradient(circle at 90% 15%, rgba(22, 179, 112, 0.09), transparent 28%),
-    var(--background);
+  background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -87,4 +84,63 @@ a {
 
 .modal-scrollbar::-webkit-scrollbar-button {
   display: none;
+}
+
+.page-enter {
+  animation: page-enter 260ms ease-out both;
+}
+
+.motion-card {
+  animation: page-enter 280ms ease-out both;
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.72),
+    transparent
+  );
+  animation: shimmer 1.3s ease-in-out infinite;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

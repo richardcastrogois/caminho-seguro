@@ -20,6 +20,7 @@ import {
   Wifi,
 } from "lucide-react";
 import type { SchoolDashboardData } from "@/types/school-dashboard";
+import { GsapReveal } from "@/components/shared/gsap-reveal";
 
 type SchoolDashboardProps = {
   data: SchoolDashboardData;
@@ -212,7 +213,8 @@ export function SchoolDashboard({ data }: SchoolDashboardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <GsapReveal>
+      <div className="page-enter min-h-screen bg-slate-50">
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-7 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-10">
           <div>
@@ -276,7 +278,7 @@ export function SchoolDashboard({ data }: SchoolDashboardProps) {
         </section>
 
         <section className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="motion-card rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.14em] text-sky-700">
@@ -594,7 +596,8 @@ export function SchoolDashboard({ data }: SchoolDashboardProps) {
           </div>
         </section>
       </main>
-    </div>
+      </div>
+    </GsapReveal>
   );
 }
 
@@ -607,7 +610,7 @@ type SummaryCardProps = {
 
 function SummaryCard({ title, value, description, icon: Icon }: SummaryCardProps) {
   return (
-    <article className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
+    <article className="motion-card rounded-[20px] border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-slate-500">{title}</p>

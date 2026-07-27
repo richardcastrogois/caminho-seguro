@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
-import { BrandLogo } from "@/components/shared/brand-logo";
+import { AppNavigation } from "@/components/shared/app-navigation";
+import { GsapReveal } from "@/components/shared/gsap-reveal";
 import { PublicHelpForm } from "@/features/public-help/public-help-form";
 import { prisma } from "@/lib/prisma";
 
@@ -32,57 +33,43 @@ export default async function PublicHelpPage({ params }: PublicHelpPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 sm:px-8">
-          <BrandLogo />
-
-          <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
-            Identidade protegida
-          </span>
-        </div>
-      </header>
-
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
-          <div className="absolute -right-20 top-24 h-72 w-72 rounded-full bg-emerald-200/35 blur-3xl" />
+    <main className="min-h-screen bg-[var(--background)]">
+      <GsapReveal>
+        <div data-gsap="nav">
+          <AppNavigation badge="Identidade protegida" />
         </div>
 
-        <div className="mx-auto grid max-w-5xl gap-10 px-5 py-10 sm:px-8 lg:grid-cols-[0.85fr_1.15fr] lg:py-16">
-          <div className="flex flex-col justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-600 text-white shadow-lg shadow-sky-900/20">
-              <ShieldCheck className="h-7 w-7" />
-            </div>
+        <section className="border-b border-slate-200 bg-white">
+          <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-10 lg:py-12">
+            <div className="flex flex-col justify-center">
+              <div data-gsap="hero" className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-lg shadow-slate-900/15">
+                <ShieldCheck className="h-7 w-7" />
+              </div>
 
-            <p className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
-              Caminho Seguro
-            </p>
-
-            <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-slate-950">
-              Você está ajudando uma criança protegida.
-            </h1>
-
-            <p className="mt-5 text-lg leading-8 text-slate-600">
-              Selecione a situação e envie o alerta. O sistema não exibirá nome, endereço,
-              responsável ou qualquer outro dado pessoal da criança.
-            </p>
-
-            <div className="mt-7 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-              <p className="font-semibold text-emerald-950">
-                Permaneça em um local visível e seguro
+              <p data-gsap="hero" className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                Leitura pública do QR
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-emerald-800">
-                Evite deslocar a criança sem necessidade. Em risco imediato, procure apoio
-                de autoridades ou serviços de emergência.
+              <h1 data-gsap="hero" className="mt-3 text-4xl font-semibold leading-tight tracking-tight text-slate-950">
+                Você pode ajudar sem acessar dados pessoais da criança.
+              </h1>
+
+              <p data-gsap="hero" className="mt-5 text-lg leading-8 text-slate-600">
+                Escolha o que aconteceu e envie o alerta. O sistema não mostra nome, endereço, telefone, responsável ou dados médicos nesta página.
               </p>
+
+              <div data-gsap="timeline" className="mt-7 rounded-[22px] border border-emerald-200 bg-emerald-50 p-5">
+                <p className="font-semibold text-emerald-950">Permaneça em local visível e seguro</p>
+                <p className="mt-2 text-sm leading-6 text-emerald-800">
+                  Em risco imediato, procure autoridades ou serviços de emergência. A localização é opcional e vem do aparelho de quem está ajudando.
+                </p>
+              </div>
             </div>
+
+            <PublicHelpForm token={token} />
           </div>
-
-          <PublicHelpForm token={token} />
-        </div>
-      </section>
+        </section>
+      </GsapReveal>
     </main>
   );
 }
