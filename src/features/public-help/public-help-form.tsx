@@ -175,20 +175,20 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
     return (
       <div
         data-gsap="card"
-        className="dashboard-panel motion-card rounded-[24px] border border-emerald-200 bg-white p-6 text-center shadow-xl shadow-emerald-950/5 sm:p-10"
+        className="dashboard-panel motion-card rounded-[24px] border border-emerald-200 bg-white p-6 text-center shadow-xl shadow-emerald-950/5 sm:p-8"
       >
-        <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-          <CheckCircle2 className="size-8" />
+        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+          <CheckCircle2 className="size-7" />
         </div>
 
-        <h2 className="mt-5 text-2xl font-semibold text-slate-950">Alerta registrado</h2>
+        <h2 className="mt-4 text-2xl font-semibold text-slate-950">Alerta registrado</h2>
 
         <p className="mx-auto mt-3 max-w-lg leading-7 text-slate-600">
           A rede de proteção e os responsáveis autorizados poderão visualizar este evento.
           Permaneça com a criança em um local seguro quando isso for possível.
         </p>
 
-        <div className="mt-6 rounded-2xl bg-slate-50 p-4">
+        <div className="mt-5 rounded-2xl bg-slate-50 p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
             Referência do alerta
           </p>
@@ -197,11 +197,6 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
             {successReference}
           </p>
         </div>
-
-        <p className="mt-6 text-sm leading-6 text-slate-500">
-          Em situação de emergência imediata, acione os serviços públicos de emergência
-          disponíveis na sua região.
-        </p>
       </div>
     );
   }
@@ -209,23 +204,23 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
   return (
     <div
       data-gsap="card"
-      className="dashboard-panel motion-card rounded-[24px] border border-slate-200 bg-white p-4 shadow-xl shadow-slate-950/5 sm:p-6"
+      className="dashboard-panel motion-card rounded-[24px] border border-slate-200 bg-white p-4 shadow-xl shadow-slate-950/5 sm:p-5"
     >
       <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-(--brand-600)">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-(--brand-600) sm:text-sm">
           Informe a situação
         </p>
 
-        <h2 className="mt-1.5 text-2xl font-semibold text-slate-950">
+        <h2 className="mt-1 text-2xl font-semibold text-slate-950">
           O que está acontecendo?
         </h2>
 
-        <p className="mt-1.5 leading-6 text-slate-600">
+        <p className="mt-1 leading-6 text-slate-600">
           Nenhum dado pessoal da criança será exibido nesta página.
         </p>
       </div>
 
-      <div className="mt-4 grid gap-2.5">
+      <div className="mt-3 grid gap-2 md:grid-cols-2">
         {situations.map((item) => {
           const Icon = item.icon;
           const isSelected = situation === item.value;
@@ -235,22 +230,22 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
               key={item.value}
               type="button"
               onClick={() => setSituation(item.value)}
-              className={`flex w-full items-start gap-3 rounded-2xl border p-3 text-left transition ${
+              className={`flex h-full w-full items-start gap-3 rounded-2xl border p-3 text-left transition ${
                 isSelected
                   ? "border-sky-500 bg-sky-50 ring-2 ring-sky-100"
                   : "border-slate-200 bg-white hover:border-sky-200 hover:bg-slate-50"
               }`}
             >
               <span
-                className={`flex size-10 shrink-0 items-center justify-center rounded-2xl ${
+                className={`flex size-9 shrink-0 items-center justify-center rounded-2xl ${
                   isSelected ? "bg-sky-600 text-white" : "bg-slate-100 text-slate-700"
                 }`}
               >
-                <Icon className="size-5" />
+                <Icon className="size-4" />
               </span>
 
               <span>
-                <span className="block font-semibold text-slate-950">{item.title}</span>
+                <span className="block font-semibold leading-5 text-slate-950">{item.title}</span>
 
                 <span className="mt-1 block text-sm leading-5 text-slate-600">
                   {item.description}
@@ -261,53 +256,55 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
         })}
       </div>
 
-      <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-3.5">
-        <div className="flex items-start gap-3">
-          <MapPin className="mt-0.5 size-5 shrink-0 text-sky-700" />
+      <div className="mt-3 grid gap-3 lg:grid-cols-[0.82fr_1.18fr]">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+          <div className="flex items-start gap-3">
+            <MapPin className="mt-0.5 size-5 shrink-0 text-sky-700" />
 
-          <div className="flex-1">
-            <p className="font-semibold text-slate-950">Localização do aparelho</p>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-slate-950">Localização</p>
 
-            <p className="mt-1 text-sm leading-5 text-slate-600">{locationMessage}</p>
+              <p className="mt-1 text-sm leading-5 text-slate-600">{locationMessage}</p>
 
-            <button
-              type="button"
-              onClick={requestLocation}
-              disabled={isLocating}
-              className="mt-3 inline-flex items-center gap-2 rounded-xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <LocateFixed className="size-4" />
-              {isLocating
-                ? "Obtendo localização..."
-                : location
-                  ? "Atualizar localização"
-                  : "Compartilhar localização"}
-            </button>
+              <button
+                type="button"
+                onClick={requestLocation}
+                disabled={isLocating}
+                className="mt-3 inline-flex items-center gap-2 rounded-xl bg-slate-950 px-3.5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <LocateFixed className="size-4" />
+                {isLocating
+                  ? "Obtendo..."
+                  : location
+                    ? "Atualizar"
+                    : "Compartilhar"}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="mt-4">
-        <label htmlFor="help-notes" className="text-sm font-semibold text-slate-900">
-          Observação opcional
-        </label>
+        <div>
+          <label htmlFor="help-notes" className="text-sm font-semibold text-slate-900">
+            Observação opcional
+          </label>
 
-        <textarea
-          id="help-notes"
-          value={notes}
-          onChange={(event) => setNotes(event.target.value)}
-          maxLength={500}
-          rows={3}
-          placeholder="Exemplo: a criança informou que se perdeu ao voltar da escola."
-          className="mt-2 w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
-        />
+          <textarea
+            id="help-notes"
+            value={notes}
+            onChange={(event) => setNotes(event.target.value)}
+            maxLength={500}
+            rows={3}
+            placeholder="Exemplo: a criança informou que se perdeu ao voltar da escola."
+            className="mt-2 h-[7.5rem] w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-100 lg:h-[8.25rem]"
+          />
 
-        <p className="mt-1 text-right text-xs text-slate-400">{notes.length}/500</p>
+          <p className="mt-1 text-right text-xs text-slate-400">{notes.length}/500</p>
+        </div>
       </div>
 
       {errorMessage && (
         <div
-          className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+          className="mt-3 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-800"
           role="alert"
         >
           {errorMessage}
@@ -318,12 +315,12 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
         type="button"
         onClick={submitAlert}
         disabled={isSubmitting}
-        className="mt-4 inline-flex w-full items-center justify-center rounded-2xl bg-(--brand-600) px-5 py-3 font-semibold text-white shadow-lg shadow-sky-900/15 transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-3 inline-flex w-full items-center justify-center rounded-2xl bg-(--brand-600) px-5 py-3 font-semibold text-white shadow-lg shadow-sky-900/15 transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting ? "Enviando alerta..." : "Confirmar e enviar alerta"}
       </button>
 
-      <p className="mt-3 text-center text-xs leading-5 text-slate-500">
+      <p className="mt-2 text-center text-xs leading-5 text-slate-500">
         O envio registra horário, situação e localização apenas quando autorizada.
       </p>
     </div>
