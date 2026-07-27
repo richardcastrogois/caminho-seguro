@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BrandLogo } from "@/components/shared/brand-logo";
 import { SchoolDashboard } from "@/features/school-dashboard/school-dashboard";
 import { prisma } from "@/lib/prisma";
+import { requireCurrentUser, requireUserInstitution } from "@/lib/session";
 import { getSaoPauloDayRange } from "@/lib/time";
 import type { SchoolDashboardData } from "@/types/school-dashboard";
 
@@ -14,15 +14,13 @@ export const metadata: Metadata = {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const DEMO_SCHOOL_PUBLIC_ID = "instituicao-demo-escola";
-
 export default async function SchoolPage() {
+  const user = await requireCurrentUser(["INSTITUTION_MEMBER", "ADMIN"], "/escola");
+  const userInstitution = await requireUserInstitution(user, ["SCHOOL"], "/escola");
   const { start, end } = getSaoPauloDayRange();
 
   const institution = await prisma.institution.findUnique({
-    where: {
-      publicId: DEMO_SCHOOL_PUBLIC_ID,
-    },
+    where: { id: userInstitution.id },
     select: {
       publicId: true,
       name: true,
@@ -68,9 +66,7 @@ export default async function SchoolPage() {
               },
               events: {
                 where: {
-                  institution: {
-                    publicId: DEMO_SCHOOL_PUBLIC_ID,
-                  },
+                  institutionId: userInstitution.id,
                   type: "SCHOOL_ARRIVAL",
                   occurredAt: {
                     gte: start,
@@ -207,19 +203,5 @@ export default async function SchoolPage() {
     })),
   };
 
-  return (
-    <>
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10">
-          <BrandLogo />
-
-          <span className="rounded-full bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700">
-            Acesso institucional
-          </span>
-        </div>
-      </header>
-
-      <SchoolDashboard data={dashboardData} />
-    </>
-  );
+  return <SchoolDashboard data={dashboardData} />;
 }

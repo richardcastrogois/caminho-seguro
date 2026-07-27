@@ -7,4 +7,5 @@ export type DashboardModule = {
   icon: LucideIcon;
   badge: string;
   accent: "blue" | "green" | "orange" | "purple";
+  status: "ready" | "soon";
 };

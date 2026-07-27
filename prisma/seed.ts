@@ -19,6 +19,7 @@ import {
   UserRole,
   UserStatus,
 } from "../src/generated/prisma/client";
+import { hashPassword } from "../src/lib/password";
 
 dotenv.config({
   path: ".env.local",
@@ -42,7 +43,8 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  console.log("Iniciando dados de demonstração do Caminho Seguro...");
+  console.log("Iniciando dados de demonstracao do Caminho Seguro...");
+  const demoPasswordHash = await hashPassword(process.env.DEMO_PASSWORD ?? "CaminhoSeguro@2026");
 
   const guardianUser = await prisma.user.upsert({
     where: {
@@ -51,6 +53,7 @@ async function main() {
     update: {
       name: "Ana Souza",
       phone: "+55 19 99999-1001",
+      passwordHash: demoPasswordHash,
       role: UserRole.GUARDIAN,
       status: UserStatus.ACTIVE,
     },
@@ -58,6 +61,7 @@ async function main() {
       name: "Ana Souza",
       email: "ana.responsavel@caminhoseguro.demo",
       phone: "+55 19 99999-1001",
+      passwordHash: demoPasswordHash,
       role: UserRole.GUARDIAN,
       status: UserStatus.ACTIVE,
     },
@@ -228,6 +232,7 @@ async function main() {
     create: {
       name: "Carlos Lima",
       email: "operador.escola@caminhoseguro.demo",
+      passwordHash: demoPasswordHash,
       role: UserRole.INSTITUTION_MEMBER,
       status: UserStatus.ACTIVE,
     },
@@ -252,6 +257,82 @@ async function main() {
     },
   });
 
+
+  const transportUser = await prisma.user.upsert({
+    where: {
+      email: "operador.transporte@caminhoseguro.demo",
+    },
+    update: {
+      name: "Roberto Santos",
+      role: UserRole.TRANSPORT_MEMBER,
+      status: UserStatus.ACTIVE,
+      passwordHash: demoPasswordHash,
+    },
+    create: {
+      name: "Roberto Santos",
+      email: "operador.transporte@caminhoseguro.demo",
+      passwordHash: demoPasswordHash,
+      role: UserRole.TRANSPORT_MEMBER,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  await prisma.institutionMember.upsert({
+    where: {
+      userId_institutionId: {
+        userId: transportUser.id,
+        institutionId: transport.id,
+      },
+    },
+    update: {
+      role: InstitutionMemberRole.MONITOR,
+      active: true,
+    },
+    create: {
+      userId: transportUser.id,
+      institutionId: transport.id,
+      role: InstitutionMemberRole.MONITOR,
+      active: true,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: {
+      email: "rede.protecao@caminhoseguro.demo",
+    },
+    update: {
+      name: "Rede de Protecao",
+      role: UserRole.PUBLIC_AGENT,
+      status: UserStatus.ACTIVE,
+      passwordHash: demoPasswordHash,
+    },
+    create: {
+      name: "Rede de Protecao",
+      email: "rede.protecao@caminhoseguro.demo",
+      passwordHash: demoPasswordHash,
+      role: UserRole.PUBLIC_AGENT,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: {
+      email: "admin@caminhoseguro.demo",
+    },
+    update: {
+      name: "Administracao Caminho Seguro",
+      role: UserRole.ADMIN,
+      status: UserStatus.ACTIVE,
+      passwordHash: demoPasswordHash,
+    },
+    create: {
+      name: "Administracao Caminho Seguro",
+      email: "admin@caminhoseguro.demo",
+      passwordHash: demoPasswordHash,
+      role: UserRole.ADMIN,
+      status: UserStatus.ACTIVE,
+    },
+  });
   await prisma.childInstitution.upsert({
     where: {
       childId_institutionId: {

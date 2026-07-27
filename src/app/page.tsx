@@ -1,398 +1,318 @@
 "use client";
 
 import Link from "next/link";
-import { buttonVariants } from "@heroui/styles";
 import {
   ArrowRight,
   BellRing,
   Bluetooth,
   CheckCircle2,
-  MapPinned,
+  EyeOff,
+  Fingerprint,  Network,
   QrCode,
+  School,
   ShieldCheck,
+  Users,
 } from "lucide-react";
-import { BrandLogo } from "@/components/shared/brand-logo";
-import { dashboardModules } from "@/features/dashboard/dashboard-modules";
+import { GsapReveal } from "@/components/shared/gsap-reveal";
+import { InteractiveParticleField } from "@/components/shared/interactive-particle-field";
+import { ProtectionNetworkVisual } from "@/components/shared/protection-network-visual";
+import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-const accentClasses = {
-  blue: {
-    icon: "bg-sky-50 text-sky-700",
-    badge: "bg-sky-50 text-sky-700",
-  },
-  green: {
-    icon: "bg-emerald-50 text-emerald-700",
-    badge: "bg-emerald-50 text-emerald-700",
-  },
-  orange: {
-    icon: "bg-orange-50 text-orange-700",
-    badge: "bg-orange-50 text-orange-700",
-  },
-  purple: {
-    icon: "bg-violet-50 text-violet-700",
-    badge: "bg-violet-50 text-violet-700",
-  },
-};
-
-const protectionSteps = [
+const productPillars = [
   {
-    title: "Identificação inclusiva",
-    description:
-      "A criança utiliza QR Code e identificação Bluetooth sem precisar possuir celular.",
-    icon: QrCode,
+    title: "Nao rastreia a crianca",
+    text: "O sistema registra eventos importantes: chegada, saida, embarque, pedido de ajuda e confirmacao institucional.",
+    icon: EyeOff,
   },
   {
-    title: "Eventos automáticos",
-    description: "Escola e transporte registram chegadas e embarques sem criar filas.",
-    icon: Bluetooth,
+    title: "A crianca nao precisa de celular",
+    text: "A identidade fica em pulseira, cracha, etiqueta, QR, NFC ou BLE. Quem le e a rede ao redor.",
+    icon: Fingerprint,
   },
   {
-    title: "Alertas imediatos",
-    description:
-      "Responsáveis e instituições recebem atualizações e alertas de proteção.",
-    icon: BellRing,
-  },
-  {
-    title: "Integridade verificável",
-    description: "Provas dos eventos são registradas na Solana sem expor dados pessoais.",
+    title: "Dados sensiveis ficam protegidos",
+    text: "O QR publico nao mostra nome, telefone, escola, endereco, responsavel ou dados medicos.",
     icon: ShieldCheck,
   },
 ];
 
+const testSteps = [
+  {
+    title: "Abra a Familia em uma aba",
+    text: "Use esta tela para acompanhar os eventos chegando no painel do responsavel.",
+    href: "/responsavel",
+    action: "Abrir Familia",
+    icon: Users,
+  },
+  {
+    title: "Em outra aba, simule uma acao",
+    text: "Use Escola para chegada BLE, Transporte para embarque ou QR para pedido publico de ajuda.",
+    href: "/escola",
+    action: "Testar Escola",
+    icon: School,
+  },
+  {
+    title: "Compare os limites de cada perfil",
+    text: "Troque o perfil privado e veja que cada ator recebe apenas o necessario para agir.",
+    href: "/login?next=/rede",
+    action: "Trocar perfil",
+    icon: Network,
+  },
+];
+
+const protectionSteps = [
+  { title: "Identidade fisica", description: "A crianca usa QR e BLE sem depender de celular, internet ou aplicativo.", icon: QrCode },
+  { title: "Evento, nao rota", description: "A rede registra passagens importantes, nao cada passo da rotina.", icon: Bluetooth },
+  { title: "Alerta acionavel", description: "Responsaveis e instituicoes recebem contexto suficiente para agir.", icon: BellRing },
+  { title: "Privacidade primeiro", description: "Dados pessoais ficam fora do QR publico e fora de provas abertas.", icon: ShieldCheck },
+];
+
 export default function Home() {
   return (
-    <main className="min-h-screen">
-      <header className="border-b border-slate-200/80 bg-white/85 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10">
-          <BrandLogo />
+    <main className="relative isolate min-h-screen overflow-hidden bg-[linear-gradient(135deg,#CFDAE0_0%,#ffffff_45%,#DDECE5_100%)]">
+      <InteractiveParticleField className="z-0 opacity-90" />
 
-          <div className="hidden items-center gap-3 sm:flex">
-            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
-              MVP em desenvolvimento
-            </span>
+      <GsapReveal className="relative z-10">
+        <section className="relative border-b border-sky-100/80">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-180 bg-[linear-gradient(115deg,rgba(14,165,233,.14),rgba(23, 176, 203, 0.11)_45%,rgba(16,185,129,.14))]" />
 
-            <Link
-              href="/login"
-              className={buttonVariants({
-                variant: "secondary",
-                className: "font-semibold",
-              })}
+          <div className="relative mx-auto grid max-w-7xl gap-9 px-4 pb-14 pt-[calc(var(--app-nav-offset)+0.50rem)] sm:px-6 lg:grid-cols-[0.94fr_1.06fr] lg:items-center lg:px-10 lg:pb-20">
+            <div className="flex flex-col justify-center">
+              <div
+                data-gsap="hero"
+                className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-white/95 px-4 py-2 b-2 text-sm font-semibold text-emerald-700 shadow-sm"
+              >
+                <ShieldCheck />
+                Protecao infantil por eventos, sem vigilancia permanente
+              </div>
+
+              <h1
+                data-gsap="hero"
+                className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.04] tracking-normal text-slate-950 sm:text-5xl lg:text-6xl"
+              >
+                Caminho Seguro: uma rede que protege sem vigiar.
+              </h1>
+
+              <p
+                data-gsap="hero"
+                className="mt-6 max-w-2xl text-lg leading-8 text-slate-600"
+              >
+                Um MVP para conectar familia, escola, transporte, servicos publicos e
+                comunidade em torno de eventos de protecao infantil. A proposta e simples:
+                acompanhar sinais importantes sem acompanhar cada passo da crianca.
+              </p>
+
+              <div data-gsap="metrics" className="mt-9 grid gap-3 sm:grid-cols-3">
+                <MetricCard value="0" label="dados pessoais no QR" />
+                <MetricCard value="7" label="atores da rede conectados" />
+                <MetricCard value="24h" label="eventos prontos para resposta" />
+              </div>
+            </div>
+
+            <div data-gsap="visual">
+              <ProtectionNetworkVisual />
+            </div>
+          </div>
+        </section>
+
+        <section className="relative border-b border-sky-100 py-16">
+          <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:px-10">
+            <Card
+              data-gsap-scroll="left"
+              className="rounded-3xl border-sky-100 bg-linear-to-br from-sky-600 via-cyan-600 to-emerald-600 text-white shadow-[0_26px_60px_rgba(3,105,161,0.24)]"
             >
-              Entrar
-            </Link>
-          </div>
-        </div>
-      </header>
+              <CardHeader>
+                <CardTitle className="text-3xl leading-tight tracking-normal sm:text-4xl">
+                  Protecao comunitaria para criancas, com privacidade desde o primeiro
+                  evento.
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-base leading-7 text-cyan-50">
+                O Caminho Seguro nao promete saber onde a crianca esta o tempo todo. Ele
+                cria uma infraestrutura de confianca para registrar quando algo importante
+                aconteceu e acionar quem pode responder.
+              </CardContent>
+            </Card>
 
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute -left-20 top-16 h-72 w-72 rounded-full bg-sky-200/35 blur-3xl" />
-
-          <div className="absolute -right-25 top-0 h-80 w-80 rounded-full bg-emerald-200/35 blur-3xl" />
-        </div>
-
-        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:px-10 lg:py-24">
-          <div className="flex flex-col justify-center">
-            <div className="mb-6 flex w-fit items-center gap-2 rounded-full border border-sky-200 bg-white/75 px-4 py-2 text-sm font-semibold text-sky-700 shadow-sm">
-              <ShieldCheck className="h-4 w-4" />
-              Tecnologia para proteger trajetos reais
-            </div>
-
-            <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl lg:text-6xl">
-              Uma rede que acompanha{" "}
-              <span className="text-(--brand-600)">eventos de proteção</span>, não cada
-              passo da criança.
-            </h1>
-
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-              O Caminho Seguro conecta famílias, escolas, transportes, órgãos públicos e a
-              comunidade para proteger crianças em trajetos longos ou vulneráveis, sem
-              exigir smartphone, internet ou carteira blockchain.
-            </p>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/ajuda/demo"
-                className={buttonVariants({
-                  variant: "primary",
-                  className: "font-semibold",
-                })}
-              >
-                Simular pedido de ajuda
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-
-              <Link
-                href="#modulos"
-                className={buttonVariants({
-                  variant: "secondary",
-                  className: "font-semibold",
-                })}
-              >
-                Explorar módulos
-              </Link>
-            </div>
-
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-slate-200 bg-white/80 p-4">
-                <p className="text-2xl font-semibold text-slate-950">0</p>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  dados pessoais na blockchain
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-white/80 p-4">
-                <p className="text-2xl font-semibold text-slate-950">1</p>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  identificação para toda a rede
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-white/80 p-4">
-                <p className="text-2xl font-semibold text-slate-950">24h</p>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  potencial de proteção contínua
-                </p>
-              </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {productPillars.map((pillar) => {
+                const Icon = pillar.icon;
+                return (
+                  <Card
+                    key={pillar.title}
+                    data-gsap-scroll="up"
+                    className="home-surface rounded-2xl border-sky-100 bg-white/90"
+                  >
+                    <CardHeader>
+                      <div className="mb-2 flex size-11 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
+                        <Icon />
+                      </div>
+                      <CardTitle className="text-lg text-slate-950">
+                        {pillar.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-sm leading-6 text-slate-600">
+                      {pillar.text}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
+        </section>
 
-          <div className="relative flex items-center justify-center">
-            <div className="w-full max-w-xl rounded-[32px] border border-white/80 bg-white/80 p-5 shadow-2xl shadow-slate-900/10 backdrop-blur sm:p-7">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-500">Status da criança</p>
+        <section id="como-funciona" className="relative border-b border-sky-100 py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+            <div data-gsap-scroll="up" className="max-w-3xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                Como funciona
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
+                A crianca carrega uma identidade protegida. A rede registra eventos. As
+                pessoas certas agem.
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                O cidadao pode ler o QR e pedir ajuda sem ver dados sensiveis. A escola
+                confirma chegada. O transporte registra embarque. O responsavel acompanha
+                alertas. A rede publica coordena casos formais.
+              </p>
+            </div>
 
-                  <h2 className="mt-1 text-2xl font-semibold text-slate-950">
-                    Maria está segura
-                  </h2>
-                </div>
-
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-                  <CheckCircle2 className="h-6 w-6" />
-                </div>
-              </div>
-
-              <div className="mt-6 rounded-3xl bg-slate-950 p-5 text-white">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
-                    <MapPinned className="h-5 w-5 text-sky-300" />
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-slate-400">Último evento</p>
-
-                    <p className="font-medium">Chegada à escola confirmada</p>
-                  </div>
-                </div>
-
-                <div className="mt-5 grid grid-cols-[auto_1fr] gap-x-4 gap-y-4">
-                  <div className="flex flex-col items-center">
-                    <span className="h-3 w-3 rounded-full bg-emerald-400" />
-                    <span className="my-1 h-10 w-px bg-white/20" />
-                  </div>
-
-                  <div>
-                    <p className="font-medium">07:28 — Escola Municipal</p>
-
-                    <p className="mt-1 text-sm text-slate-400">
-                      Evento detectado automaticamente pelo leitor Bluetooth.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col items-center">
-                    <span className="h-3 w-3 rounded-full bg-sky-400" />
-                    <span className="my-1 h-10 w-px bg-white/20" />
-                  </div>
-
-                  <div>
-                    <p className="font-medium">07:02 — Embarque confirmado</p>
-
-                    <p className="mt-1 text-sm text-slate-400">
-                      Transporte escolar identificado pela rede.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col items-center">
-                    <span className="h-3 w-3 rounded-full bg-slate-500" />
-                  </div>
-
-                  <div>
-                    <p className="font-medium">06:55 — Identificador ativo</p>
-
-                    <p className="mt-1 text-sm text-slate-400">
-                      Pulseira vinculada e pronta para o trajeto.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-5 rounded-2xl border border-sky-100 bg-sky-50 p-4">
-                <div className="flex gap-3">
-                  <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-sky-700" />
-
-                  <div>
-                    <p className="font-semibold text-sky-950">
-                      Privacidade desde a origem
-                    </p>
-
-                    <p className="mt-1 text-sm leading-6 text-sky-800">
-                      O painel exibe eventos autorizados. Coordenadas e dados pessoais não
-                      são publicados na blockchain.
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {protectionSteps.map((step, index) => {
+                const Icon = step.icon;
+                return (
+                  <Card
+                    key={step.title}
+                    data-gsap-scroll="up"
+                    className="rounded-2xl border-slate-800 bg-slate-950 text-white"
+                  >
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div className="flex size-11 items-center justify-center rounded-xl bg-white text-slate-950">
+                          <Icon />
+                        </div>
+                        <span className="text-sm font-semibold text-slate-500">
+                          0{index + 1}
+                        </span>
+                      </div>
+                      <CardTitle>{step.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-sm leading-6 text-slate-300">
+                      {step.description}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section id="modulos" className="border-y border-slate-200 bg-white/70 py-16">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-(--brand-600)">
-              Ecossistema conectado
-            </p>
+        <section id="como-testar" className="relative border-b border-sky-100 py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+            <div data-gsap-scroll="up" className="max-w-3xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+                Como testar
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
+                Abra duas abas: uma acompanha, a outra provoca
+                eventos (navegador anônimo).
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                Use a aba Familia como observatorio do responsavel. Na segunda aba, simule
+                Escola, Transporte ou QR publico. Assim você acompanha os resultador sem
+                precisar de explicacao longa.
+              </p>
+            </div>
 
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-              Uma experiência específica para cada participante da rede
-            </h2>
-
-            <p className="mt-4 text-lg leading-8 text-slate-600">
-              Cada perfil acessa apenas as informações e ações necessárias para sua
-              função.
-            </p>
+            <div className="mt-10 grid gap-4 lg:grid-cols-3">
+              {testSteps.map((step) => {
+                const Icon = step.icon;
+                return (
+                  <Card
+                    key={step.title}
+                    data-gsap-scroll="up"
+                    className="home-surface rounded-2xl border-sky-100 bg-white/90"
+                  >
+                    <CardHeader>
+                      <div className="flex size-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                        <Icon />
+                      </div>
+                      <CardTitle className="text-xl text-slate-950">
+                        {step.title}
+                      </CardTitle>
+                      <CardDescription className="leading-6">{step.text}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                      <Link
+                        href={step.href}
+                        className={cn(
+                          buttonVariants({ variant: "outline", size: "lg" }),
+                          "w-full rounded-2xl bg-white",
+                        )}
+                      >
+                        {step.action}
+                        <ArrowRight data-icon="inline-end" />
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+            </div>
           </div>
+        </section>
 
-          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {dashboardModules.map((module) => {
-              const Icon = module.icon;
-              const accent = accentClasses[module.accent];
-
-              return (
-                <Link
-                  key={module.title}
-                  href={module.href}
-                  className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-sky-200 hover:shadow-xl hover:shadow-slate-900/5"
-                >
-                  <div className="flex items-center justify-between">
-                    <div
-                      className={`flex h-12 w-12 items-center justify-center rounded-2xl ${accent.icon}`}
-                    >
-                      <Icon className="h-6 w-6" />
-                    </div>
-
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-semibold ${accent.badge}`}
-                    >
-                      {module.badge}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-5 text-xl font-semibold text-slate-950">
-                    {module.title}
-                  </h3>
-
-                  <p className="mt-2 min-h-20 text-sm leading-6 text-slate-600">
-                    {module.description}
-                  </p>
-
-                  <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-(--brand-600)">
-                    Acessar módulo
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </div>
-                </Link>
-              );
-            })}
+        <section className="relative py-16">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-10">
+            <div data-gsap-scroll="left">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                O que ele faz e nao faz
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
+                O valor do produto esta no limite: ajudar sem expor.
+              </h2>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <TruthCard
+                title="Faz"
+                text="Registra eventos de protecao e notifica responsaveis, instituicoes e rede formal."
+                positive
+              />
+              <TruthCard
+                title="Nao faz"
+                text="Nao mostra dados pessoais no QR e nao acompanha GPS continuo da crianca."
+              />
+            </div>
           </div>
-        </div>
-      </section>
-
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-(--safe-600)">
-              Como funciona
-            </p>
-
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-              Tecnologia invisível para uma proteção simples
-            </h2>
-          </div>
-
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {protectionSteps.map((step, index) => {
-              const Icon = step.icon;
-
-              return (
-                <div
-                  key={step.title}
-                  className="rounded-3xl border border-slate-200 bg-white/80 p-6"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white">
-                      <Icon className="h-5 w-5" />
-                    </div>
-
-                    <span className="text-sm font-semibold text-slate-400">
-                      0{index + 1}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-5 font-semibold text-slate-950">{step.title}</h3>
-
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    {step.description}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="px-5 pb-16 sm:px-8 lg:px-10">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[32px] bg-slate-950 px-6 py-10 text-white sm:px-10 lg:flex lg:items-center lg:justify-between lg:px-12">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-300">
-              Princípio central
-            </p>
-
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight">
-              Nenhuma criança precisa possuir smartphone para ser protegida.
-            </h2>
-
-            <p className="mt-4 leading-7 text-slate-300">
-              A tecnologia pertence à rede: escolas, transportes, instituições,
-              responsáveis e cidadãos parceiros.
-            </p>
-          </div>
-
-          <Link
-            href="/ajuda/demo"
-            className={buttonVariants({
-              variant: "primary",
-              className: "mt-8 font-semibold lg:mt-0",
-            })}
-          >
-            Ver fluxo de proteção
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
-
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-8 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
-          <BrandLogo />
-
-          <p className="text-sm text-slate-500">
-            Protótipo para o UNICEF x Superteam Brasil.
-          </p>
-        </div>
-      </footer>
+        </section>
+      </GsapReveal>
     </main>
+  );
+}
+
+function MetricCard({ value, label }: { value: string; label: string }) {
+  return (
+    <Card className="home-surface rounded-2xl border-sky-100 bg-white/90">
+      <CardContent className="p-4">
+        <p className="text-2xl font-semibold text-slate-950">{value}</p>
+        <p className="mt-1 text-sm leading-5 text-slate-500">{label}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function TruthCard({ title, text, positive = false }: { title: string; text: string; positive?: boolean }) {
+  return (
+    <Card data-gsap-scroll="up" className={`rounded-2xl ${positive ? "border-emerald-200 bg-emerald-50" : "border-sky-200 bg-sky-50"}`}>
+      <CardHeader>
+        <div className="flex items-center gap-2 text-slate-950">
+          <CheckCircle2 />
+          <CardTitle>{title}</CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent className="leading-7 text-slate-700">{text}</CardContent>
+    </Card>
   );
 }

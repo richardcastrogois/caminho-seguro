@@ -1,29 +1,25 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BrandLogo } from "@/components/shared/brand-logo";
 import {
   GuardianDashboard,
   type GuardianDashboardData,
 } from "@/features/guardian-dashboard/guardian-dashboard";
 import { prisma } from "@/lib/prisma";
+import { requireCurrentUser } from "@/lib/session";
 
 export const metadata: Metadata = {
-  title: "Painel do responsável",
+  title: "Painel do responsÃƒÂ¡vel",
   description: "Acompanhamento de eventos e alertas da rede Caminho Seguro.",
 };
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const DEMO_GUARDIAN_EMAIL = "ana.responsavel@caminhoseguro.demo";
-
 export default async function GuardianPage() {
+  const user = await requireCurrentUser(["GUARDIAN", "ADMIN"], "/responsavel");
+
   const guardian = await prisma.guardian.findFirst({
-    where: {
-      user: {
-        email: DEMO_GUARDIAN_EMAIL,
-      },
-    },
+    where: user.role === "ADMIN" ? undefined : { userId: user.id },
     select: {
       user: {
         select: {
@@ -184,19 +180,5 @@ export default async function GuardianPage() {
     })),
   };
 
-  return (
-    <>
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10">
-          <BrandLogo />
-
-          <span className="rounded-full bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700">
-            Ambiente de demonstração
-          </span>
-        </div>
-      </header>
-
-      <GuardianDashboard data={dashboardData} />
-    </>
-  );
+  return <GuardianDashboard data={dashboardData} />;
 }

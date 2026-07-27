@@ -9,6 +9,7 @@ import {
   EventStatus,
   EventType,
 } from "@/generated/prisma/client";
+import { dispatchAlertNotifications } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -29,34 +30,32 @@ const situationConfig = {
     alertType: AlertType.HELP_REQUEST,
     severity: AlertSeverity.HIGH,
     eventSeverity: EventSeverity.CRITICAL,
-    title: "Criança solicitou ajuda",
-    message: "Uma pessoa informou que a criança protegida solicitou ajuda.",
+    title: "Crianca solicitou ajuda",
+    message: "Uma pessoa informou que a crianca protegida solicitou ajuda.",
   },
   CHILD_FOUND: {
     eventType: EventType.CHILD_FOUND,
     alertType: AlertType.CHILD_FOUND,
     severity: AlertSeverity.HIGH,
     eventSeverity: EventSeverity.ATTENTION,
-    title: "Criança encontrada",
-    message:
-      "Uma pessoa informou que encontrou a criança protegida aparentemente desacompanhada.",
+    title: "Crianca encontrada",
+    message: "Uma pessoa informou que encontrou a crianca protegida aparentemente desacompanhada.",
   },
   CHILD_AT_RISK: {
     eventType: EventType.CHILD_AT_RISK,
     alertType: AlertType.CHILD_AT_RISK,
     severity: AlertSeverity.CRITICAL,
     eventSeverity: EventSeverity.CRITICAL,
-    title: "Possível situação de risco",
-    message:
-      "Uma pessoa informou que a criança protegida aparenta estar em situação de risco.",
+    title: "Possivel situacao de risco",
+    message: "Uma pessoa informou que a crianca protegida aparenta estar em situacao de risco.",
   },
   MEDICAL_HELP: {
     eventType: EventType.HELP_REQUEST,
     alertType: AlertType.HELP_REQUEST,
     severity: AlertSeverity.CRITICAL,
     eventSeverity: EventSeverity.CRITICAL,
-    title: "Possível necessidade de atendimento",
-    message: "Uma pessoa informou que a criança protegida pode precisar de atendimento.",
+    title: "Possivel necessidade de atendimento",
+    message: "Uma pessoa informou que a crianca protegida pode precisar de atendimento.",
   },
 } as const;
 
@@ -67,44 +66,31 @@ export async function POST(request: Request) {
 
     if (!parsedBody.success) {
       return NextResponse.json(
-        {
-          ok: false,
-          error: "Dados inválidos para registrar o pedido de ajuda.",
-        },
-        {
-          status: 400,
-        },
+        { ok: false, error: "Dados invalidos para registrar o pedido de ajuda." },
+        { status: 400 },
       );
     }
 
-    const { token, situation, latitude, longitude, locationAccuracy, notes } =
-      parsedBody.data;
+    const { token, situation, latitude, longitude, locationAccuracy, notes } = parsedBody.data;
 
     const identifier = await prisma.childIdentifier.findFirst({
-      where: {
-        publicToken: token,
-        status: "ACTIVE",
-        type: "QR_CODE",
-      },
-      select: {
-        id: true,
-        childId: true,
-      },
+      where: { publicToken: token, status: "ACTIVE", type: "QR_CODE" },
+      select: { id: true, childId: true },
     });
 
     if (!identifier) {
       return NextResponse.json(
-        {
-          ok: false,
-          error: "Identificador inválido, inativo ou revogado.",
-        },
-        {
-          status: 404,
-        },
+        { ok: false, error: "Identificador invalido, inativo ou revogado." },
+        { status: 404 },
       );
     }
 
     const config = situationConfig[situation];
+    const occurredAt = new Date();
+    const locationLabel =
+      latitude !== null && longitude !== null
+        ? "Localizacao compartilhada pelo cidadao"
+        : "Localizacao nao compartilhada";
 
     const result = await prisma.$transaction(async (transaction) => {
       const event = await transaction.protectionEvent.create({
@@ -117,18 +103,11 @@ export async function POST(request: Request) {
           status: EventStatus.VALIDATED,
           latitude,
           longitude,
-          locationLabel:
-            latitude !== null && longitude !== null
-              ? "Localização compartilhada pelo cidadão"
-              : "Localização não compartilhada",
+          locationLabel,
           notes: notes || null,
-          occurredAt: new Date(),
-          validatedAt: new Date(),
-          metadata: {
-            publicScan: true,
-            locationAccuracy,
-            situation,
-          },
+          occurredAt,
+          validatedAt: occurredAt,
+          metadata: { publicScan: true, locationAccuracy, situation },
         },
       });
 
@@ -142,35 +121,91 @@ export async function POST(request: Request) {
           title: config.title,
           message: config.message,
         },
+        select: { id: true, publicId: true },
       });
+
+      const guardians = await transaction.childGuardian.findMany({
+        where: { childId: identifier.childId, canReceiveAlerts: true },
+        select: {
+          guardian: {
+            select: {
+              notificationOpt: {
+                select: { browserPush: true, telegram: true, telegramChatId: true },
+              },
+              user: { select: { id: true, email: true } },
+            },
+          },
+        },
+      });
+
+      if (guardians.length > 0) {
+        await transaction.notification.createMany({
+          data: guardians.flatMap((relation) => [
+            {
+              userId: relation.guardian.user.id,
+              alertId: alert.id,
+              channel: "DASHBOARD",
+              status: "DELIVERED",
+              recipient: relation.guardian.user.email,
+              subject: config.title,
+              content: config.message,
+              sentAt: occurredAt,
+              deliveredAt: occurredAt,
+            },
+            {
+              userId: relation.guardian.user.id,
+              alertId: alert.id,
+              channel: "BROWSER_PUSH",
+              status: relation.guardian.notificationOpt?.browserPush === false ? "FAILED" : "PENDING",
+              recipient: relation.guardian.user.email,
+              subject: config.title,
+              content: config.message,
+              failureReason:
+                relation.guardian.notificationOpt?.browserPush === false
+                  ? "Preferencia de notificacao do navegador desativada."
+                  : null,
+            },
+          ]),
+        });
+      }
 
       return {
         eventPublicId: event.publicId,
+        alertId: alert.id,
         alertPublicId: alert.publicId,
+        targets: guardians.map((relation) => ({
+          userId: relation.guardian.user.id,
+          email: relation.guardian.user.email,
+          telegramEnabled: relation.guardian.notificationOpt?.telegram ?? false,
+          telegramChatId: relation.guardian.notificationOpt?.telegramChatId ?? null,
+        })),
       };
+    });
+
+    await dispatchAlertNotifications({
+      alertId: result.alertId,
+      title: config.title,
+      message: config.message,
+      severity: config.severity,
+      targets: result.targets,
+      locationLabel,
     });
 
     return NextResponse.json(
       {
         ok: true,
-        message: "O alerta foi registrado e encaminhado à rede de proteção.",
+        message: "O alerta foi registrado e encaminhado a rede de protecao.",
         reference: result.alertPublicId,
+        event: result.eventPublicId,
       },
-      {
-        status: 201,
-      },
+      { status: 201 },
     );
   } catch (error: unknown) {
-    console.error("Erro ao criar alerta público:", error);
+    console.error("Erro ao criar alerta publico:", error);
 
     return NextResponse.json(
-      {
-        ok: false,
-        error: "Não foi possível registrar o alerta neste momento.",
-      },
-      {
-        status: 500,
-      },
+      { ok: false, error: "Nao foi possivel registrar o alerta neste momento." },
+      { status: 500 },
     );
   }
 }
