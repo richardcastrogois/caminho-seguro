@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { AlertStatus, AuditAction } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { authorizeDemoRequest } from "@/lib/demo-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,13 @@ type RouteContext = {
 
 export async function PATCH(request: Request, context: RouteContext) {
   try {
+    if (!(await authorizeDemoRequest(["guardian", "admin"]))) {
+      return NextResponse.json(
+        { ok: false, error: "Acesso do responsavel necessario." },
+        { status: 401 },
+      );
+    }
+
     const { publicId } = await context.params;
 
     const guardianUser = await prisma.user.findUnique({
@@ -30,7 +38,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Responsável de demonstração não encontrado.",
+          error: "ResponsÃƒÂ¡vel de demonstraÃƒÂ§ÃƒÂ£o nÃƒÂ£o encontrado.",
         },
         {
           status: 404,
@@ -64,7 +72,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Alerta não encontrado ou acesso não autorizado.",
+          error: "Alerta nÃƒÂ£o encontrado ou acesso nÃƒÂ£o autorizado.",
         },
         {
           status: 404,
@@ -76,7 +84,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Este alerta já foi resolvido.",
+          error: "Este alerta jÃƒÂ¡ foi resolvido.",
         },
         {
           status: 409,
@@ -87,7 +95,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     if (alert.status === AlertStatus.ACKNOWLEDGED) {
       return NextResponse.json({
         ok: true,
-        message: "O recebimento deste alerta já havia sido confirmado.",
+        message: "O recebimento deste alerta jÃƒÂ¡ havia sido confirmado.",
       });
     }
 
@@ -109,7 +117,7 @@ export async function PATCH(request: Request, context: RouteContext) {
           action: AuditAction.ACKNOWLEDGE_ALERT,
           entityType: "Alert",
           entityId: alert.id,
-          description: "Responsável confirmou o recebimento do alerta.",
+          description: "ResponsÃƒÂ¡vel confirmou o recebimento do alerta.",
           metadata: {
             alertPublicId: alert.publicId,
             environment: "demo",
@@ -128,7 +136,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Não foi possível confirmar o recebimento do alerta.",
+        error: "NÃƒÂ£o foi possÃƒÂ­vel confirmar o recebimento do alerta.",
       },
       {
         status: 500,

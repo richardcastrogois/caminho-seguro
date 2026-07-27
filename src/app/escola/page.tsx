@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SchoolDashboard } from "@/features/school-dashboard/school-dashboard";
 import { prisma } from "@/lib/prisma";
+import { requireDemoSession } from "@/lib/demo-auth";
 import { getSaoPauloDayRange } from "@/lib/time";
 import type { SchoolDashboardData } from "@/types/school-dashboard";
 
@@ -16,6 +17,8 @@ export const dynamic = "force-dynamic";
 const DEMO_SCHOOL_PUBLIC_ID = "instituicao-demo-escola";
 
 export default async function SchoolPage() {
+  await requireDemoSession(["school", "admin"], "/escola");
+
   const { start, end } = getSaoPauloDayRange();
 
   const institution = await prisma.institution.findUnique({

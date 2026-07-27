@@ -4,6 +4,8 @@ export type ProtectionNetworkData = {
     name: string;
     type: string;
     address: string | null;
+    latitude: number | null;
+    longitude: number | null;
     active: boolean;
   }>;
   alerts: Array<{
@@ -14,6 +16,9 @@ export type ProtectionNetworkData = {
     status: string;
     createdAt: string;
     institutionName: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    locationLabel: string | null;
   }>;
   recentEvents: Array<{
     publicId: string;
@@ -21,5 +26,8 @@ export type ProtectionNetworkData = {
     severity: string;
     occurredAt: string;
     institutionName: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    locationLabel: string | null;
   }>;
 };

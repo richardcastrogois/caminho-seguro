@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { AlertStatus, AuditAction } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { authorizeDemoRequest } from "@/lib/demo-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,13 @@ type RouteContext = {
 
 export async function PATCH(request: Request, context: RouteContext) {
   try {
+    if (!(await authorizeDemoRequest(["guardian", "admin"]))) {
+      return NextResponse.json(
+        { ok: false, error: "Acesso do responsavel necessario." },
+        { status: 401 },
+      );
+    }
+
     const { publicId } = await context.params;
 
     const guardianUser = await prisma.user.findUnique({
@@ -30,7 +38,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Responsável de demonstração não encontrado.",
+          error: "ResponsÃƒÂ¡vel de demonstraÃƒÂ§ÃƒÂ£o nÃƒÂ£o encontrado.",
         },
         {
           status: 404,
@@ -64,7 +72,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Alerta não encontrado ou acesso não autorizado.",
+          error: "Alerta nÃƒÂ£o encontrado ou acesso nÃƒÂ£o autorizado.",
         },
         {
           status: 404,
@@ -75,7 +83,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     if (alert.status === AlertStatus.RESOLVED) {
       return NextResponse.json({
         ok: true,
-        message: "Este alerta já estava resolvido.",
+        message: "Este alerta jÃƒÂ¡ estava resolvido.",
       });
     }
 
@@ -91,7 +99,7 @@ export async function PATCH(request: Request, context: RouteContext) {
           resolvedByUserId: guardianUser.id,
           resolvedAt: new Date(),
           resolutionNotes:
-            "Alerta marcado como resolvido pelo responsável no painel de demonstração.",
+            "Alerta marcado como resolvido pelo responsÃƒÂ¡vel no painel de demonstraÃƒÂ§ÃƒÂ£o.",
         },
       });
 
@@ -101,7 +109,7 @@ export async function PATCH(request: Request, context: RouteContext) {
           action: AuditAction.RESOLVE_ALERT,
           entityType: "Alert",
           entityId: alert.id,
-          description: "Responsável marcou o alerta como resolvido.",
+          description: "ResponsÃƒÂ¡vel marcou o alerta como resolvido.",
           metadata: {
             alertPublicId: alert.publicId,
             environment: "demo",
@@ -120,7 +128,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Não foi possível resolver o alerta.",
+        error: "NÃƒÂ£o foi possÃƒÂ­vel resolver o alerta.",
       },
       {
         status: 500,

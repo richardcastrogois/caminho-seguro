@@ -9,6 +9,7 @@ import {
   EventType,
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { authorizeDemoRequest } from "@/lib/demo-auth";
 import { getSaoPauloDayRange } from "@/lib/time";
 
 export const runtime = "nodejs";
@@ -21,6 +22,13 @@ const DEMO_OPERATOR_EMAIL = "operador.escola@caminhoseguro.demo";
 
 export async function POST() {
   try {
+    if (!(await authorizeDemoRequest(["school", "admin"]))) {
+      return NextResponse.json(
+        { ok: false, error: "Acesso institucional necessario." },
+        { status: 401 },
+      );
+    }
+
     const { start, end, dateKey } = getSaoPauloDayRange();
 
     const [school, child, gateway, operator] = await Promise.all([
@@ -83,7 +91,8 @@ export async function POST() {
       return NextResponse.json(
         {
           ok: false,
-          error: "Os dados institucionais da demonstração não foram encontrados.",
+          error:
+            "Os dados institucionais da demonstraÃƒÂ§ÃƒÂ£o nÃƒÂ£o foram encontrados.",
         },
         {
           status: 404,
@@ -95,7 +104,7 @@ export async function POST() {
       return NextResponse.json(
         {
           ok: false,
-          error: "O gateway Bluetooth está inativo.",
+          error: "O gateway Bluetooth estÃƒÂ¡ inativo.",
         },
         {
           status: 409,
@@ -107,7 +116,7 @@ export async function POST() {
       return NextResponse.json(
         {
           ok: false,
-          error: "O gateway não pertence à instituição informada.",
+          error: "O gateway nÃƒÂ£o pertence ÃƒÂ  instituiÃƒÂ§ÃƒÂ£o informada.",
         },
         {
           status: 409,
@@ -121,7 +130,7 @@ export async function POST() {
       return NextResponse.json(
         {
           ok: false,
-          error: "A criança não possui um identificador BLE ativo.",
+          error: "A crianÃƒÂ§a nÃƒÂ£o possui um identificador BLE ativo.",
         },
         {
           status: 404,
@@ -149,7 +158,7 @@ export async function POST() {
       return NextResponse.json(
         {
           ok: false,
-          error: `${child.firstName} já possui uma chegada registrada hoje.`,
+          error: `${child.firstName} jÃƒÂ¡ possui uma chegada registrada hoje.`,
           reference: existingArrival.publicId,
         },
         {
@@ -191,7 +200,7 @@ export async function POST() {
           status: EventStatus.VALIDATED,
           latitude: school.latitude,
           longitude: school.longitude,
-          locationLabel: "Portão principal da escola",
+          locationLabel: "PortÃƒÂ£o principal da escola",
           occurredAt,
           validatedAt: occurredAt,
           metadata: {
@@ -254,7 +263,7 @@ export async function POST() {
     return NextResponse.json(
       {
         ok: true,
-        message: `${child.firstName} ${child.lastName} chegou à escola. O responsável já pode visualizar o evento.`,
+        message: `${child.firstName} ${child.lastName} chegou ÃƒÂ  escola. O responsÃƒÂ¡vel jÃƒÂ¡ pode visualizar o evento.`,
         event: {
           publicId: event.publicId,
           occurredAt: event.occurredAt.toISOString(),
@@ -266,12 +275,12 @@ export async function POST() {
       },
     );
   } catch (error: unknown) {
-    console.error("Erro ao registrar detecção BLE:", error);
+    console.error("Erro ao registrar detecÃƒÂ§ÃƒÂ£o BLE:", error);
 
     return NextResponse.json(
       {
         ok: false,
-        error: "Não foi possível registrar a detecção Bluetooth.",
+        error: "NÃƒÂ£o foi possÃƒÂ­vel registrar a detecÃƒÂ§ÃƒÂ£o Bluetooth.",
       },
       {
         status: 500,

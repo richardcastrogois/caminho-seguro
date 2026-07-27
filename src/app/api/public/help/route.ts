@@ -144,6 +144,52 @@ export async function POST(request: Request) {
         },
       });
 
+      const guardians = await transaction.childGuardian.findMany({
+        where: {
+          childId: identifier.childId,
+          canReceiveAlerts: true,
+        },
+        select: {
+          guardian: {
+            select: {
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (guardians.length > 0) {
+        await transaction.notification.createMany({
+          data: guardians.flatMap((relation) => [
+            {
+              userId: relation.guardian.user.id,
+              alertId: alert.id,
+              channel: "DASHBOARD",
+              status: "DELIVERED",
+              recipient: relation.guardian.user.email,
+              subject: config.title,
+              content: config.message,
+              sentAt: new Date(),
+              deliveredAt: new Date(),
+            },
+            {
+              userId: relation.guardian.user.id,
+              alertId: alert.id,
+              channel: "BROWSER_PUSH",
+              status: "PENDING",
+              recipient: relation.guardian.user.email,
+              subject: config.title,
+              content: config.message,
+            },
+          ]),
+        });
+      }
+
       return {
         eventPublicId: event.publicId,
         alertPublicId: alert.publicId,

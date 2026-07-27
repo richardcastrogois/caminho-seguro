@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { AuditAction, EventType } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { authorizeDemoRequest } from "@/lib/demo-auth";
 import { getSaoPauloDayRange } from "@/lib/time";
 
 export const runtime = "nodejs";
@@ -12,6 +13,13 @@ const DEMO_OPERATOR_EMAIL = "operador.escola@caminhoseguro.demo";
 
 export async function POST() {
   try {
+    if (!(await authorizeDemoRequest(["school", "admin"]))) {
+      return NextResponse.json(
+        { ok: false, error: "Acesso institucional necessario." },
+        { status: 401 },
+      );
+    }
+
     const { start, end } = getSaoPauloDayRange();
 
     const [school, child, operator] = await Promise.all([
@@ -45,7 +53,7 @@ export async function POST() {
       return NextResponse.json(
         {
           ok: false,
-          error: "Os dados da demonstração não foram encontrados.",
+          error: "Os dados da demonstraÃƒÂ§ÃƒÂ£o nÃƒÂ£o foram encontrados.",
         },
         {
           status: 404,
@@ -85,7 +93,7 @@ export async function POST() {
           actorUserId: operator?.id ?? null,
           action: AuditAction.DELETE,
           entityType: "DemoSchoolArrival",
-          description: "Eventos de chegada da demonstração foram reiniciados.",
+          description: "Eventos de chegada da demonstraÃƒÂ§ÃƒÂ£o foram reiniciados.",
           metadata: {
             environment: "demo",
             deletedEvents: arrivalEvents.map((event) => event.publicId),
@@ -98,17 +106,17 @@ export async function POST() {
       ok: true,
       message:
         arrivalEvents.length > 0
-          ? "Demonstração reiniciada. Maria voltou ao estado de chegada pendente."
-          : "A demonstração já estava pronta para uma nova chegada.",
+          ? "DemonstraÃƒÂ§ÃƒÂ£o reiniciada. Maria voltou ao estado de chegada pendente."
+          : "A demonstraÃƒÂ§ÃƒÂ£o jÃƒÂ¡ estava pronta para uma nova chegada.",
       deletedEvents: arrivalEvents.length,
     });
   } catch (error: unknown) {
-    console.error("Erro ao reiniciar demonstração BLE:", error);
+    console.error("Erro ao reiniciar demonstraÃƒÂ§ÃƒÂ£o BLE:", error);
 
     return NextResponse.json(
       {
         ok: false,
-        error: "Não foi possível reiniciar a demonstração.",
+        error: "NÃƒÂ£o foi possÃƒÂ­vel reiniciar a demonstraÃƒÂ§ÃƒÂ£o.",
       },
       {
         status: 500,

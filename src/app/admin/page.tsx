@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AdminDashboard } from "@/features/admin-dashboard/admin-dashboard";
+import { requireDemoSession } from "@/lib/demo-auth";
 import { prisma } from "@/lib/prisma";
 import type { AdminDashboardData } from "@/types/admin-dashboard";
 
@@ -14,7 +15,9 @@ export const dynamic = "force-dynamic";
 const DEMO_CHILD_PUBLIC_ID = "crianca-demo-maria";
 
 export default async function AdminPage() {
-  const [child, institutions] = await Promise.all([
+  await requireDemoSession(["admin"], "/admin");
+
+  const [child, children, institutions] = await Promise.all([
     prisma.child.findUnique({
       where: { publicId: DEMO_CHILD_PUBLIC_ID },
       select: {
@@ -39,6 +42,26 @@ export default async function AdminPage() {
         },
       },
     }),
+    prisma.child.findMany({
+      orderBy: [{ createdAt: "desc" }],
+      take: 20,
+      select: {
+        publicId: true,
+        firstName: true,
+        lastName: true,
+        guardians: {
+          where: { isPrimary: true },
+          take: 1,
+          select: { guardian: { select: { user: { select: { name: true } } } } },
+        },
+        enrollments: {
+          where: { active: true },
+          take: 1,
+          select: { institution: { select: { name: true } } },
+        },
+        identifiers: { select: { id: true } },
+      },
+    }),
     prisma.institution.findMany({
       orderBy: [{ type: "asc" }, { name: "asc" }],
       select: { publicId: true, name: true, type: true, active: true },
@@ -61,6 +84,13 @@ export default async function AdminPage() {
           })),
         }
       : null,
+    children: children.map((item) => ({
+      publicId: item.publicId,
+      fullName: `${item.firstName} ${item.lastName}`,
+      guardianName: item.guardians[0]?.guardian.user.name ?? null,
+      institutionName: item.enrollments[0]?.institution.name ?? null,
+      identifiers: item.identifiers.length,
+    })),
     institutions,
   };
 

@@ -2,6 +2,7 @@ import { ViewTransition } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppNavigation } from "@/components/shared/app-navigation";
+import { getDemoSession } from "@/lib/demo-auth";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -35,15 +36,17 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getDemoSession();
+
   return (
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AppNavigation />
+        <AppNavigation session={session} />
         <div className="h-[128px] md:h-[92px]" aria-hidden="true" />
         <ViewTransition name="main-content">{children}</ViewTransition>
       </body>

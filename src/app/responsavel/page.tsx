@@ -5,9 +5,10 @@ import {
   type GuardianDashboardData,
 } from "@/features/guardian-dashboard/guardian-dashboard";
 import { prisma } from "@/lib/prisma";
+import { requireDemoSession } from "@/lib/demo-auth";
 
 export const metadata: Metadata = {
-  title: "Painel do responsável",
+  title: "Painel do responsÃ¡vel",
   description: "Acompanhamento de eventos e alertas da rede Caminho Seguro.",
 };
 
@@ -17,6 +18,8 @@ export const dynamic = "force-dynamic";
 const DEMO_GUARDIAN_EMAIL = "ana.responsavel@caminhoseguro.demo";
 
 export default async function GuardianPage() {
+  await requireDemoSession(["guardian", "admin"], "/responsavel");
+
   const guardian = await prisma.guardian.findFirst({
     where: {
       user: {

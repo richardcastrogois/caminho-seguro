@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { TransportDashboard } from "@/features/transport-dashboard/transport-dashboard";
 import { prisma } from "@/lib/prisma";
+import { requireDemoSession } from "@/lib/demo-auth";
 import { getSaoPauloDayRange } from "@/lib/time";
 import type { TransportDashboardData } from "@/types/transport-dashboard";
 
@@ -16,6 +17,8 @@ export const dynamic = "force-dynamic";
 const DEMO_TRANSPORT_PUBLIC_ID = "instituicao-demo-transporte";
 
 export default async function TransportPage() {
+  await requireDemoSession(["transport", "admin"], "/transporte");
+
   const { start, end } = getSaoPauloDayRange();
 
   const transport = await prisma.institution.findUnique({

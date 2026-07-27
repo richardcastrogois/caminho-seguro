@@ -12,6 +12,13 @@ export type AdminDashboardData = {
       lastSeenAt: string | null;
     }>;
   } | null;
+  children: Array<{
+    publicId: string;
+    fullName: string;
+    guardianName: string | null;
+    institutionName: string | null;
+    identifiers: number;
+  }>;
   institutions: Array<{
     publicId: string;
     name: string;

@@ -8,6 +8,7 @@ import {
   EventType,
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { authorizeDemoRequest } from "@/lib/demo-auth";
 import { getSaoPauloDayRange } from "@/lib/time";
 
 export const runtime = "nodejs";
@@ -21,7 +22,7 @@ const requestSchema = z.object({
 
 const eventConfig = {
   BUS_BOARDING: {
-    label: "Embarque confirmado no ponto comunitário",
+    label: "Embarque confirmado no ponto comunitÃƒÂ¡rio",
     type: EventType.BUS_BOARDING,
   },
   DISEMBARKING_BUS: {
@@ -32,10 +33,17 @@ const eventConfig = {
 
 export async function POST(request: Request) {
   try {
+    if (!(await authorizeDemoRequest(["transport", "admin"]))) {
+      return NextResponse.json(
+        { ok: false, error: "Acesso do transporte necessario." },
+        { status: 401 },
+      );
+    }
+
     const parsedBody = requestSchema.safeParse(await request.json());
     if (!parsedBody.success) {
       return NextResponse.json(
-        { ok: false, error: "Dados inválidos para o evento de transporte." },
+        { ok: false, error: "Dados invÃƒÂ¡lidos para o evento de transporte." },
         { status: 400 },
       );
     }
@@ -74,14 +82,15 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Criança ou vínculo de transporte da demonstração não encontrado.",
+          error:
+            "CrianÃƒÂ§a ou vÃƒÂ­nculo de transporte da demonstraÃƒÂ§ÃƒÂ£o nÃƒÂ£o encontrado.",
         },
         { status: 404 },
       );
     }
     if (!transport.transportRoutes[0] || !child.identifiers[0]) {
       return NextResponse.json(
-        { ok: false, error: "Rota ativa ou identificador BLE não disponível." },
+        { ok: false, error: "Rota ativa ou identificador BLE nÃƒÂ£o disponÃƒÂ­vel." },
         { status: 409 },
       );
     }
@@ -100,7 +109,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Este evento já foi registrado hoje.",
+          error: "Este evento jÃƒÂ¡ foi registrado hoje.",
           reference: existingEvent.publicId,
         },
         { status: 409 },
@@ -156,7 +165,7 @@ export async function POST(request: Request) {
   } catch (error: unknown) {
     console.error("Erro ao registrar evento de transporte:", error);
     return NextResponse.json(
-      { ok: false, error: "Não foi possível registrar o evento de transporte." },
+      { ok: false, error: "NÃƒÂ£o foi possÃƒÂ­vel registrar o evento de transporte." },
       { status: 500 },
     );
   }

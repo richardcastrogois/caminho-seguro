@@ -7,12 +7,15 @@ import {
   HeartHandshake,
   Home,
   LayoutDashboard,
+  LogIn,
+  LogOut,
   QrCode,
   School,
   Settings,
   Users,
 } from "lucide-react";
 import { BrandLogo } from "@/components/shared/brand-logo";
+import type { DemoSession } from "@/lib/demo-auth";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
@@ -35,7 +38,11 @@ const routeBadges = [
   { path: "/admin", label: "Gestão da demonstração" },
 ];
 
-export function AppNavigation() {
+type AppNavigationProps = {
+  session: DemoSession | null;
+};
+
+export function AppNavigation({ session }: AppNavigationProps) {
   const pathname = usePathname();
   const badge =
     routeBadges.find((item) => pathname.startsWith(item.path))?.label ??
@@ -84,6 +91,35 @@ export function AppNavigation() {
             })}
           </div>
         </nav>
+
+        <div className="flex items-center gap-2">
+          {session ? (
+            <>
+              <span className="hidden max-w-36 truncate rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 xl:inline">
+                {session.label}
+              </span>
+              <form action="/api/auth/logout" method="post">
+                <button
+                  type="submit"
+                  aria-label="Sair"
+                  title="Sair"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </form>
+            </>
+          ) : (
+            <Link
+              href={`/login?next=${encodeURIComponent(pathname)}`}
+              aria-label="Entrar"
+              title="Entrar"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-800 transition hover:bg-emerald-100"
+            >
+              <LogIn className="h-4 w-4" />
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );

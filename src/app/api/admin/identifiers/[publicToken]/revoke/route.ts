@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { AuditAction, IdentifierStatus } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { authorizeDemoRequest } from "@/lib/demo-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,6 +12,13 @@ type RouteContext = { params: Promise<{ publicToken: string }> };
 
 export async function PATCH(_request: Request, context: RouteContext) {
   try {
+    if (!(await authorizeDemoRequest(["admin"]))) {
+      return NextResponse.json(
+        { ok: false, error: "Acesso administrativo necessario." },
+        { status: 401 },
+      );
+    }
+
     const { publicToken } = await context.params;
     const identifier = await prisma.childIdentifier.findFirst({
       where: { publicToken, child: { publicId: DEMO_CHILD_PUBLIC_ID } },
@@ -19,13 +27,16 @@ export async function PATCH(_request: Request, context: RouteContext) {
 
     if (!identifier) {
       return NextResponse.json(
-        { ok: false, error: "Identificador não encontrado no ambiente de demonstração." },
+        {
+          ok: false,
+          error: "Identificador nÃƒÂ£o encontrado no ambiente de demonstraÃƒÂ§ÃƒÂ£o.",
+        },
         { status: 404 },
       );
     }
     if (identifier.status !== IdentifierStatus.ACTIVE) {
       return NextResponse.json(
-        { ok: false, error: "Este identificador já não está ativo." },
+        { ok: false, error: "Este identificador jÃƒÂ¡ nÃƒÂ£o estÃƒÂ¡ ativo." },
         { status: 409 },
       );
     }
@@ -40,7 +51,8 @@ export async function PATCH(_request: Request, context: RouteContext) {
           action: AuditAction.REVOKE_IDENTIFIER,
           entityType: "ChildIdentifier",
           entityId: identifier.id,
-          description: "Identificador protegido revogado no ambiente de demonstração.",
+          description:
+            "Identificador protegido revogado no ambiente de demonstraÃƒÂ§ÃƒÂ£o.",
           metadata: { environment: "demo", publicToken: identifier.publicToken },
         },
       });
@@ -50,7 +62,7 @@ export async function PATCH(_request: Request, context: RouteContext) {
   } catch (error: unknown) {
     console.error("Erro ao revogar identificador:", error);
     return NextResponse.json(
-      { ok: false, error: "Não foi possível revogar o identificador." },
+      { ok: false, error: "NÃƒÂ£o foi possÃƒÂ­vel revogar o identificador." },
       { status: 500 },
     );
   }
