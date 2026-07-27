@@ -53,31 +53,30 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: "Transporte",
     description:
-      "Registrará embarques e desembarques automáticos ou assistidos durante o trajeto.",
+      "Registre embarques e desembarques assistidos durante o trajeto, sem rastrear a rota.",
     href: "/transporte",
     icon: BusFront,
-    badge: "Etapa 2",
+    badge: "Transporte",
     accent: "orange",
-    status: "soon",
+    status: "ready",
   },
   {
     title: "Rede de proteção",
-    description:
-      "Mostrará órgãos públicos, UBS, CRAS, ONGs, pontos parceiros e alertas autorizados.",
+    description: "Visualize órgãos, UBS, CRAS, parceiros e alertas autorizados da rede.",
     href: "/rede",
     icon: ShieldCheck,
-    badge: "Etapa 2",
+    badge: "Coordenação",
     accent: "purple",
-    status: "soon",
+    status: "ready",
   },
   {
     title: "Administração",
     description:
-      "Centralizará cadastro de crianças, responsáveis, instituições e identificadores protegidos.",
+      "Consulte instituições e gerencie o ciclo de vida de identificadores protegidos da demonstração.",
     href: "/admin",
     icon: HeartHandshake,
-    badge: "Etapa 2",
+    badge: "Gestão",
     accent: "green",
-    status: "soon",
+    status: "ready",
   },
 ];

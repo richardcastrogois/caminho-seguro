@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LayoutDashboard, QrCode, School, Users } from "lucide-react";
+import {
+  BusFront,
+  HeartHandshake,
+  Home,
+  LayoutDashboard,
+  QrCode,
+  School,
+  Settings,
+  Users,
+} from "lucide-react";
 import { BrandLogo } from "@/components/shared/brand-logo";
 
 const navItems = [
@@ -11,6 +20,9 @@ const navItems = [
   { href: "/escola", label: "Escola", icon: School },
   { href: "/responsavel", label: "Família", icon: Users },
   { href: "/ajuda/demo", label: "QR", icon: QrCode },
+  { href: "/transporte", label: "Transporte", icon: BusFront },
+  { href: "/rede", label: "Rede", icon: HeartHandshake },
+  { href: "/admin", label: "Admin", icon: Settings },
 ];
 
 const routeBadges = [
@@ -18,6 +30,9 @@ const routeBadges = [
   { path: "/escola", label: "Acesso institucional" },
   { path: "/responsavel", label: "Ambiente do responsável" },
   { path: "/ajuda", label: "Identidade protegida" },
+  { path: "/transporte", label: "Operação de transporte" },
+  { path: "/rede", label: "Coordenação da rede" },
+  { path: "/admin", label: "Gestão da demonstração" },
 ];
 
 export function AppNavigation() {
