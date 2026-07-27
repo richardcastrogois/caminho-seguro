@@ -1,5 +1,7 @@
+import { ViewTransition } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AppNavigation } from "@/components/shared/app-navigation";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,11 +23,10 @@ export const metadata: Metadata = {
     "Rede comunitária de proteção infantil que conecta famílias, escolas, transportes, órgãos públicos e comunidade.",
   keywords: [
     "proteção infantil",
-    "blockchain",
-    "Solana",
     "Bluetooth",
     "QR Code",
     "rede comunitária",
+    "eventos de proteção",
   ],
   authors: [
     {
@@ -42,7 +43,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+        <AppNavigation />
+        <div className="h-[128px] md:h-[92px]" aria-hidden="true" />
+        <ViewTransition name="main-content">{children}</ViewTransition>
       </body>
     </html>
   );
