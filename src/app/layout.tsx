@@ -2,6 +2,7 @@ import { ViewTransition } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppNavigation } from "@/components/shared/app-navigation";
+import { getCurrentUser } from "@/lib/session";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,31 +21,29 @@ export const metadata: Metadata = {
     template: "%s | Caminho Seguro",
   },
   description:
-    "Rede comunitária de proteção infantil que conecta famílias, escolas, transportes, órgãos públicos e comunidade.",
+    "Rede comunitaria de protecao infantil que conecta familias, escolas, transportes, orgaos publicos e comunidade.",
   keywords: [
-    "proteção infantil",
+    "protecao infantil",
     "Bluetooth",
     "QR Code",
-    "rede comunitária",
-    "eventos de proteção",
+    "rede comunitaria",
+    "eventos de protecao",
   ],
-  authors: [
-    {
-      name: "Equipe Caminho Seguro",
-    },
-  ],
+  authors: [{ name: "Equipe Caminho Seguro" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getCurrentUser();
+
   return (
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AppNavigation />
-        <div className="h-[128px] md:h-[92px]" aria-hidden="true" />
+        <AppNavigation session={session} />
+        <div className="h-32 md:h-0" aria-hidden="true" />
         <ViewTransition name="main-content">{children}</ViewTransition>
       </body>
     </html>

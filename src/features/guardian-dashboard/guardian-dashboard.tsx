@@ -140,6 +140,15 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
 
   const [actionError, setActionError] = useState<string | null>(null);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null);
+  const [notificationPermission, setNotificationPermission] = useState<
+    NotificationPermission | "unsupported"
+  >(() => {
+    if (typeof window === "undefined") {
+      return "default";
+    }
+
+    return "Notification" in window ? Notification.permission : "unsupported";
+  });
 
   useEffect(() => {
     const initializeTimer = window.setTimeout(() => {
@@ -160,6 +169,48 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
   const activeAlerts = data.alerts.filter(
     (alert) => alert.status === "OPEN" || alert.status === "ACKNOWLEDGED",
   );
+
+  const activeAlertSignature = activeAlerts.map((alert) => alert.publicId).join("|");
+
+  useEffect(() => {
+    if (notificationPermission !== "granted" || activeAlerts.length === 0) {
+      return;
+    }
+
+    const notifiedAlerts = new Set(
+      window.localStorage
+        .getItem("caminho_seguro_notified_alerts")
+        ?.split("|")
+        .filter(Boolean) ?? [],
+    );
+
+    for (const alert of activeAlerts) {
+      if (notifiedAlerts.has(alert.publicId)) {
+        continue;
+      }
+
+      new Notification(alert.title, {
+        body: alert.message,
+        tag: alert.publicId,
+      });
+      notifiedAlerts.add(alert.publicId);
+    }
+
+    window.localStorage.setItem(
+      "caminho_seguro_notified_alerts",
+      Array.from(notifiedAlerts).join("|"),
+    );
+  }, [activeAlertSignature, activeAlerts, notificationPermission]);
+
+  async function requestBrowserNotification() {
+    if (!("Notification" in window)) {
+      setNotificationPermission("unsupported");
+      return;
+    }
+
+    const permission = await Notification.requestPermission();
+    setNotificationPermission(permission);
+  }
 
   const resolvedAlerts = data.alerts.filter(
     (alert) => alert.status === "RESOLVED" || alert.status === "DISMISSED",
@@ -230,24 +281,43 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <RefreshCw className="h-4 w-4 text-sky-700" />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <button
+                type="button"
+                onClick={requestBrowserNotification}
+                disabled={
+                  notificationPermission === "granted" ||
+                  notificationPermission === "unsupported"
+                }
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <BellRing className="h-4 w-4" />
+                {notificationPermission === "granted"
+                  ? "Notificação ativa"
+                  : notificationPermission === "unsupported"
+                    ? "Sem suporte"
+                    : "Ativar notificação"}
+              </button>
 
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-                  Atualização automática
-                </p>
+              <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <RefreshCw className="h-4 w-4 text-sky-700" />
 
-                <p className="mt-0.5 text-sm text-slate-700">
-                  Última atualização:{" "}
-                  {lastUpdatedAt
-                    ? lastUpdatedAt.toLocaleTimeString("pt-BR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                      })
-                    : "carregando..."}
-                </p>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                    Atualização automática
+                  </p>
+
+                  <p className="mt-0.5 text-sm text-slate-700">
+                    Última atualização:{" "}
+                    {lastUpdatedAt
+                      ? lastUpdatedAt.toLocaleTimeString("pt-BR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })
+                      : "carregando..."}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

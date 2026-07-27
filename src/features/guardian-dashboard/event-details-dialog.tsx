@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   CalendarClock,
   ExternalLink,
@@ -70,6 +71,7 @@ export function EventDetailsDialog({
   eventLabel,
   onClose,
 }: EventDetailsDialogProps) {
+
   useEffect(() => {
     if (!event) {
       return;
@@ -92,7 +94,7 @@ export function EventDetailsDialog({
     };
   }, [event, onClose]);
 
-  if (!event) {
+  if (!event || typeof document === "undefined") {
     return null;
   }
 
@@ -102,9 +104,9 @@ export function EventDetailsDialog({
     ? `https://www.openstreetmap.org/?mlat=${event.latitude}&mlon=${event.longitude}#map=17/${event.latitude}/${event.longitude}`
     : null;
 
-  return (
+  const dialog = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm sm:p-6"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 p-3 backdrop-blur-sm sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="event-details-title"
@@ -114,8 +116,8 @@ export function EventDetailsDialog({
         }
       }}
     >
-      <div className="flex max-h-[calc(100dvh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-[30px] border border-white/80 bg-white shadow-2xl shadow-slate-950/30 sm:max-h-[calc(100dvh-3rem)]">
-        <header className="z-10 flex shrink-0 items-start justify-between gap-4 border-b border-slate-200 bg-white px-6 py-5 sm:px-7">
+      <div className="flex h-[calc(100dvh-1.5rem)] w-full max-w-[min(85vw,980px)] flex-col overflow-hidden rounded-[30px] border border-white/80 bg-white shadow-2xl shadow-slate-950/30 sm:h-[85dvh]">
+        <header className="z-10 flex shrink-0 items-start justify-between gap-4 border-b border-slate-200 bg-white px-5 py-4 sm:px-7 sm:py-5">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-(--brand-600)">
               Detalhes do evento
@@ -139,7 +141,7 @@ export function EventDetailsDialog({
           </button>
         </header>
 
-        <div className="modal-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-6 sm:px-7">
+        <div className="modal-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-7 sm:py-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <div className="flex items-center gap-2 text-slate-500">
@@ -292,4 +294,6 @@ export function EventDetailsDialog({
       </div>
     </div>
   );
+
+  return createPortal(dialog, document.body);
 }
