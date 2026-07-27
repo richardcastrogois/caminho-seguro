@@ -1,289 +1,289 @@
 "use client";
 
 import Link from "next/link";
-import { buttonVariants } from "@heroui/styles";
 import {
   ArrowRight,
   BellRing,
   Bluetooth,
-  Fingerprint,
-  HeartHandshake,
-  Network,
+  CheckCircle2,
+  EyeOff,
+  Fingerprint,  Network,
   QrCode,
+  School,
   ShieldCheck,
+  Users,
 } from "lucide-react";
 import { GsapReveal } from "@/components/shared/gsap-reveal";
 import { InteractiveParticleField } from "@/components/shared/interactive-particle-field";
 import { ProtectionNetworkVisual } from "@/components/shared/protection-network-visual";
-import { dashboardModules } from "@/features/dashboard/dashboard-modules";
+import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-const accentClasses = {
-  blue: {
-    icon: "border-sky-200 bg-sky-50 text-sky-700",
-    badge: "bg-sky-50 text-sky-700",
-  },
-  green: {
-    icon: "border-emerald-200 bg-emerald-50 text-emerald-700",
-    badge: "bg-emerald-50 text-emerald-700",
-  },
-  orange: {
-    icon: "border-amber-200 bg-amber-50 text-amber-700",
-    badge: "bg-amber-50 text-amber-700",
-  },
-  purple: {
-    icon: "border-cyan-200 bg-cyan-50 text-cyan-700",
-    badge: "bg-cyan-50 text-cyan-700",
-  },
-};
-
-const protectionSteps = [
+const productPillars = [
   {
-    title: "Identidade física",
-    description:
-      "A criança usa QR e camada Bluetooth sem depender de celular, internet ou aplicativo.",
-    icon: QrCode,
+    title: "Nao rastreia a crianca",
+    text: "O sistema registra eventos importantes: chegada, saida, embarque, pedido de ajuda e confirmacao institucional.",
+    icon: EyeOff,
   },
   {
-    title: "Evento, não rota",
-    description: "A rede registra passagens importantes, não cada passo da rotina.",
-    icon: Bluetooth,
+    title: "A crianca nao precisa de celular",
+    text: "A identidade fica em pulseira, cracha, etiqueta, QR, NFC ou BLE. Quem le e a rede ao redor.",
+    icon: Fingerprint,
   },
   {
-    title: "Alerta acionável",
-    description: "Responsáveis e instituições recebem contexto suficiente para agir.",
-    icon: BellRing,
-  },
-  {
-    title: "Privacidade primeiro",
-    description: "Dados pessoais ficam fora do QR público e fora de provas abertas.",
+    title: "Dados sensiveis ficam protegidos",
+    text: "O QR publico nao mostra nome, telefone, escola, endereco, responsavel ou dados medicos.",
     icon: ShieldCheck,
   },
 ];
 
+const testSteps = [
+  {
+    title: "Abra a Familia em uma aba",
+    text: "Use esta tela para acompanhar os eventos chegando no painel do responsavel.",
+    href: "/responsavel",
+    action: "Abrir Familia",
+    icon: Users,
+  },
+  {
+    title: "Em outra aba, simule uma acao",
+    text: "Use Escola para chegada BLE, Transporte para embarque ou QR para pedido publico de ajuda.",
+    href: "/escola",
+    action: "Testar Escola",
+    icon: School,
+  },
+  {
+    title: "Compare os limites de cada perfil",
+    text: "Troque o perfil privado e veja que cada ator recebe apenas o necessario para agir.",
+    href: "/login?next=/rede",
+    action: "Trocar perfil",
+    icon: Network,
+  },
+];
+
+const protectionSteps = [
+  { title: "Identidade fisica", description: "A crianca usa QR e BLE sem depender de celular, internet ou aplicativo.", icon: QrCode },
+  { title: "Evento, nao rota", description: "A rede registra passagens importantes, nao cada passo da rotina.", icon: Bluetooth },
+  { title: "Alerta acionavel", description: "Responsaveis e instituicoes recebem contexto suficiente para agir.", icon: BellRing },
+  { title: "Privacidade primeiro", description: "Dados pessoais ficam fora do QR publico e fora de provas abertas.", icon: ShieldCheck },
+];
+
 export default function Home() {
   return (
-    <main className="relative isolate min-h-screen overflow-hidden bg-[linear-gradient(135deg,#f7fcff_0%,#ffffff_45%,#f3fff9_100%)]">
+    <main className="relative isolate min-h-screen overflow-hidden bg-[linear-gradient(135deg,#CFDAE0_0%,#ffffff_45%,#DDECE5_100%)]">
       <InteractiveParticleField className="z-0 opacity-90" />
 
       <GsapReveal className="relative z-10">
         <section className="relative border-b border-sky-100/80">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-[linear-gradient(115deg,rgba(14,165,233,.14),rgba(6,182,212,.08)_45%,rgba(16,185,129,.14))]" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-180 bg-[linear-gradient(115deg,rgba(14,165,233,.14),rgba(23, 176, 203, 0.11)_45%,rgba(16,185,129,.14))]" />
 
-          <div className="relative mx-auto grid max-w-7xl gap-12 px-4 pb-14 pt-5 sm:px-6 lg:grid-cols-[0.94fr_1.06fr] lg:items-center lg:px-10 lg:pb-20 lg:pt-10">
+          <div className="relative mx-auto grid max-w-7xl gap-9 px-4 pb-14 pt-[calc(var(--app-nav-offset)+0.50rem)] sm:px-6 lg:grid-cols-[0.94fr_1.06fr] lg:items-center lg:px-10 lg:pb-20">
             <div className="flex flex-col justify-center">
               <div
                 data-gsap="hero"
-                className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-white/95 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm"
+                className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-white/95 px-4 py-2 b-2 text-sm font-semibold text-emerald-700 shadow-sm"
               >
-                <ShieldCheck data-gsap-icon className="h-4 w-4" />
-                Proteção infantil por eventos, sem rastrear rotina
+                <ShieldCheck />
+                Protecao infantil por eventos, sem vigilancia permanente
               </div>
 
               <h1
                 data-gsap="hero"
                 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.04] tracking-normal text-slate-950 sm:text-5xl lg:text-6xl"
               >
-                Caminho Seguro conecta quem pode proteger uma criança.
+                Caminho Seguro: uma rede que protege sem vigiar.
               </h1>
 
               <p
                 data-gsap="hero"
                 className="mt-6 max-w-2xl text-lg leading-8 text-slate-600"
               >
-                Uma rede comunitária que registra eventos de proteção entre família,
-                escola, transporte, serviços públicos e comunidade. A criança participa
-                com uma identidade física protegida, sem precisar de celular e sem
-                vigilância contínua.
+                Um MVP para conectar familia, escola, transporte, servicos publicos e
+                comunidade em torno de eventos de protecao infantil. A proposta e simples:
+                acompanhar sinais importantes sem acompanhar cada passo da crianca.
               </p>
 
-              <div data-gsap="hero" className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href="/demo"
-                  className={buttonVariants({
-                    variant: "primary",
-                    className:
-                      "min-h-12 bg-gradient-to-r from-sky-600 via-cyan-600 to-emerald-600 px-5 font-semibold text-white shadow-lg shadow-emerald-900/15 hover:brightness-105",
-                  })}
-                >
-                  Ver o produto funcionando
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-
-                <Link
-                  href="/ajuda/demo"
-                  className={buttonVariants({
-                    variant: "secondary",
-                    className:
-                      "min-h-12 border border-slate-300 bg-white px-5 font-semibold text-slate-900 hover:border-sky-300 hover:bg-sky-50",
-                  })}
-                >
-                  Simular pedido de ajuda
-                </Link>
-              </div>
-
               <div data-gsap="metrics" className="mt-9 grid gap-3 sm:grid-cols-3">
-                <MetricCard value="0" label="dados pessoais expostos no QR" />
-                <MetricCard value="6" label="atores conectados à proteção" />
-                <MetricCard value="24h" label="rede pronta para receber eventos" />
+                <MetricCard value="0" label="dados pessoais no QR" />
+                <MetricCard value="7" label="atores da rede conectados" />
+                <MetricCard value="24h" label="eventos prontos para resposta" />
               </div>
             </div>
 
             <div data-gsap="visual">
-              <div data-gsap-parallax>
-                <ProtectionNetworkVisual />
-              </div>
+              <ProtectionNetworkVisual />
             </div>
           </div>
         </section>
 
         <section className="relative border-b border-sky-100 py-16">
           <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:px-10">
-            <div
+            <Card
               data-gsap-scroll="left"
-              className="rounded-lg bg-gradient-to-br from-sky-600 via-cyan-600 to-emerald-600 p-7 text-white shadow-[0_26px_60px_rgba(3,105,161,0.24)] sm:p-9"
+              className="rounded-3xl border-sky-100 bg-linear-to-br from-sky-600 via-cyan-600 to-emerald-600 text-white shadow-[0_26px_60px_rgba(3,105,161,0.24)]"
             >
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-50">
-                Pergunta central
-              </p>
-              <h2 className="mt-5 text-3xl font-semibold leading-tight tracking-normal sm:text-4xl">
-                Como proteger uma criança sem expor sua identidade ou mapear sua rotina?
-              </h2>
-              <p className="mt-6 text-base leading-7 text-cyan-50">
-                O Caminho Seguro transforma leituras autorizadas em eventos claros para a
-                rede agir, mantendo os dados pessoais fora do acesso público.
-              </p>
-            </div>
+              <CardHeader>
+                <CardTitle className="text-3xl leading-tight tracking-normal sm:text-4xl">
+                  Protecao comunitaria para criancas, com privacidade desde o primeiro
+                  evento.
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-base leading-7 text-cyan-50">
+                O Caminho Seguro nao promete saber onde a crianca esta o tempo todo. Ele
+                cria uma infraestrutura de confianca para registrar quando algo importante
+                aconteceu e acionar quem pode responder.
+              </CardContent>
+            </Card>
 
-            <div className="grid gap-0 sm:grid-cols-3">
-              <SignalItem
-                icon={Fingerprint}
-                title="Identidade protegida"
-                text="O token público não revela nome, endereço, responsável ou escola."
-              />
-              <SignalItem
-                icon={Network}
-                title="Rede acionável"
-                text="Cada evento chega à pessoa ou instituição certa para responder."
-              />
-              <SignalItem
-                icon={HeartHandshake}
-                title="Ajuda com limite"
-                text="O cidadão ajuda sem receber acesso aos dados sensíveis da criança."
-              />
-            </div>
-          </div>
-        </section>
-
-        <section id="modulos" className="relative border-b border-sky-100 py-16">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
-            <div data-gsap-scroll="up" className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
-                Rede de proteção conectada
-              </p>
-
-              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-                Cada pessoa vê o que precisa para agir, sem abrir os dados da criança.
-              </h2>
-
-              <p className="mt-4 text-lg leading-8 text-slate-600">
-                Família, escola e acesso público trabalham sobre o mesmo evento, com
-                papéis e limites diferentes. Os módulos abaixo mostram o produto a partir
-                de cada ponto da rede.
-              </p>
-            </div>
-
-            <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {dashboardModules.map((module, index) => {
-                const Icon = module.icon;
-                const accent = accentClasses[module.accent];
-
+            <div className="grid gap-4 sm:grid-cols-3">
+              {productPillars.map((pillar) => {
+                const Icon = pillar.icon;
                 return (
-                  <Link
-                    key={module.title}
-                    data-gsap-scroll={index % 2 === 0 ? "left" : "right"}
-                    href={module.status === "ready" ? module.href : "#modulos"}
-                    aria-disabled={module.status === "soon"}
-                    className={`home-surface group min-h-[220px] rounded-lg border border-slate-200/90 bg-white p-5 shadow-sm transition duration-200 ${
-                      module.status === "ready"
-                        ? "hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-slate-900/10"
-                        : "cursor-default opacity-70"
-                    }`}
+                  <Card
+                    key={pillar.title}
+                    data-gsap-scroll="up"
+                    className="home-surface rounded-2xl border-sky-100 bg-white/90"
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <div
-                        data-gsap-icon
-                        className={`flex h-12 w-12 items-center justify-center rounded-lg border ${accent.icon}`}
-                      >
-                        <Icon className="h-6 w-6" />
+                    <CardHeader>
+                      <div className="mb-2 flex size-11 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
+                        <Icon />
                       </div>
-
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${accent.badge}`}
-                      >
-                        {module.badge}
-                      </span>
-                    </div>
-
-                    <h3 className="mt-5 text-xl font-semibold text-slate-950">
-                      {module.title}
-                    </h3>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {module.description}
-                    </p>
-
-                    <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-emerald-700">
-                      {module.status === "ready" ? "Acessar módulo" : "Em breve"}
-                      {module.status === "ready" && (
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      )}
-                    </div>
-                  </Link>
+                      <CardTitle className="text-lg text-slate-950">
+                        {pillar.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-sm leading-6 text-slate-600">
+                      {pillar.text}
+                    </CardContent>
+                  </Card>
                 );
               })}
             </div>
           </div>
         </section>
 
-        <section className="relative bg-slate-950 py-16 text-white">
+        <section id="como-funciona" className="relative border-b border-sky-100 py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
             <div data-gsap-scroll="up" className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-300">
-                Proteção por eventos
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                Como funciona
               </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-normal sm:text-4xl">
-                Não é rastreador. É infraestrutura para reconhecer sinais importantes e
-                coordenar resposta.
+              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
+                A crianca carrega uma identidade protegida. A rede registra eventos. As
+                pessoas certas agem.
               </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                O cidadao pode ler o QR e pedir ajuda sem ver dados sensiveis. A escola
+                confirma chegada. O transporte registra embarque. O responsavel acompanha
+                alertas. A rede publica coordena casos formais.
+              </p>
             </div>
 
             <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {protectionSteps.map((step, index) => {
                 const Icon = step.icon;
-
                 return (
-                  <div
+                  <Card
                     key={step.title}
                     data-gsap-scroll="up"
-                    className="rounded-lg border border-white/10 bg-white/5 p-5"
+                    className="rounded-2xl border-slate-800 bg-slate-950 text-white"
                   >
-                    <div className="flex items-center justify-between">
-                      <div
-                        data-gsap-icon
-                        className="flex h-11 w-11 items-center justify-center rounded-lg bg-white text-slate-950"
-                      >
-                        <Icon className="h-5 w-5" />
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div className="flex size-11 items-center justify-center rounded-xl bg-white text-slate-950">
+                          <Icon />
+                        </div>
+                        <span className="text-sm font-semibold text-slate-500">
+                          0{index + 1}
+                        </span>
                       </div>
-                      <span className="text-sm font-semibold text-slate-500">
-                        0{index + 1}
-                      </span>
-                    </div>
-                    <h3 className="mt-5 font-semibold">{step.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                      <CardTitle>{step.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-sm leading-6 text-slate-300">
                       {step.description}
-                    </p>
-                  </div>
+                    </CardContent>
+                  </Card>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        <section id="como-testar" className="relative border-b border-sky-100 py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+            <div data-gsap-scroll="up" className="max-w-3xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+                Como testar
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
+                Abra duas abas: uma acompanha, a outra provoca
+                eventos (navegador anônimo).
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                Use a aba Familia como observatorio do responsavel. Na segunda aba, simule
+                Escola, Transporte ou QR publico. Assim você acompanha os resultador sem
+                precisar de explicacao longa.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-4 lg:grid-cols-3">
+              {testSteps.map((step) => {
+                const Icon = step.icon;
+                return (
+                  <Card
+                    key={step.title}
+                    data-gsap-scroll="up"
+                    className="home-surface rounded-2xl border-sky-100 bg-white/90"
+                  >
+                    <CardHeader>
+                      <div className="flex size-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                        <Icon />
+                      </div>
+                      <CardTitle className="text-xl text-slate-950">
+                        {step.title}
+                      </CardTitle>
+                      <CardDescription className="leading-6">{step.text}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                      <Link
+                        href={step.href}
+                        className={cn(
+                          buttonVariants({ variant: "outline", size: "lg" }),
+                          "w-full rounded-2xl bg-white",
+                        )}
+                      >
+                        {step.action}
+                        <ArrowRight data-icon="inline-end" />
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="relative py-16">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-10">
+            <div data-gsap-scroll="left">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                O que ele faz e nao faz
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
+                O valor do produto esta no limite: ajudar sem expor.
+              </h2>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <TruthCard
+                title="Faz"
+                text="Registra eventos de protecao e notifica responsaveis, instituicoes e rede formal."
+                positive
+              />
+              <TruthCard
+                title="Nao faz"
+                text="Nao mostra dados pessoais no QR e nao acompanha GPS continuo da crianca."
+              />
             </div>
           </div>
         </section>
@@ -294,32 +294,25 @@ export default function Home() {
 
 function MetricCard({ value, label }: { value: string; label: string }) {
   return (
-    <div className="home-surface rounded-lg border border-slate-200/90 bg-white/92 p-4 shadow-sm backdrop-blur">
-      <p className="text-2xl font-semibold text-slate-950">{value}</p>
-      <p className="mt-1 text-sm leading-5 text-slate-500">{label}</p>
-    </div>
+    <Card className="home-surface rounded-2xl border-sky-100 bg-white/90">
+      <CardContent className="p-4">
+        <p className="text-2xl font-semibold text-slate-950">{value}</p>
+        <p className="mt-1 text-sm leading-5 text-slate-500">{label}</p>
+      </CardContent>
+    </Card>
   );
 }
 
-function SignalItem({
-  icon: Icon,
-  title,
-  text,
-}: {
-  icon: typeof ShieldCheck;
-  title: string;
-  text: string;
-}) {
+function TruthCard({ title, text, positive = false }: { title: string; text: string; positive?: boolean }) {
   return (
-    <div data-gsap-scroll="up" className="home-surface rounded-lg border p-5 sm:p-6">
-      <div
-        data-gsap-icon
-        className="flex h-11 w-11 items-center justify-center rounded-lg bg-sky-50 text-sky-700"
-      >
-        <Icon className="h-5 w-5" />
-      </div>
-      <h3 className="mt-5 text-lg font-semibold text-slate-950">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
-    </div>
+    <Card data-gsap-scroll="up" className={`rounded-2xl ${positive ? "border-emerald-200 bg-emerald-50" : "border-sky-200 bg-sky-50"}`}>
+      <CardHeader>
+        <div className="flex items-center gap-2 text-slate-950">
+          <CheckCircle2 />
+          <CardTitle>{title}</CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent className="leading-7 text-slate-700">{text}</CardContent>
+    </Card>
   );
 }

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { isDemoProfileId, setDemoSession } from "@/lib/demo-auth";
+import { demoProfiles, isDemoProfileId, setDemoSession } from "@/lib/demo-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,5 +22,5 @@ export async function POST(request: Request) {
   }
 
   await setDemoSession(profileId);
-  redirect(nextPath === "/" ? "/demo" : nextPath);
+  redirect(nextPath === "/" ? demoProfiles[profileId].homePath : nextPath);
 }

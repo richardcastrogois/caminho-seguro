@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { TransportDashboard } from "@/features/transport-dashboard/transport-dashboard";
 import { prisma } from "@/lib/prisma";
-import { requireDemoSession } from "@/lib/demo-auth";
+import { requireCurrentUser, requireUserInstitution } from "@/lib/session";
 import { getSaoPauloDayRange } from "@/lib/time";
 import type { TransportDashboardData } from "@/types/transport-dashboard";
 
@@ -14,15 +14,13 @@ export const metadata: Metadata = {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const DEMO_TRANSPORT_PUBLIC_ID = "instituicao-demo-transporte";
-
 export default async function TransportPage() {
-  await requireDemoSession(["transport", "admin"], "/transporte");
-
+  const user = await requireCurrentUser(["TRANSPORT_MEMBER", "ADMIN"], "/transporte");
+  const userInstitution = await requireUserInstitution(user, ["TRANSPORT"], "/transporte");
   const { start, end } = getSaoPauloDayRange();
 
   const transport = await prisma.institution.findUnique({
-    where: { publicId: DEMO_TRANSPORT_PUBLIC_ID },
+    where: { id: userInstitution.id },
     select: {
       name: true,
       transportRoutes: {
@@ -48,7 +46,7 @@ export default async function TransportPage() {
               },
               events: {
                 where: {
-                  institution: { publicId: DEMO_TRANSPORT_PUBLIC_ID },
+                  institutionId: userInstitution.id,
                   type: { in: ["BUS_BOARDING", "DISEMBARKING_BUS"] },
                   occurredAt: { gte: start, lte: end },
                 },

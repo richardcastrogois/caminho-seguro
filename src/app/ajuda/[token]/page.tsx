@@ -35,37 +35,37 @@ export default async function PublicHelpPage({ params }: PublicHelpPageProps) {
     <main className="app-surface min-h-screen">
       <GsapReveal>
         <section className="border-b border-slate-200 bg-white">
-          <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-10 lg:py-12">
-            <div className="flex flex-col justify-center">
+          <div className="app-first-content mx-auto grid min-h-[calc(100dvh-var(--app-nav-offset)-2.75rem)] max-w-7xl gap-8 px-4 pb-8 pt-8 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:px-10 lg:pb-10">
+            <div className="flex min-h-0 flex-col justify-center lg:sticky lg:top-[calc(var(--app-nav-offset)+2.75rem)]">
               <div
                 data-gsap="hero"
-                className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-lg shadow-slate-900/15"
+                className="flex size-14 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-lg shadow-slate-900/15"
               >
-                <ShieldCheck className="h-7 w-7" />
+                <ShieldCheck className="size-7" />
               </div>
 
               <p
                 data-gsap="hero"
-                className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700"
+                className="mt-5 text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700"
               >
                 Leitura pública do QR
               </p>
 
               <h1
                 data-gsap="hero"
-                className="mt-3 text-4xl font-semibold leading-tight tracking-tight text-slate-950"
+                className="mt-3 max-w-xl text-3xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-4xl"
               >
                 Você pode ajudar sem acessar dados pessoais da criança.
               </h1>
 
-              <p data-gsap="hero" className="mt-5 text-lg leading-8 text-slate-600">
+              <p data-gsap="hero" className="mt-4 max-w-xl text-base leading-7 text-slate-600">
                 Escolha o que aconteceu e envie o alerta. O sistema não mostra nome,
                 endereço, telefone, responsável ou dados médicos nesta página.
               </p>
 
               <div
                 data-gsap="timeline"
-                className="mt-7 rounded-[22px] border border-emerald-200 bg-emerald-50 p-5"
+                className="mt-5 max-w-xl rounded-[22px] border border-emerald-200 bg-emerald-50 p-4"
               >
                 <p className="font-semibold text-emerald-950">
                   Permaneça em local visível e seguro

@@ -47,6 +47,25 @@ export const demoProfiles: Record<DemoProfileId, DemoSession> = {
 
 const profileIds = Object.keys(demoProfiles) as DemoProfileId[];
 
+function getProfileIdForPath(nextPath: string): DemoProfileId | null {
+  return profileIds.find((profileId) => demoProfiles[profileId].homePath === nextPath) ?? null;
+}
+
+function getLoginRedirectPath(nextPath: string, unauthorized = false): string {
+  const params = new URLSearchParams({ next: nextPath });
+  const profileId = getProfileIdForPath(nextPath);
+
+  if (profileId) {
+    params.set("profile", profileId);
+  }
+
+  if (unauthorized) {
+    params.set("unauthorized", "1");
+  }
+
+  return `/login?${params.toString()}`;
+}
+
 export function isDemoProfileId(value: unknown): value is DemoProfileId {
   return typeof value === "string" && profileIds.includes(value as DemoProfileId);
 }
@@ -86,11 +105,11 @@ export async function requireDemoSession(
   const session = await getDemoSession();
 
   if (!session) {
-    redirect(`/login?next=${encodeURIComponent(nextPath)}`);
+    redirect(getLoginRedirectPath(nextPath));
   }
 
   if (!allowedProfiles.includes(session.profileId)) {
-    redirect(`/login?next=${encodeURIComponent(nextPath)}&unauthorized=1`);
+    redirect(getLoginRedirectPath(nextPath, true));
   }
 
   return session;
@@ -107,3 +126,4 @@ export async function authorizeDemoRequest(
 
   return session;
 }
+

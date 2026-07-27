@@ -3,86 +3,49 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { AuditAction, IdentifierStatus, IdentifierType } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import { authorizeDemoRequest } from "@/lib/demo-auth";
+import { authorizeRequest, unauthorizedResponse } from "@/lib/session";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const DEMO_CHILD_PUBLIC_ID = "crianca-demo-maria";
 const requestSchema = z.object({
-  childPublicId: z.literal(DEMO_CHILD_PUBLIC_ID),
+  childPublicId: z.string().min(8).max(200),
   type: z.enum(["QR_CODE", "BLE", "NFC"]),
   label: z.string().trim().max(80).optional().default(""),
 });
 
+function publicHelpUrl(request: Request, token: string) {
+  const origin = new URL(request.url).origin;
+  return `${origin}/ajuda/${encodeURIComponent(token)}`;
+}
+
 export async function POST(request: Request) {
   try {
-    if (!(await authorizeDemoRequest(["admin"]))) {
-      return NextResponse.json(
-        { ok: false, error: "Acesso administrativo necessario." },
-        { status: 401 },
-      );
-    }
+    const user = await authorizeRequest(["ADMIN"]);
+    if (!user) return unauthorizedResponse("Acesso administrativo necessario.");
 
     const parsedBody = requestSchema.safeParse(await request.json());
     if (!parsedBody.success) {
-      return NextResponse.json(
-        { ok: false, error: "Dados invÃƒÂ¡lidos para emitir o identificador." },
-        { status: 400 },
-      );
+      return NextResponse.json({ ok: false, error: "Dados invalidos para emitir o identificador." }, { status: 400 });
     }
 
-    const child = await prisma.child.findUnique({
-      where: { publicId: DEMO_CHILD_PUBLIC_ID },
-      select: { id: true },
-    });
-    if (!child) {
-      return NextResponse.json(
-        { ok: false, error: "CrianÃƒÂ§a da demonstraÃƒÂ§ÃƒÂ£o nÃƒÂ£o encontrada." },
-        { status: 404 },
-      );
-    }
+    const child = await prisma.child.findUnique({ where: { publicId: parsedBody.data.childPublicId }, select: { id: true, publicId: true } });
+    if (!child) return NextResponse.json({ ok: false, error: "Crianca nao encontrada." }, { status: 404 });
 
     const publicToken = `demo-${randomUUID().replaceAll("-", "")}`;
     const identifier = await prisma.$transaction(async (transaction) => {
       const createdIdentifier = await transaction.childIdentifier.create({
-        data: {
-          childId: child.id,
-          publicToken,
-          type: parsedBody.data.type as IdentifierType,
-          status: IdentifierStatus.ACTIVE,
-          label: parsedBody.data.label || null,
-        },
+        data: { childId: child.id, publicToken, type: parsedBody.data.type as IdentifierType, status: IdentifierStatus.ACTIVE, label: parsedBody.data.label || null },
       });
       await transaction.auditLog.create({
-        data: {
-          action: AuditAction.CREATE,
-          entityType: "ChildIdentifier",
-          entityId: createdIdentifier.id,
-          description:
-            "Identificador protegido emitido no ambiente de demonstraÃƒÂ§ÃƒÂ£o.",
-          metadata: {
-            environment: "demo",
-            publicToken: createdIdentifier.publicToken,
-            type: createdIdentifier.type,
-          },
-        },
+        data: { actorUserId: user.id, action: AuditAction.CREATE, entityType: "ChildIdentifier", entityId: createdIdentifier.id, description: "Identificador protegido emitido.", metadata: { publicToken: createdIdentifier.publicToken, type: createdIdentifier.type, childPublicId: child.publicId } },
       });
       return createdIdentifier;
     });
 
-    return NextResponse.json(
-      {
-        ok: true,
-        identifier: { publicToken: identifier.publicToken, type: identifier.type },
-      },
-      { status: 201 },
-    );
+    return NextResponse.json({ ok: true, identifier: { publicToken: identifier.publicToken, type: identifier.type, publicUrl: publicHelpUrl(request, identifier.publicToken) } }, { status: 201 });
   } catch (error: unknown) {
     console.error("Erro ao emitir identificador:", error);
-    return NextResponse.json(
-      { ok: false, error: "NÃƒÂ£o foi possÃƒÂ­vel emitir o identificador." },
-      { status: 500 },
-    );
+    return NextResponse.json({ ok: false, error: "Nao foi possivel emitir o identificador." }, { status: 500 });
   }
 }

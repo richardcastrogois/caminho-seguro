@@ -1,126 +1,53 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { AuditAction, EventType } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import { authorizeDemoRequest } from "@/lib/demo-auth";
+import { authorizeRequest, findUserInstitution, unauthorizedResponse } from "@/lib/session";
 import { getSaoPauloDayRange } from "@/lib/time";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const DEMO_SCHOOL_PUBLIC_ID = "instituicao-demo-escola";
-const DEMO_CHILD_PUBLIC_ID = "crianca-demo-maria";
-const DEMO_OPERATOR_EMAIL = "operador.escola@caminhoseguro.demo";
+const requestSchema = z.object({ childPublicId: z.string().min(8).max(200).optional() }).optional();
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
-    if (!(await authorizeDemoRequest(["school", "admin"]))) {
-      return NextResponse.json(
-        { ok: false, error: "Acesso institucional necessario." },
-        { status: 401 },
-      );
+    const user = await authorizeRequest(["INSTITUTION_MEMBER", "ADMIN"]);
+    if (!user) return unauthorizedResponse("Acesso institucional necessario.");
+
+    const school = await findUserInstitution(user, ["SCHOOL"]);
+    if (!school) return unauthorizedResponse("Usuario sem vinculo com escola ativa.");
+
+    const body = await request.json().catch(() => undefined);
+    const parsedBody = requestSchema.safeParse(body);
+    if (!parsedBody.success) {
+      return NextResponse.json({ ok: false, error: "Dados invalidos para reiniciar BLE." }, { status: 400 });
     }
 
     const { start, end } = getSaoPauloDayRange();
-
-    const [school, child, operator] = await Promise.all([
-      prisma.institution.findUnique({
-        where: {
-          publicId: DEMO_SCHOOL_PUBLIC_ID,
-        },
-        select: {
-          id: true,
-        },
-      }),
-      prisma.child.findUnique({
-        where: {
-          publicId: DEMO_CHILD_PUBLIC_ID,
-        },
-        select: {
-          id: true,
-        },
-      }),
-      prisma.user.findUnique({
-        where: {
-          email: DEMO_OPERATOR_EMAIL,
-        },
-        select: {
-          id: true,
-        },
-      }),
-    ]);
-
-    if (!school || !child) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "Os dados da demonstraÃƒÂ§ÃƒÂ£o nÃƒÂ£o foram encontrados.",
-        },
-        {
-          status: 404,
-        },
-      );
-    }
-
+    const childPublicId = parsedBody.data?.childPublicId;
     const arrivalEvents = await prisma.protectionEvent.findMany({
       where: {
-        childId: child.id,
         institutionId: school.id,
         type: EventType.SCHOOL_ARRIVAL,
-        occurredAt: {
-          gte: start,
-          lte: end,
-        },
+        occurredAt: { gte: start, lte: end },
+        ...(childPublicId ? { child: { publicId: childPublicId } } : {}),
       },
-      select: {
-        id: true,
-        publicId: true,
-      },
+      select: { id: true, publicId: true },
     });
 
     await prisma.$transaction(async (transaction) => {
       if (arrivalEvents.length > 0) {
-        await transaction.protectionEvent.deleteMany({
-          where: {
-            id: {
-              in: arrivalEvents.map((event) => event.id),
-            },
-          },
-        });
+        await transaction.protectionEvent.deleteMany({ where: { id: { in: arrivalEvents.map((event) => event.id) } } });
       }
-
       await transaction.auditLog.create({
-        data: {
-          actorUserId: operator?.id ?? null,
-          action: AuditAction.DELETE,
-          entityType: "DemoSchoolArrival",
-          description: "Eventos de chegada da demonstraÃƒÂ§ÃƒÂ£o foram reiniciados.",
-          metadata: {
-            environment: "demo",
-            deletedEvents: arrivalEvents.map((event) => event.publicId),
-          },
-        },
+        data: { actorUserId: user.id, action: AuditAction.DELETE, entityType: "SchoolArrival", description: "Eventos de chegada escolar foram reiniciados.", metadata: { deletedEvents: arrivalEvents.map((event) => event.publicId) } },
       });
     });
 
-    return NextResponse.json({
-      ok: true,
-      message:
-        arrivalEvents.length > 0
-          ? "DemonstraÃƒÂ§ÃƒÂ£o reiniciada. Maria voltou ao estado de chegada pendente."
-          : "A demonstraÃƒÂ§ÃƒÂ£o jÃƒÂ¡ estava pronta para uma nova chegada.",
-      deletedEvents: arrivalEvents.length,
-    });
+    return NextResponse.json({ ok: true, message: arrivalEvents.length > 0 ? "Chegadas de hoje reiniciadas." : "Nao havia chegadas para reiniciar.", deletedEvents: arrivalEvents.length });
   } catch (error: unknown) {
-    console.error("Erro ao reiniciar demonstraÃƒÂ§ÃƒÂ£o BLE:", error);
-
-    return NextResponse.json(
-      {
-        ok: false,
-        error: "NÃƒÂ£o foi possÃƒÂ­vel reiniciar a demonstraÃƒÂ§ÃƒÂ£o.",
-      },
-      {
-        status: 500,
-      },
-    );
+    console.error("Erro ao reiniciar BLE:", error);
+    return NextResponse.json({ ok: false, error: "Nao foi possivel reiniciar a demonstracao." }, { status: 500 });
   }
 }

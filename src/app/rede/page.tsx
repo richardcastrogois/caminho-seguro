@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
 import { ProtectionNetworkDashboard } from "@/features/protection-network/protection-network-dashboard";
-import { requireDemoSession } from "@/lib/demo-auth";
+import { requireCurrentUser, requireUserInstitution } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import type { ProtectionNetworkData } from "@/types/protection-network";
 
 export const metadata: Metadata = {
-  title: "Rede de proteção",
-  description: "Coordenação de instituições e alertas autorizados do Caminho Seguro.",
+  title: "Rede de proteÃ§Ã£o",
+  description: "CoordenaÃ§Ã£o de instituiÃ§Ãµes e alertas autorizados do Caminho Seguro.",
 };
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export default async function ProtectionNetworkPage() {
-  await requireDemoSession(["network", "admin"], "/rede");
+  const user = await requireCurrentUser(["ADMIN", "PUBLIC_AGENT", "INSTITUTION_MEMBER"], "/rede");
+  if (user.role === "INSTITUTION_MEMBER") {
+    await requireUserInstitution(user, ["PROTECTION_AGENCY", "UBS", "CRAS", "NGO", "PARTNER_BUSINESS"], "/rede");
+  }
 
   const [institutions, alerts, recentEvents] = await Promise.all([
     prisma.institution.findMany({

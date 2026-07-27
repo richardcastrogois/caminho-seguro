@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SchoolDashboard } from "@/features/school-dashboard/school-dashboard";
 import { prisma } from "@/lib/prisma";
-import { requireDemoSession } from "@/lib/demo-auth";
+import { requireCurrentUser, requireUserInstitution } from "@/lib/session";
 import { getSaoPauloDayRange } from "@/lib/time";
 import type { SchoolDashboardData } from "@/types/school-dashboard";
 
@@ -14,17 +14,13 @@ export const metadata: Metadata = {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const DEMO_SCHOOL_PUBLIC_ID = "instituicao-demo-escola";
-
 export default async function SchoolPage() {
-  await requireDemoSession(["school", "admin"], "/escola");
-
+  const user = await requireCurrentUser(["INSTITUTION_MEMBER", "ADMIN"], "/escola");
+  const userInstitution = await requireUserInstitution(user, ["SCHOOL"], "/escola");
   const { start, end } = getSaoPauloDayRange();
 
   const institution = await prisma.institution.findUnique({
-    where: {
-      publicId: DEMO_SCHOOL_PUBLIC_ID,
-    },
+    where: { id: userInstitution.id },
     select: {
       publicId: true,
       name: true,
@@ -70,9 +66,7 @@ export default async function SchoolPage() {
               },
               events: {
                 where: {
-                  institution: {
-                    publicId: DEMO_SCHOOL_PUBLIC_ID,
-                  },
+                  institutionId: userInstitution.id,
                   type: "SCHOOL_ARRIVAL",
                   occurredAt: {
                     gte: start,

@@ -1,25 +1,23 @@
 import type { Metadata } from "next";
 import { AdminDashboard } from "@/features/admin-dashboard/admin-dashboard";
-import { requireDemoSession } from "@/lib/demo-auth";
+import { requireCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import type { AdminDashboardData } from "@/types/admin-dashboard";
 
 export const metadata: Metadata = {
-  title: "Administração da demonstração",
-  description: "Consulta e gestão controlada de identificadores do Caminho Seguro.",
+  title: "AdministraÃ§Ã£o da demonstraÃ§Ã£o",
+  description: "Consulta e gestÃ£o controlada de identificadores do Caminho Seguro.",
 };
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const DEMO_CHILD_PUBLIC_ID = "crianca-demo-maria";
-
 export default async function AdminPage() {
-  await requireDemoSession(["admin"], "/admin");
+  await requireCurrentUser(["ADMIN"], "/admin");
 
   const [child, children, institutions] = await Promise.all([
-    prisma.child.findUnique({
-      where: { publicId: DEMO_CHILD_PUBLIC_ID },
+    prisma.child.findFirst({
+      orderBy: { createdAt: "desc" },
       select: {
         publicId: true,
         firstName: true,
