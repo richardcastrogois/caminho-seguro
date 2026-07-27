@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { AppNavigation } from "@/components/shared/app-navigation";
 import { SchoolDashboard } from "@/features/school-dashboard/school-dashboard";
 import { prisma } from "@/lib/prisma";
 import { getSaoPauloDayRange } from "@/lib/time";
@@ -207,13 +206,5 @@ export default async function SchoolPage() {
     })),
   };
 
-  return (
-    <>
-      <div data-gsap="nav">
-        <AppNavigation badge="Acesso institucional" />
-      </div>
-
-      <SchoolDashboard data={dashboardData} />
-    </>
-  );
+  return <SchoolDashboard data={dashboardData} />;
 }

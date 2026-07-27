@@ -175,7 +175,10 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
 
   if (successReference) {
     return (
-      <div data-gsap="card" className="motion-card rounded-[24px] border border-emerald-200 bg-white p-6 text-center shadow-xl shadow-emerald-950/5 sm:p-10">
+      <div
+        data-gsap="card"
+        className="dashboard-panel motion-card rounded-[24px] border border-emerald-200 bg-white p-6 text-center shadow-xl shadow-emerald-950/5 sm:p-10"
+      >
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
           <CheckCircle2 className="h-8 w-8" />
         </div>
@@ -206,7 +209,10 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
   }
 
   return (
-    <div data-gsap="card" className="motion-card rounded-[24px] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-950/5 sm:p-8">
+    <div
+      data-gsap="card"
+      className="dashboard-panel motion-card rounded-[24px] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-950/5 sm:p-8"
+    >
       <div>
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-(--brand-600)">
           Informe a situação

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { AppNavigation } from "@/components/shared/app-navigation";
 import {
   GuardianDashboard,
   type GuardianDashboardData,
@@ -184,13 +183,5 @@ export default async function GuardianPage() {
     })),
   };
 
-  return (
-    <>
-      <div data-gsap="nav">
-        <AppNavigation badge="Ambiente do responsável" />
-      </div>
-
-      <GuardianDashboard data={dashboardData} />
-    </>
-  );
+  return <GuardianDashboard data={dashboardData} />;
 }

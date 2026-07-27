@@ -1,66 +1,279 @@
-import { AlertTriangle, Building2, BusFront, HeartHandshake, Home, QrCode, School } from "lucide-react";
+"use client";
+
+import { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import {
+  Building2,
+  BusFront,
+  HeartHandshake,
+  Hospital,
+  Home,
+  QrCode,
+  School,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
+
+gsap.registerPlugin(useGSAP);
 
 const nodes = [
-  { label: "Família", icon: Home, className: "left-[6%] top-[42%] border-sky-200 bg-sky-50 text-sky-800" },
-  { label: "Escola", icon: School, className: "left-[40%] top-[10%] border-emerald-200 bg-emerald-50 text-emerald-800" },
-  { label: "Transporte", icon: BusFront, className: "right-[8%] top-[44%] border-amber-200 bg-amber-50 text-amber-800" },
-  { label: "Rede", icon: Building2, className: "left-[34%] bottom-[10%] border-violet-200 bg-violet-50 text-violet-800" },
-];
+  { id: "familia", label: "Família", icon: Home, left: "7%", top: "25%", tone: "blue" },
+  { id: "escola", label: "Escola", icon: School, left: "40%", top: "8%", tone: "green" },
+  {
+    id: "transporte",
+    label: "Transporte",
+    icon: BusFront,
+    left: "73%",
+    top: "27%",
+    tone: "blue",
+  },
+  { id: "ubs", label: "UBS", icon: Hospital, left: "78%", top: "62%", tone: "green" },
+  { id: "cras", label: "CRAS", icon: Building2, left: "43%", top: "78%", tone: "blue" },
+  {
+    id: "comunidade",
+    label: "Comunidade",
+    icon: HeartHandshake,
+    left: "6%",
+    top: "64%",
+    tone: "green",
+  },
+] as const;
+
+const edges = [
+  ...nodes.map((node) => ({ from: "center", to: node.id, primary: true })),
+  { from: "familia", to: "escola", primary: false },
+  { from: "escola", to: "transporte", primary: false },
+  { from: "transporte", to: "ubs", primary: false },
+  { from: "ubs", to: "cras", primary: false },
+  { from: "cras", to: "comunidade", primary: false },
+  { from: "comunidade", to: "familia", primary: false },
+  { from: "familia", to: "cras", primary: false },
+  { from: "escola", to: "ubs", primary: false },
+] as const;
 
 export function ProtectionNetworkVisual() {
-  return (
-    <div className="relative min-h-[430px] overflow-hidden rounded-[28px] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-900/10 sm:p-7">
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(226_232_240/.5)_1px,transparent_1px),linear-gradient(0deg,rgb(226_232_240/.5)_1px,transparent_1px)] bg-[size:38px_38px]" />
-      <div className="absolute inset-x-8 top-1/2 h-px bg-slate-200" />
-      <div className="absolute left-1/2 top-8 h-[calc(100%-4rem)] w-px bg-slate-200" />
-      <div className="absolute left-[18%] top-[30%] h-px w-[62%] rotate-[22deg] bg-slate-200" />
-      <div className="absolute left-[20%] bottom-[30%] h-px w-[58%] -rotate-[20deg] bg-slate-200" />
+  const scope = useRef<HTMLDivElement>(null);
 
-      <div className="absolute left-1/2 top-1/2 z-10 w-[190px] -translate-x-1/2 -translate-y-1/2 rounded-[24px] border border-slate-900 bg-slate-950 p-4 text-white shadow-2xl">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-slate-950">
-            <QrCode className="h-6 w-6" />
+  useGSAP(
+    () => {
+      const root = scope.current;
+
+      if (!root) {
+        return;
+      }
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const nodeElements = Array.from(
+        root.querySelectorAll<HTMLElement>("[data-network-node]"),
+      );
+      const center = root.querySelector<HTMLElement>("[data-network-anchor='center']");
+      const edgeElements = Array.from(
+        root.querySelectorAll<SVGLineElement>("[data-network-edge]"),
+      );
+      const pulses = Array.from(
+        root.querySelectorAll<HTMLElement>("[data-network-pulse]"),
+      );
+
+      const updateEdges = () => {
+        const rootRect = root.getBoundingClientRect();
+        const anchors = new Map<string, { x: number; y: number }>();
+
+        root.querySelectorAll<HTMLElement>("[data-network-anchor]").forEach((element) => {
+          const rect = element.getBoundingClientRect();
+          const id = element.dataset.networkAnchor;
+
+          if (id) {
+            anchors.set(id, {
+              x: rect.left - rootRect.left + rect.width / 2,
+              y: rect.top - rootRect.top + rect.height / 2,
+            });
+          }
+        });
+
+        edgeElements.forEach((line) => {
+          const from = anchors.get(line.dataset.from ?? "");
+          const to = anchors.get(line.dataset.to ?? "");
+
+          if (!from || !to) {
+            return;
+          }
+
+          line.setAttribute("x1", from.x.toFixed(2));
+          line.setAttribute("y1", from.y.toFixed(2));
+          line.setAttribute("x2", to.x.toFixed(2));
+          line.setAttribute("y2", to.y.toFixed(2));
+        });
+      };
+
+      gsap.set([center, ...nodeElements], { autoAlpha: 1 });
+      updateEdges();
+      window.addEventListener("resize", updateEdges);
+
+      if (reduceMotion) {
+        return () => window.removeEventListener("resize", updateEdges);
+      }
+
+      const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      if (center) {
+        intro.from(center, { autoAlpha: 0, scale: 0.72, duration: 0.72 });
+      }
+
+      intro.from(
+        nodeElements,
+        {
+          autoAlpha: 0,
+          scale: 0.72,
+          duration: 0.58,
+          stagger: { each: 0.09, from: "center" },
+        },
+        "-=0.34",
+      );
+
+      intro.from(
+        edgeElements,
+        {
+          autoAlpha: 0,
+          duration: 0.65,
+          stagger: 0.025,
+        },
+        "-=0.45",
+      );
+
+      nodeElements.forEach((node, index) => {
+        gsap.to(node, {
+          x: index % 2 === 0 ? 25 + index * 1.5 : -(21 + index * 1.5),
+          y: index % 3 === 0 ? -(22 + index) : 20 + (index % 2) * 5,
+          rotation: index % 2 === 0 ? 2.4 : -2.1,
+          duration: 1.85 + index * 0.18,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+      });
+
+      if (center) {
+        gsap.to(center, {
+          y: -11,
+          scale: 1.025,
+          duration: 2.15,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+      }
+
+      gsap.fromTo(
+        edgeElements,
+        { strokeDashoffset: 28 },
+        {
+          strokeDashoffset: 0,
+          duration: 2.4,
+          repeat: -1,
+          ease: "none",
+          stagger: 0.08,
+        },
+      );
+
+      gsap.to(pulses, {
+        scale: 1.7,
+        autoAlpha: 0.18,
+        duration: 1.45,
+        repeat: -1,
+        stagger: 0.22,
+        ease: "power2.out",
+      });
+
+      gsap.ticker.add(updateEdges);
+
+      return () => {
+        gsap.ticker.remove(updateEdges);
+        window.removeEventListener("resize", updateEdges);
+      };
+    },
+    { scope },
+  );
+
+  return (
+    <div
+      ref={scope}
+      data-network-visual
+      className="relative min-h-[490px] overflow-hidden rounded-lg border border-sky-200/80 bg-white/88 shadow-[0_28px_70px_rgba(8,47,73,0.16)] backdrop-blur-sm sm:min-h-[540px]"
+    >
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(224,242,254,.88),rgba(255,255,255,.35)_46%,rgba(209,250,229,.78))]" />
+      <div className="absolute inset-0 opacity-45 [background-image:linear-gradient(rgba(14,165,233,.13)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,.11)_1px,transparent_1px)] [background-size:42px_42px]" />
+
+      <svg
+        className="pointer-events-none absolute inset-0 z-10 h-full w-full"
+        aria-hidden="true"
+      >
+        {edges.map((edge, index) => (
+          <line
+            key={`${edge.from}-${edge.to}`}
+            data-network-edge
+            data-from={edge.from}
+            data-to={edge.to}
+            stroke={edge.primary ? (index % 2 === 0 ? "#0284c7" : "#059669") : "#38bdf8"}
+            strokeWidth={edge.primary ? 1.35 : 0.9}
+            strokeDasharray={edge.primary ? "6 8" : "3 10"}
+            strokeLinecap="round"
+            opacity={edge.primary ? 0.56 : 0.3}
+          />
+        ))}
+      </svg>
+
+      <div
+        data-network-anchor="center"
+        className="absolute left-1/2 top-[48%] z-30 flex h-[148px] w-[148px] -translate-x-1/2 -translate-y-1/2 will-change-transform items-center justify-center rounded-full border border-cyan-200 bg-[radial-gradient(circle_at_34%_24%,#ecfdf5_0%,#a7f3d0_26%,#0e7490_68%,#082f49_100%)] shadow-[0_20px_62px_rgba(8,145,178,0.34)] sm:h-[170px] sm:w-[170px]"
+      >
+        <span
+          data-network-pulse
+          className="absolute inset-[-12px] -z-10 rounded-full border border-emerald-300/90"
+        />
+        <span
+          data-network-pulse
+          className="absolute inset-[-26px] -z-10 rounded-full border border-sky-300/80"
+        />
+
+        <div className="text-center">
+          <div className="relative mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-slate-950/70 text-white shadow-lg shadow-sky-950/40">
+            <UserRound className="h-6 w-6" />
+            <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-950">
+              <QrCode className="h-3.5 w-3.5" />
+            </span>
           </div>
-          <span data-gsap="pulse" className="h-3 w-3 rounded-full bg-emerald-300" />
+          <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-50">
+            Identidade protegida
+          </p>
+          <h2 className="mt-1 text-xl font-semibold text-white">Criança</h2>
         </div>
-        <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-          Identidade protegida
-        </p>
-        <h2 className="mt-2 text-xl font-semibold">Maria</h2>
-        <p className="mt-2 text-sm leading-6 text-slate-300">
-          Eventos autorizados, sem rastreamento contínuo.
-        </p>
       </div>
 
       {nodes.map((node) => {
         const Icon = node.icon;
+        const tone =
+          node.tone === "green"
+            ? "border-emerald-200 bg-white text-emerald-800 shadow-emerald-950/10"
+            : "border-sky-200 bg-white text-sky-800 shadow-sky-950/10";
+
         return (
           <div
-            key={node.label}
-            data-gsap="card"
-            className={`absolute z-10 flex items-center gap-2 rounded-2xl border px-3 py-2 text-sm font-semibold shadow-sm ${node.className}`}
+            key={node.id}
+            data-network-node
+            data-network-anchor={node.id}
+            className={`absolute z-20 flex min-h-10 items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold shadow-lg will-change-transform sm:text-sm ${tone}`}
+            style={{ left: node.left, top: node.top }}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-4 w-4 shrink-0" />
             {node.label}
           </div>
         );
       })}
 
-      <div data-gsap="timeline" className="absolute bottom-5 left-5 right-5 z-10 rounded-2xl border border-red-100 bg-red-50 p-4 text-red-900">
-        <div className="flex items-start gap-3">
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
-          <div>
-            <p className="font-semibold">Alerta acionável</p>
-            <p className="mt-1 text-sm leading-6 text-red-800">
-              Quando alguém usa o QR, a rede recebe um evento para responder.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute right-5 top-5 z-10 rounded-2xl border border-emerald-100 bg-white px-3 py-2 text-xs font-semibold text-emerald-700 shadow-sm">
-        <HeartHandshake className="mr-1 inline h-4 w-4" />
-        Comunidade ativa
+      <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-emerald-200 bg-white/92 px-3 py-2 text-xs font-semibold text-emerald-800 shadow-sm backdrop-blur">
+        <ShieldCheck className="h-4 w-4" />
+        Rede ativa ao redor da criança
       </div>
     </div>
   );
