@@ -44,13 +44,15 @@ const situations: Array<{
   {
     value: "CHILD_AT_RISK",
     title: "A criança parece estar em risco",
-    description: "Use quando houver comportamento, pessoa ou situação que gere preocupação.",
+    description:
+      "Use quando houver comportamento, pessoa ou situação que gere preocupação.",
     icon: AlertTriangle,
   },
   {
     value: "MEDICAL_HELP",
     title: "A criança precisa de atendimento",
-    description: "Use quando houver mal-estar, machucado ou necessidade aparente de cuidado.",
+    description:
+      "Use quando houver mal-estar, machucado ou necessidade aparente de cuidado.",
     icon: HeartPulse,
   },
 ];
@@ -245,7 +247,9 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
               </span>
 
               <span>
-                <span className="block font-semibold leading-5 text-slate-950">{item.title}</span>
+                <span className="block font-semibold leading-5 text-slate-950">
+                  {item.title}
+                </span>
 
                 <span className="mt-1 block text-sm leading-5 text-slate-600">
                   {item.description}
@@ -273,11 +277,7 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
                 className="mt-3 inline-flex items-center gap-2 rounded-xl bg-slate-950 px-3.5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <LocateFixed className="size-4" />
-                {isLocating
-                  ? "Obtendo..."
-                  : location
-                    ? "Atualizar"
-                    : "Compartilhar"}
+                {isLocating ? "Obtendo..." : location ? "Atualizar" : "Compartilhar"}
               </button>
             </div>
           </div>
@@ -295,7 +295,7 @@ export function PublicHelpForm({ token }: PublicHelpFormProps) {
             maxLength={500}
             rows={3}
             placeholder="Exemplo: a criança informou que se perdeu ao voltar da escola."
-            className="mt-2 h-[7.5rem] w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-100 lg:h-[8.25rem]"
+            className="mt-2 h-30 w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-100 lg:h-33"
           />
 
           <p className="mt-1 text-right text-xs text-slate-400">{notes.length}/500</p>

@@ -52,8 +52,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true, ...result });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Erro desconhecido";
+    const message = error instanceof Error ? error.message : "Erro desconhecido";
     console.error("Falha no login:", message);
     return NextResponse.json({ ok: false, error: "Erro interno" }, { status: 500 });
   }

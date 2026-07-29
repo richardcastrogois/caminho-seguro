@@ -12,7 +12,10 @@ export async function hashPassword(password: string): Promise<string> {
   return `${passwordPrefix}$${salt}$${derivedKey.toString("hex")}`;
 }
 
-export async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  storedHash: string,
+): Promise<boolean> {
   const [prefix, salt, key] = storedHash.split("$");
 
   if (prefix !== passwordPrefix || !salt || !key) {

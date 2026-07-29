@@ -41,7 +41,9 @@ export async function GET() {
     }
 
     const connection = getConnection();
-    const balance = await connection.getBalance(new (await import("@solana/web3.js")).PublicKey(publicKey));
+    const balance = await connection.getBalance(
+      new (await import("@solana/web3.js")).PublicKey(publicKey),
+    );
     const balanceSOL = balance / LAMPORTS_PER_SOL;
     const low = balance < LOW_BALANCE_THRESHOLD;
 
@@ -58,8 +60,7 @@ export async function GET() {
       thresholdSOL: LOW_BALANCE_THRESHOLD / LAMPORTS_PER_SOL,
     });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Erro desconhecido";
+    const message = error instanceof Error ? error.message : "Erro desconhecido";
     console.error("Falha ao verificar saldo:", message);
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }

@@ -1,9 +1,19 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { AuditAction, EventSeverity, EventSource, EventStatus, EventType } from "@/generated/prisma/client";
+import {
+  AuditAction,
+  EventSeverity,
+  EventSource,
+  EventStatus,
+  EventType,
+} from "@/generated/prisma/client";
 import { tryCreateBlockchainActorHash } from "@/lib/blockchain-identity";
 import { prisma } from "@/lib/prisma";
-import { authorizeRequest, findUserInstitution, unauthorizedResponse } from "@/lib/session";
+import {
+  authorizeRequest,
+  findUserInstitution,
+  unauthorizedResponse,
+} from "@/lib/session";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,8 +24,14 @@ const requestSchema = z.object({
 });
 
 const eventConfig = {
-  BUS_BOARDING: { label: "Embarque confirmado no ponto comunitario", type: EventType.BUS_BOARDING },
-  DISEMBARKING_BUS: { label: "Desembarque confirmado na rota escolar", type: EventType.DISEMBARKING_BUS },
+  BUS_BOARDING: {
+    label: "Embarque confirmado no ponto comunitario",
+    type: EventType.BUS_BOARDING,
+  },
+  DISEMBARKING_BUS: {
+    label: "Desembarque confirmado na rota escolar",
+    type: EventType.DISEMBARKING_BUS,
+  },
 } as const;
 
 export async function POST(request: Request) {
@@ -24,11 +40,15 @@ export async function POST(request: Request) {
     if (!user) return unauthorizedResponse("Acesso do transporte necessario.");
 
     const transport = await findUserInstitution(user, ["TRANSPORT"]);
-    if (!transport) return unauthorizedResponse("Usuario sem vinculo com transporte ativo.");
+    if (!transport)
+      return unauthorizedResponse("Usuario sem vinculo com transporte ativo.");
 
     const parsedBody = requestSchema.safeParse(await request.json());
     if (!parsedBody.success) {
-      return NextResponse.json({ ok: false, error: "Dados invalidos para o evento de transporte." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "Dados invalidos para o evento de transporte." },
+        { status: 400 },
+      );
     }
 
     const { action, childPublicId } = parsedBody.data;
@@ -38,8 +58,16 @@ export async function POST(request: Request) {
         id: true,
         publicId: true,
         firstName: true,
-        identifiers: { where: { type: "BLE", status: "ACTIVE" }, take: 1, select: { id: true } },
-        enrollments: { where: { institutionId: transport.id, active: true }, take: 1, select: { id: true } },
+        identifiers: {
+          where: { type: "BLE", status: "ACTIVE" },
+          take: 1,
+          select: { id: true },
+        },
+        enrollments: {
+          where: { institutionId: transport.id, active: true },
+          take: 1,
+          select: { id: true },
+        },
       },
     });
 
@@ -50,10 +78,16 @@ export async function POST(request: Request) {
     });
 
     if (!child || child.enrollments.length === 0) {
-      return NextResponse.json({ ok: false, error: "Crianca ou vinculo de transporte nao encontrado." }, { status: 404 });
+      return NextResponse.json(
+        { ok: false, error: "Crianca ou vinculo de transporte nao encontrado." },
+        { status: 404 },
+      );
     }
     if (!route || !child.identifiers[0]) {
-      return NextResponse.json({ ok: false, error: "Rota ativa ou identificador BLE nao disponivel." }, { status: 409 });
+      return NextResponse.json(
+        { ok: false, error: "Rota ativa ou identificador BLE nao disponivel." },
+        { status: 409 },
+      );
     }
 
     const config = eventConfig[action];
@@ -80,7 +114,10 @@ export async function POST(request: Request) {
           },
         },
       });
-      await transaction.childIdentifier.update({ where: { id: child.identifiers[0].id }, data: { lastSeenAt: occurredAt } });
+      await transaction.childIdentifier.update({
+        where: { id: child.identifiers[0].id },
+        data: { lastSeenAt: occurredAt },
+      });
       await transaction.auditLog.create({
         data: {
           actorUserId: user.id,
@@ -88,15 +125,29 @@ export async function POST(request: Request) {
           entityType: "ProtectionEvent",
           entityId: createdEvent.id,
           description: `Evento de transporte assistido: ${config.type}.`,
-          metadata: { eventPublicId: createdEvent.publicId, childPublicId: child.publicId, actorHash: tryCreateBlockchainActorHash(user.id) },
+          metadata: {
+            eventPublicId: createdEvent.publicId,
+            childPublicId: child.publicId,
+            actorHash: tryCreateBlockchainActorHash(user.id),
+          },
         },
       });
       return createdEvent;
     });
 
-    return NextResponse.json({ ok: true, message: "Evento de transporte registrado.", event: { publicId: event.publicId, occurredAt: event.occurredAt.toISOString() } }, { status: 201 });
+    return NextResponse.json(
+      {
+        ok: true,
+        message: "Evento de transporte registrado.",
+        event: { publicId: event.publicId, occurredAt: event.occurredAt.toISOString() },
+      },
+      { status: 201 },
+    );
   } catch (error: unknown) {
     console.error("Erro ao registrar evento de transporte:", error);
-    return NextResponse.json({ ok: false, error: "Nao foi possivel registrar o evento de transporte." }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: "Nao foi possivel registrar o evento de transporte." },
+      { status: 500 },
+    );
   }
 }

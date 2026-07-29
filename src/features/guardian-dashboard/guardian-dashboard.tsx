@@ -228,9 +228,12 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
     });
 
     try {
-      const response = await authFetch(`/api/guardian/alerts/${alertPublicId}/${action}`, {
-        method: "PATCH",
-      });
+      const response = await authFetch(
+        `/api/guardian/alerts/${alertPublicId}/${action}`,
+        {
+          method: "PATCH",
+        },
+      );
 
       const result: unknown = await response.json();
 
@@ -622,7 +625,10 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
                             <ShieldCheck className="h-3.5 w-3.5" />
                             Blockchain verificado
                             {event.transactionHash && (
-                              <span className="hidden max-w-[100px] truncate text-[10px] text-emerald-500 sm:inline-block" title={event.transactionHash}>
+                              <span
+                                className="hidden max-w-[100px] truncate text-[10px] text-emerald-500 sm:inline-block"
+                                title={event.transactionHash}
+                              >
                                 {event.transactionHash.slice(0, 8)}...
                               </span>
                             )}
@@ -633,11 +639,13 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
                             Pendente
                           </div>
                         )}
-                        {event.blockchainStatus && event.blockchainStatus !== "CONFIRMED" && event.blockchainStatus !== "PENDING" && (
-                          <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
-                            Falha
-                          </div>
-                        )}
+                        {event.blockchainStatus &&
+                          event.blockchainStatus !== "CONFIRMED" &&
+                          event.blockchainStatus !== "PENDING" && (
+                            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+                              Falha
+                            </div>
+                          )}
                       </div>
                     </button>
                   );

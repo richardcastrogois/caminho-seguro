@@ -26,26 +26,66 @@ export async function POST(request: Request) {
 
     const parsedBody = requestSchema.safeParse(await request.json());
     if (!parsedBody.success) {
-      return NextResponse.json({ ok: false, error: "Dados invalidos para emitir o identificador." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "Dados invalidos para emitir o identificador." },
+        { status: 400 },
+      );
     }
 
-    const child = await prisma.child.findUnique({ where: { publicId: parsedBody.data.childPublicId }, select: { id: true, publicId: true } });
-    if (!child) return NextResponse.json({ ok: false, error: "Crianca nao encontrada." }, { status: 404 });
+    const child = await prisma.child.findUnique({
+      where: { publicId: parsedBody.data.childPublicId },
+      select: { id: true, publicId: true },
+    });
+    if (!child)
+      return NextResponse.json(
+        { ok: false, error: "Crianca nao encontrada." },
+        { status: 404 },
+      );
 
     const publicToken = `demo-${randomUUID().replaceAll("-", "")}`;
     const identifier = await prisma.$transaction(async (transaction) => {
       const createdIdentifier = await transaction.childIdentifier.create({
-        data: { childId: child.id, publicToken, type: parsedBody.data.type as IdentifierType, status: IdentifierStatus.ACTIVE, label: parsedBody.data.label || null },
+        data: {
+          childId: child.id,
+          publicToken,
+          type: parsedBody.data.type as IdentifierType,
+          status: IdentifierStatus.ACTIVE,
+          label: parsedBody.data.label || null,
+        },
       });
       await transaction.auditLog.create({
-        data: { actorUserId: user.id, action: AuditAction.CREATE, entityType: "ChildIdentifier", entityId: createdIdentifier.id, description: "Identificador protegido emitido.", metadata: { publicToken: createdIdentifier.publicToken, type: createdIdentifier.type, childPublicId: child.publicId } },
+        data: {
+          actorUserId: user.id,
+          action: AuditAction.CREATE,
+          entityType: "ChildIdentifier",
+          entityId: createdIdentifier.id,
+          description: "Identificador protegido emitido.",
+          metadata: {
+            publicToken: createdIdentifier.publicToken,
+            type: createdIdentifier.type,
+            childPublicId: child.publicId,
+          },
+        },
       });
       return createdIdentifier;
     });
 
-    return NextResponse.json({ ok: true, identifier: { publicToken: identifier.publicToken, type: identifier.type, publicUrl: publicHelpUrl(request, identifier.publicToken) } }, { status: 201 });
+    return NextResponse.json(
+      {
+        ok: true,
+        identifier: {
+          publicToken: identifier.publicToken,
+          type: identifier.type,
+          publicUrl: publicHelpUrl(request, identifier.publicToken),
+        },
+      },
+      { status: 201 },
+    );
   } catch (error: unknown) {
     console.error("Erro ao emitir identificador:", error);
-    return NextResponse.json({ ok: false, error: "Nao foi possivel emitir o identificador." }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: "Nao foi possivel emitir o identificador." },
+      { status: 500 },
+    );
   }
 }

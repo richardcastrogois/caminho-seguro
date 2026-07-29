@@ -1,16 +1,29 @@
 import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { AuditAction, BlockchainStatus, EventSeverity, EventSource, EventStatus, EventType } from "@/generated/prisma/client";
+import {
+  AuditAction,
+  BlockchainStatus,
+  EventSeverity,
+  EventSource,
+  EventStatus,
+  EventType,
+} from "@/generated/prisma/client";
 import { tryCreateBlockchainActorHash } from "@/lib/blockchain-identity";
 import { prisma } from "@/lib/prisma";
-import { authorizeRequest, findUserInstitution, unauthorizedResponse } from "@/lib/session";
+import {
+  authorizeRequest,
+  findUserInstitution,
+  unauthorizedResponse,
+} from "@/lib/session";
 import { getSaoPauloDayRange } from "@/lib/time";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const requestSchema = z.object({ childPublicId: z.string().min(8).max(200).optional() }).optional();
+const requestSchema = z
+  .object({ childPublicId: z.string().min(8).max(200).optional() })
+  .optional();
 
 export async function POST(request: Request) {
   try {
@@ -23,7 +36,10 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => undefined);
     const parsedBody = requestSchema.safeParse(body);
     if (!parsedBody.success) {
-      return NextResponse.json({ ok: false, error: "Dados invalidos para deteccao BLE." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "Dados invalidos para deteccao BLE." },
+        { status: 400 },
+      );
     }
 
     const { start, end, dateKey } = getSaoPauloDayRange();
@@ -47,25 +63,47 @@ export async function POST(request: Request) {
         publicId: true,
         firstName: true,
         lastName: true,
-        identifiers: { where: { type: "BLE", status: "ACTIVE" }, take: 1, select: { id: true, publicToken: true } },
+        identifiers: {
+          where: { type: "BLE", status: "ACTIVE" },
+          take: 1,
+          select: { id: true, publicToken: true },
+        },
       },
     });
 
     if (!child || !gateway) {
-      return NextResponse.json({ ok: false, error: "Escola, crianca ou gateway BLE nao encontrado." }, { status: 404 });
+      return NextResponse.json(
+        { ok: false, error: "Escola, crianca ou gateway BLE nao encontrado." },
+        { status: 404 },
+      );
     }
 
     const bleIdentifier = child.identifiers[0];
     if (!bleIdentifier) {
-      return NextResponse.json({ ok: false, error: "A crianca nao possui um identificador BLE ativo." }, { status: 404 });
+      return NextResponse.json(
+        { ok: false, error: "A crianca nao possui um identificador BLE ativo." },
+        { status: 404 },
+      );
     }
 
     const existingArrival = await prisma.protectionEvent.findFirst({
-      where: { childId: child.id, institutionId: school.id, type: EventType.SCHOOL_ARRIVAL, occurredAt: { gte: start, lte: end } },
+      where: {
+        childId: child.id,
+        institutionId: school.id,
+        type: EventType.SCHOOL_ARRIVAL,
+        occurredAt: { gte: start, lte: end },
+      },
       select: { publicId: true, occurredAt: true },
     });
     if (existingArrival) {
-      return NextResponse.json({ ok: false, error: `${child.firstName} ja possui uma chegada registrada hoje.`, reference: existingArrival.publicId }, { status: 409 });
+      return NextResponse.json(
+        {
+          ok: false,
+          error: `${child.firstName} ja possui uma chegada registrada hoje.`,
+          reference: existingArrival.publicId,
+        },
+        { status: 409 },
+      );
     }
 
     const occurredAt = new Date();
@@ -79,7 +117,9 @@ export async function POST(request: Request) {
       type: EventType.SCHOOL_ARRIVAL,
       occurredAt: occurredAt.toISOString(),
     };
-    const eventHash = createHash("sha256").update(JSON.stringify(canonicalEvent)).digest("hex");
+    const eventHash = createHash("sha256")
+      .update(JSON.stringify(canonicalEvent))
+      .digest("hex");
     const eventPublicId = `school-arrival-${child.publicId}-${dateKey}`;
 
     const event = await prisma.$transaction(async (transaction) => {
@@ -100,21 +140,66 @@ export async function POST(request: Request) {
           locationLabel: "Portao principal da escola",
           occurredAt,
           validatedAt: occurredAt,
-          metadata: { simulation: true, signalStrength: -47, detectionDurationSeconds: 6, gatewayPublicToken: gateway.publicToken, actorHash: tryCreateBlockchainActorHash(user.id) },
+          metadata: {
+            simulation: true,
+            signalStrength: -47,
+            detectionDurationSeconds: 6,
+            gatewayPublicToken: gateway.publicToken,
+            actorHash: tryCreateBlockchainActorHash(user.id),
+          },
         },
       });
-      await transaction.blockchainRecord.create({ data: { eventId: createdEvent.id, network: "solana-devnet", status: BlockchainStatus.PENDING, eventHash, programVersion: "1" } });
-      await transaction.gatewayIdentifier.update({ where: { id: gateway.id }, data: { lastSeenAt: occurredAt } });
-      await transaction.childIdentifier.update({ where: { id: bleIdentifier.id }, data: { lastSeenAt: occurredAt } });
+      await transaction.blockchainRecord.create({
+        data: {
+          eventId: createdEvent.id,
+          network: "solana-devnet",
+          status: BlockchainStatus.PENDING,
+          eventHash,
+          programVersion: "1",
+        },
+      });
+      await transaction.gatewayIdentifier.update({
+        where: { id: gateway.id },
+        data: { lastSeenAt: occurredAt },
+      });
+      await transaction.childIdentifier.update({
+        where: { id: bleIdentifier.id },
+        data: { lastSeenAt: occurredAt },
+      });
       await transaction.auditLog.create({
-        data: { actorUserId: user.id, action: AuditAction.CREATE, entityType: "ProtectionEvent", entityId: createdEvent.id, description: "Chegada escolar registrada pelo simulador de gateway BLE.", metadata: { eventPublicId: createdEvent.publicId, gatewayPublicToken: gateway.publicToken, actorHash: tryCreateBlockchainActorHash(user.id) } },
+        data: {
+          actorUserId: user.id,
+          action: AuditAction.CREATE,
+          entityType: "ProtectionEvent",
+          entityId: createdEvent.id,
+          description: "Chegada escolar registrada pelo simulador de gateway BLE.",
+          metadata: {
+            eventPublicId: createdEvent.publicId,
+            gatewayPublicToken: gateway.publicToken,
+            actorHash: tryCreateBlockchainActorHash(user.id),
+          },
+        },
       });
       return createdEvent;
     });
 
-    return NextResponse.json({ ok: true, message: `${child.firstName} ${child.lastName} chegou a escola. O responsavel ja pode visualizar o evento.`, event: { publicId: event.publicId, occurredAt: event.occurredAt.toISOString(), blockchainStatus: BlockchainStatus.PENDING } }, { status: 201 });
+    return NextResponse.json(
+      {
+        ok: true,
+        message: `${child.firstName} ${child.lastName} chegou a escola. O responsavel ja pode visualizar o evento.`,
+        event: {
+          publicId: event.publicId,
+          occurredAt: event.occurredAt.toISOString(),
+          blockchainStatus: BlockchainStatus.PENDING,
+        },
+      },
+      { status: 201 },
+    );
   } catch (error: unknown) {
     console.error("Erro ao registrar deteccao BLE:", error);
-    return NextResponse.json({ ok: false, error: "Nao foi possivel registrar a deteccao Bluetooth." }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: "Nao foi possivel registrar a deteccao Bluetooth." },
+      { status: 500 },
+    );
   }
 }

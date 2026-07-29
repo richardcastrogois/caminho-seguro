@@ -1,8 +1,4 @@
-import type {
-  EventSeverity,
-  EventSource,
-  EventType,
-} from "@/generated/prisma/client";
+import type { EventSeverity, EventSource, EventType } from "@/generated/prisma/client";
 
 export type CreateEventInput = {
   childId: string;

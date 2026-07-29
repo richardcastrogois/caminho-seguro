@@ -71,7 +71,6 @@ export function EventDetailsDialog({
   eventLabel,
   onClose,
 }: EventDetailsDialogProps) {
-
   useEffect(() => {
     if (!event) {
       return;
@@ -250,8 +249,11 @@ export function EventDetailsDialog({
                             : "border border-red-200 bg-red-100 text-red-800"
                       }`}
                     >
-                      {event.blockchainStatus === "CONFIRMED" ? "CONFIRMADO" :
-                       event.blockchainStatus === "PENDING" ? "PENDENTE" : "FALHA"}
+                      {event.blockchainStatus === "CONFIRMED"
+                        ? "CONFIRMADO"
+                        : event.blockchainStatus === "PENDING"
+                          ? "PENDENTE"
+                          : "FALHA"}
                     </span>
 
                     {event.transactionHash && (

@@ -18,7 +18,10 @@ export type CurrentUser = {
 const profileAccess: Record<DemoProfileId, { role: UserRole; email: string }> = {
   guardian: { role: "GUARDIAN", email: "ana.responsavel@caminhoseguro.demo" },
   school: { role: "INSTITUTION_MEMBER", email: "operador.escola@caminhoseguro.demo" },
-  transport: { role: "TRANSPORT_MEMBER", email: "operador.transporte@caminhoseguro.demo" },
+  transport: {
+    role: "TRANSPORT_MEMBER",
+    email: "operador.transporte@caminhoseguro.demo",
+  },
   network: { role: "PUBLIC_AGENT", email: "rede.protecao@caminhoseguro.demo" },
   admin: { role: "ADMIN", email: "admin@caminhoseguro.demo" },
 };
@@ -107,7 +110,10 @@ export function unauthorizedResponse(message = "Acesso nao autorizado.") {
   return NextResponse.json({ ok: false, error: message }, { status: 401 });
 }
 
-export async function findUserInstitution(user: CurrentUser, allowedTypes: InstitutionType[]) {
+export async function findUserInstitution(
+  user: CurrentUser,
+  allowedTypes: InstitutionType[],
+) {
   if (user.role === "ADMIN") {
     return prisma.institution.findFirst({
       where: { active: true, type: { in: allowedTypes } },

@@ -60,20 +60,12 @@ async function main() {
   console.log(` 💾 Private key salva em .env.local`);
   console.log("");
 
-  const answer = await ask(
-    " Solicitar SOL de teste (airdrop) agora? (s/N): ",
-  );
+  const answer = await ask(" Solicitar SOL de teste (airdrop) agora? (s/N): ");
 
   if (answer.toLowerCase() === "s") {
-    const {
-      Connection,
-      LAMPORTS_PER_SOL,
-    } = await import("@solana/web3.js");
+    const { Connection, LAMPORTS_PER_SOL } = await import("@solana/web3.js");
 
-    const connection = new Connection(
-      "https://api.devnet.solana.com",
-      "confirmed",
-    );
+    const connection = new Connection("https://api.devnet.solana.com", "confirmed");
 
     console.log(" Solicitando airdrop de 1 SOL...");
     try {
@@ -85,7 +77,7 @@ async function main() {
       const balance = await connection.getBalance(wallet.publicKey);
       console.log(` ✅ Airdrop confirmado! TX: ${txHash}`);
       console.log(` 💰 Saldo: ${balance / LAMPORTS_PER_SOL} SOL`);
-    } catch (error) {
+    } catch {
       console.log(" ❌ Airdrop temporariamente indisponível (rate limit).");
       console.log("    Solicite manualmente em: https://faucet.solana.com");
       console.log(`    Endereço: ${wallet.publicKey.toBase58()}`);

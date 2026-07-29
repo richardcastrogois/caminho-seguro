@@ -1,5 +1,9 @@
 import nodemailer from "nodemailer";
-import { AlertSeverity, NotificationChannel, NotificationStatus } from "@/generated/prisma/client";
+import {
+  AlertSeverity,
+  NotificationChannel,
+  NotificationStatus,
+} from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
 type AlertNotificationTarget = {
@@ -148,7 +152,8 @@ export async function dispatchAlertNotifications(input: DispatchAlertNotificatio
           subject: input.title,
           content: telegramText,
           status: "FAILED",
-          failureReason: error instanceof Error ? error.message : "Falha desconhecida no Telegram.",
+          failureReason:
+            error instanceof Error ? error.message : "Falha desconhecida no Telegram.",
         });
       }
     }),
@@ -164,7 +169,10 @@ export async function dispatchAlertNotifications(input: DispatchAlertNotificatio
   }
 
   const adminUser = await prisma.user.findFirst({
-    where: { role: { in: ["ADMIN", "PUBLIC_AGENT", "INSTITUTION_MEMBER"] }, status: "ACTIVE" },
+    where: {
+      role: { in: ["ADMIN", "PUBLIC_AGENT", "INSTITUTION_MEMBER"] },
+      status: "ACTIVE",
+    },
     orderBy: { createdAt: "asc" },
     select: { id: true },
   });
@@ -204,7 +212,8 @@ export async function dispatchAlertNotifications(input: DispatchAlertNotificatio
           subject,
           content,
           status: "FAILED",
-          failureReason: error instanceof Error ? error.message : "Falha desconhecida no SMTP.",
+          failureReason:
+            error instanceof Error ? error.message : "Falha desconhecida no SMTP.",
         });
       }
     }),

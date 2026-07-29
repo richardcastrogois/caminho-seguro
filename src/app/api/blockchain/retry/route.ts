@@ -1,28 +1,57 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { blockchainService } from "@/features/blockchain/blockchain.service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const configuredSecret = process.env.BLOCKCHAIN_ADMIN_SECRET;
+    const receivedSecret = request.headers.get("x-blockchain-admin-secret");
+
+    if (!configuredSecret) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "BLOCKCHAIN_ADMIN_SECRET não está configurado no servidor.",
+        },
+        { status: 503 },
+      );
+    }
+
+    if (!receivedSecret || receivedSecret !== configuredSecret) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Operação não autorizada.",
+        },
+        { status: 401 },
+      );
+    }
+
     const pendingRecords = await prisma.blockchainRecord.findMany({
       where: { status: "PENDING" },
       include: {
         event: {
-          include: { child: true },
+          include: {
+            child: true,
+          },
         },
+      },
+      orderBy: {
+        createdAt: "asc",
       },
     });
 
     if (pendingRecords.length === 0) {
       return NextResponse.json({
         ok: true,
-        message: "Nenhum evento PENDING para retentar",
+        message: "Nenhum evento PENDING para retentar.",
         attempted: 0,
         succeeded: 0,
         failed: 0,
+        results: [],
       });
     }
 
@@ -43,23 +72,28 @@ export async function POST() {
         const eventHash = await blockchainService.hashEvent(event);
         const submitResult = await blockchainService.submitEvent(eventHash);
 
-        await prisma.blockchainRecord.update({
-          where: { id: record.id },
-          data: {
-            eventHash,
-            transactionHash: submitResult.transactionHash,
-            slot: BigInt(submitResult.slot),
-            status: "CONFIRMED",
-            submittedAt: new Date(),
-            confirmedAt: new Date(),
-            failureReason: null,
-          },
-        });
+        await prisma.$transaction([
+          prisma.blockchainRecord.update({
+            where: { id: record.id },
+            data: {
+              eventHash,
+              transactionHash: submitResult.transactionHash,
+              slot: BigInt(submitResult.slot),
+              status: "CONFIRMED",
+              submittedAt: new Date(),
+              confirmedAt: new Date(),
+              failureReason: null,
+            },
+          }),
 
-        await prisma.protectionEvent.update({
-          where: { id: event.id },
-          data: { status: "VALIDATED", validatedAt: new Date() },
-        });
+          prisma.protectionEvent.update({
+            where: { id: event.id },
+            data: {
+              status: "VALIDATED",
+              validatedAt: new Date(),
+            },
+          }),
+        ]);
 
         results.push({
           eventId: event.id,
@@ -69,13 +103,14 @@ export async function POST() {
           transactionHash: submitResult.transactionHash,
           slot: submitResult.slot.toString(),
         });
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Erro desconhecido";
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
 
         await prisma.blockchainRecord.update({
           where: { id: record.id },
-          data: { failureReason: message },
+          data: {
+            failureReason: message,
+          },
         });
 
         results.push({
@@ -88,21 +123,29 @@ export async function POST() {
       }
     }
 
-    const succeeded = results.filter((r) => r.status === "success").length;
-    const failed = results.filter((r) => r.status === "error").length;
+    const succeeded = results.filter((result) => result.status === "success").length;
+
+    const failed = results.filter((result) => result.status === "error").length;
 
     return NextResponse.json({
       ok: true,
-      message: `${succeeded} evento(s) confirmado(s), ${failed} falha(s)`,
+      message: `${succeeded} evento(s) confirmado(s), ${failed} falha(s).`,
       attempted: results.length,
       succeeded,
       failed,
       results,
     });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Erro desconhecido";
+    const message = error instanceof Error ? error.message : "Erro desconhecido";
+
     console.error("Falha no retry automático:", message);
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+
+    return NextResponse.json(
+      {
+        ok: false,
+        error: message,
+      },
+      { status: 500 },
+    );
   }
 }

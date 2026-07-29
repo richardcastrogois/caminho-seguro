@@ -2,13 +2,19 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { AuditAction, EventType } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import { authorizeRequest, findUserInstitution, unauthorizedResponse } from "@/lib/session";
+import {
+  authorizeRequest,
+  findUserInstitution,
+  unauthorizedResponse,
+} from "@/lib/session";
 import { getSaoPauloDayRange } from "@/lib/time";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const requestSchema = z.object({ childPublicId: z.string().min(8).max(200).optional() }).optional();
+const requestSchema = z
+  .object({ childPublicId: z.string().min(8).max(200).optional() })
+  .optional();
 
 export async function POST(request: Request) {
   try {
@@ -21,7 +27,10 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => undefined);
     const parsedBody = requestSchema.safeParse(body);
     if (!parsedBody.success) {
-      return NextResponse.json({ ok: false, error: "Dados invalidos para reiniciar BLE." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "Dados invalidos para reiniciar BLE." },
+        { status: 400 },
+      );
     }
 
     const { start, end } = getSaoPauloDayRange();
@@ -38,16 +47,34 @@ export async function POST(request: Request) {
 
     await prisma.$transaction(async (transaction) => {
       if (arrivalEvents.length > 0) {
-        await transaction.protectionEvent.deleteMany({ where: { id: { in: arrivalEvents.map((event) => event.id) } } });
+        await transaction.protectionEvent.deleteMany({
+          where: { id: { in: arrivalEvents.map((event) => event.id) } },
+        });
       }
       await transaction.auditLog.create({
-        data: { actorUserId: user.id, action: AuditAction.DELETE, entityType: "SchoolArrival", description: "Eventos de chegada escolar foram reiniciados.", metadata: { deletedEvents: arrivalEvents.map((event) => event.publicId) } },
+        data: {
+          actorUserId: user.id,
+          action: AuditAction.DELETE,
+          entityType: "SchoolArrival",
+          description: "Eventos de chegada escolar foram reiniciados.",
+          metadata: { deletedEvents: arrivalEvents.map((event) => event.publicId) },
+        },
       });
     });
 
-    return NextResponse.json({ ok: true, message: arrivalEvents.length > 0 ? "Chegadas de hoje reiniciadas." : "Nao havia chegadas para reiniciar.", deletedEvents: arrivalEvents.length });
+    return NextResponse.json({
+      ok: true,
+      message:
+        arrivalEvents.length > 0
+          ? "Chegadas de hoje reiniciadas."
+          : "Nao havia chegadas para reiniciar.",
+      deletedEvents: arrivalEvents.length,
+    });
   } catch (error: unknown) {
     console.error("Erro ao reiniciar BLE:", error);
-    return NextResponse.json({ ok: false, error: "Nao foi possivel reiniciar a demonstracao." }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: "Nao foi possivel reiniciar a demonstracao." },
+      { status: 500 },
+    );
   }
 }

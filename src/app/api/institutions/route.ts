@@ -24,8 +24,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ ok: true, ...result });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Erro desconhecido";
+    const message = error instanceof Error ? error.message : "Erro desconhecido";
     console.error("Falha ao listar instituições:", message);
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }

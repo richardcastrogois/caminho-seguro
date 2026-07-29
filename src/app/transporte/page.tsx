@@ -16,7 +16,11 @@ export const dynamic = "force-dynamic";
 
 export default async function TransportPage() {
   const user = await requireCurrentUser(["TRANSPORT_MEMBER", "ADMIN"], "/transporte");
-  const userInstitution = await requireUserInstitution(user, ["TRANSPORT"], "/transporte");
+  const userInstitution = await requireUserInstitution(
+    user,
+    ["TRANSPORT"],
+    "/transporte",
+  );
   const { start, end } = getSaoPauloDayRange();
 
   const transport = await prisma.institution.findUnique({

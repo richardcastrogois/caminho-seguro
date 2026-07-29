@@ -1,5 +1,6 @@
-import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@/generated/prisma/client";
 import { blockchainService } from "@/features/blockchain/blockchain.service";
+import { prisma } from "@/lib/prisma";
 import type { CreateEventInput, CreateEventResult } from "./events.types";
 
 export const eventsService = {
@@ -21,7 +22,10 @@ export const eventsService = {
         longitude: input.longitude,
         locationLabel: input.locationLabel,
         notes: input.notes,
-        metadata: input.metadata as any,
+        metadata:
+          input.metadata === undefined
+            ? undefined
+            : (input.metadata as Prisma.InputJsonValue),
         status: "RECEIVED",
       },
     });
@@ -72,8 +76,7 @@ export const eventsService = {
         status: "CONFIRMED",
       };
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Erro desconhecido";
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
       console.error("Blockchain submit falhou, evento salvo como PENDING:", message);
 
       const eventHash = await blockchainService.hashEvent(event);

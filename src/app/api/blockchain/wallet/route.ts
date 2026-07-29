@@ -1,24 +1,23 @@
 import { NextResponse } from "next/server";
-import { blockchainService } from "@/features/blockchain/blockchain.service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/**
+ * A carteira da aplicação deve ser criada somente por um script executado
+ * localmente por um administrador.
+ *
+ * Uma API pública nunca deve criar ou retornar uma chave privada.
+ */
 export async function POST() {
-  try {
-    const wallet = await blockchainService.createAndFundWallet();
-
-    return NextResponse.json({
-      ok: true,
-      message:
-        "Wallet criada. Copie a privateKey para o .env.local. NÃO compartilhe esta chave.",
-      publicKey: wallet.publicKey,
-      privateKey: wallet.privateKey,
-    });
-  } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Erro desconhecido";
-    console.error("Falha ao criar wallet:", message);
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
-  }
+  return NextResponse.json(
+    {
+      ok: false,
+      error:
+        "A criação de carteiras pela API foi desativada por segurança. Use o script local de configuração da Solana.",
+    },
+    {
+      status: 410,
+    },
+  );
 }

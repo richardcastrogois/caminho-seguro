@@ -76,8 +76,7 @@ async function retryPending() {
       );
       succeeded++;
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Erro desconhecido";
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
 
       await prisma.blockchainRecord.update({
         where: { id: record.id },

@@ -13,9 +13,16 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export default async function ProtectionNetworkPage() {
-  const user = await requireCurrentUser(["ADMIN", "PUBLIC_AGENT", "INSTITUTION_MEMBER"], "/rede");
+  const user = await requireCurrentUser(
+    ["ADMIN", "PUBLIC_AGENT", "INSTITUTION_MEMBER"],
+    "/rede",
+  );
   if (user.role === "INSTITUTION_MEMBER") {
-    await requireUserInstitution(user, ["PROTECTION_AGENCY", "UBS", "CRAS", "NGO", "PARTNER_BUSINESS"], "/rede");
+    await requireUserInstitution(
+      user,
+      ["PROTECTION_AGENCY", "UBS", "CRAS", "NGO", "PARTNER_BUSINESS"],
+      "/rede",
+    );
   }
 
   const [institutions, alerts, recentEvents] = await Promise.all([

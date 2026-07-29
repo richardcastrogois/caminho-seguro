@@ -40,7 +40,8 @@ const situationConfig = {
     severity: AlertSeverity.HIGH,
     eventSeverity: EventSeverity.ATTENTION,
     title: "Crianca encontrada",
-    message: "Uma pessoa informou que encontrou a crianca protegida aparentemente desacompanhada.",
+    message:
+      "Uma pessoa informou que encontrou a crianca protegida aparentemente desacompanhada.",
   },
   CHILD_AT_RISK: {
     eventType: EventType.CHILD_AT_RISK,
@@ -48,7 +49,8 @@ const situationConfig = {
     severity: AlertSeverity.CRITICAL,
     eventSeverity: EventSeverity.CRITICAL,
     title: "Possivel situacao de risco",
-    message: "Uma pessoa informou que a crianca protegida aparenta estar em situacao de risco.",
+    message:
+      "Uma pessoa informou que a crianca protegida aparenta estar em situacao de risco.",
   },
   MEDICAL_HELP: {
     eventType: EventType.HELP_REQUEST,
@@ -72,7 +74,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const { token, situation, latitude, longitude, locationAccuracy, notes } = parsedBody.data;
+    const { token, situation, latitude, longitude, locationAccuracy, notes } =
+      parsedBody.data;
 
     const identifier = await prisma.childIdentifier.findFirst({
       where: { publicToken: token, status: "ACTIVE", type: "QR_CODE" },
@@ -157,7 +160,10 @@ export async function POST(request: Request) {
               userId: relation.guardian.user.id,
               alertId: alert.id,
               channel: "BROWSER_PUSH",
-              status: relation.guardian.notificationOpt?.browserPush === false ? "FAILED" : "PENDING",
+              status:
+                relation.guardian.notificationOpt?.browserPush === false
+                  ? "FAILED"
+                  : "PENDING",
               recipient: relation.guardian.user.email,
               subject: config.title,
               content: config.message,

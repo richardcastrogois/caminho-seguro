@@ -58,7 +58,10 @@ export default async function PublicHelpPage({ params }: PublicHelpPageProps) {
                 Você pode ajudar sem acessar dados pessoais da criança.
               </h1>
 
-              <p data-gsap="hero" className="mt-3 max-w-xl text-base leading-7 text-slate-600">
+              <p
+                data-gsap="hero"
+                className="mt-3 max-w-xl text-base leading-7 text-slate-600"
+              >
                 Escolha o que aconteceu e envie o alerta. O sistema não mostra nome,
                 endereço, telefone, responsável ou dados médicos nesta página.
               </p>

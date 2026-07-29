@@ -17,8 +17,7 @@ export async function GET(
       ...result,
     });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Erro desconhecido";
+    const message = error instanceof Error ? error.message : "Erro desconhecido";
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 }

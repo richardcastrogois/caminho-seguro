@@ -259,7 +259,7 @@ export function LoginForm({ nextPath, unauthorized, initialProfile }: LoginFormP
               type="submit"
               disabled={loading}
               size="lg"
-              className="h-12 w-full rounded-2xl bg-gradient-to-r from-sky-600 via-cyan-600 to-emerald-600 text-white hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-12 w-full rounded-2xl bg-linear-to-r from-sky-600 via-cyan-600 to-emerald-600 text-white hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <>

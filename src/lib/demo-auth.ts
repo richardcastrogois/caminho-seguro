@@ -48,7 +48,9 @@ export const demoProfiles: Record<DemoProfileId, DemoSession> = {
 const profileIds = Object.keys(demoProfiles) as DemoProfileId[];
 
 function getProfileIdForPath(nextPath: string): DemoProfileId | null {
-  return profileIds.find((profileId) => demoProfiles[profileId].homePath === nextPath) ?? null;
+  return (
+    profileIds.find((profileId) => demoProfiles[profileId].homePath === nextPath) ?? null
+  );
 }
 
 function getLoginRedirectPath(nextPath: string, unauthorized = false): string {
@@ -126,4 +128,3 @@ export async function authorizeDemoRequest(
 
   return session;
 }
-

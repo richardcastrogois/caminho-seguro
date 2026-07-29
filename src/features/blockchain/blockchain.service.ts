@@ -62,9 +62,7 @@ export const blockchainService = {
     return buf.toString("hex");
   },
 
-  async submitEvent(
-    eventHashHex: string,
-  ): Promise<BlockchainSubmitResult> {
+  async submitEvent(eventHashHex: string): Promise<BlockchainSubmitResult> {
     if (!blockchainConfig.privateKey) {
       throw new Error(
         "SOLANA_PRIVATE_KEY não configurada. Crie uma wallet e configure no .env.local.",
@@ -100,9 +98,7 @@ export const blockchainService = {
     );
 
     if (confirmation.value.err) {
-      throw new Error(
-        `Transação falhou: ${JSON.stringify(confirmation.value.err)}`,
-      );
+      throw new Error(`Transação falhou: ${JSON.stringify(confirmation.value.err)}`);
     }
 
     return {
@@ -145,10 +141,9 @@ export const blockchainService = {
     if (record.transactionHash && isConfirmed) {
       try {
         const connection = getConnection();
-        const txResponse = await connection.getTransaction(
-          record.transactionHash,
-          { commitment: "confirmed" },
-        );
+        const txResponse = await connection.getTransaction(record.transactionHash, {
+          commitment: "confirmed",
+        });
         onChainVerified = txResponse !== null;
       } catch {
         onChainVerified = false;

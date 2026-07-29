@@ -97,16 +97,22 @@ export function AppNavigation({ session }: AppNavigationProps) {
   return (
     <header
       data-app-navigation
-      className="fixed inset-x-3 top-3 z-[100] mx-auto max-w-6xl rounded-[24px] border border-slate-200/80 bg-white/95 px-3 py-3 shadow-[0_18px_45px_rgba(15,23,42,0.14)] backdrop-blur-xl sm:inset-x-6 md:px-4"
+      className="fixed inset-x-3 top-3 z-100 mx-auto max-w-6xl rounded-[24px] border border-slate-200/80 bg-white/95 px-3 py-3 shadow-[0_18px_45px_rgba(15,23,42,0.14)] backdrop-blur-xl sm:inset-x-6 md:px-4"
     >
       <div className="flex items-center justify-between gap-3">
         <BrandLogo />
 
-        <nav aria-label="Navegacao principal" className="hidden items-center gap-2 md:flex">
+        <nav
+          aria-label="Navegacao principal"
+          className="hidden items-center gap-2 md:flex"
+        >
           <Link
             href="/"
             className={cn(
-              buttonVariants({ variant: pathname === "/" ? "default" : "outline", size: "lg" }),
+              buttonVariants({
+                variant: pathname === "/" ? "default" : "outline",
+                size: "lg",
+              }),
               "rounded-full",
             )}
           >
@@ -117,7 +123,10 @@ export function AppNavigation({ session }: AppNavigationProps) {
           <Link
             href="/ajuda/demo"
             className={cn(
-              buttonVariants({ variant: pathname.startsWith("/ajuda") ? "default" : "outline", size: "lg" }),
+              buttonVariants({
+                variant: pathname.startsWith("/ajuda") ? "default" : "outline",
+                size: "lg",
+              }),
               "rounded-full",
             )}
           >
@@ -139,13 +148,21 @@ export function AppNavigation({ session }: AppNavigationProps) {
                       const href = getPrivateLoginHref(item);
 
                       return (
-                        <NavigationMenuLink key={item.href} render={<Link href={href} />} className="items-start gap-3 p-3">
+                        <NavigationMenuLink
+                          key={item.href}
+                          render={<Link href={href} />}
+                          className="items-start gap-3 p-3"
+                        >
                           <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
                             <Icon />
                           </span>
                           <span className="min-w-0">
-                            <span className="block font-semibold text-slate-950">{item.label}</span>
-                            <span className="mt-1 block text-sm leading-5 text-slate-600">{item.description}</span>
+                            <span className="block font-semibold text-slate-950">
+                              {item.label}
+                            </span>
+                            <span className="mt-1 block text-sm leading-5 text-slate-600">
+                              {item.description}
+                            </span>
                           </span>
                         </NavigationMenuLink>
                       );
@@ -164,19 +181,43 @@ export function AppNavigation({ session }: AppNavigationProps) {
                 {session.label}
               </span>
               <form action="/api/auth/logout" method="post">
-                <Button type="submit" variant="outline" size="icon-lg" className="rounded-full" aria-label="Sair" title="Sair">
+                <Button
+                  type="submit"
+                  variant="outline"
+                  size="icon-lg"
+                  className="rounded-full"
+                  aria-label="Sair"
+                  title="Sair"
+                >
                   <LogOut />
                 </Button>
               </form>
             </>
           ) : (
-            <Link href={`/login?next=${encodeURIComponent(pathname)}`} className={cn(buttonVariants({ variant: "outline", size: "icon-lg" }), "rounded-full")} aria-label="Entrar" title="Entrar">
+            <Link
+              href={`/login?next=${encodeURIComponent(pathname)}`}
+              className={cn(
+                buttonVariants({ variant: "outline", size: "icon-lg" }),
+                "rounded-full",
+              )}
+              aria-label="Entrar"
+              title="Entrar"
+            >
               <LogIn />
             </Link>
           )}
 
           <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="outline" size="icon-lg" className="rounded-full md:hidden" aria-label="Abrir menu" />}>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="outline"
+                  size="icon-lg"
+                  className="rounded-full md:hidden"
+                  aria-label="Abrir menu"
+                />
+              }
+            >
               <Menu />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-72">
@@ -213,6 +254,3 @@ export function AppNavigation({ session }: AppNavigationProps) {
     </header>
   );
 }
-
-
-

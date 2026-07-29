@@ -6,7 +6,6 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-
   --brand-50: #eff8ff;
   --brand-100: #dff1ff;
   --brand-200: #b8e3ff;
@@ -269,7 +268,6 @@ a {
 }
 
 @theme inline {
-
   --font-heading: var(--font-sans);
 
   --font-sans: var(--font-sans);
@@ -352,7 +350,6 @@ a {
 }
 
 .dark {
-
   --background: oklch(0.145 0 0);
 
   --foreground: oklch(0.985 0 0);
@@ -420,13 +417,11 @@ a {
   * {
     @apply border-border outline-ring/50;
   }
-  
-body {
+
+  body {
     @apply bg-background text-foreground;
   }
   html {
     @apply font-sans;
   }
 }
-
-

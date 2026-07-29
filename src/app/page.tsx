@@ -7,7 +7,8 @@ import {
   Bluetooth,
   CheckCircle2,
   EyeOff,
-  Fingerprint,  Network,
+  Fingerprint,
+  Network,
   QrCode,
   School,
   ShieldCheck,
@@ -17,7 +18,14 @@ import { GsapReveal } from "@/components/shared/gsap-reveal";
 import { InteractiveParticleField } from "@/components/shared/interactive-particle-field";
 import { ProtectionNetworkVisual } from "@/components/shared/protection-network-visual";
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const productPillars = [
@@ -63,10 +71,27 @@ const testSteps = [
 ];
 
 const protectionSteps = [
-  { title: "Identidade fisica", description: "A crianca usa QR e BLE sem depender de celular, internet ou aplicativo.", icon: QrCode },
-  { title: "Evento, nao rota", description: "A rede registra passagens importantes, nao cada passo da rotina.", icon: Bluetooth },
-  { title: "Alerta acionavel", description: "Responsaveis e instituicoes recebem contexto suficiente para agir.", icon: BellRing },
-  { title: "Privacidade primeiro", description: "Dados pessoais ficam fora do QR publico e fora de provas abertas.", icon: ShieldCheck },
+  {
+    title: "Identidade fisica",
+    description:
+      "A crianca usa QR e BLE sem depender de celular, internet ou aplicativo.",
+    icon: QrCode,
+  },
+  {
+    title: "Evento, nao rota",
+    description: "A rede registra passagens importantes, nao cada passo da rotina.",
+    icon: Bluetooth,
+  },
+  {
+    title: "Alerta acionavel",
+    description: "Responsaveis e instituicoes recebem contexto suficiente para agir.",
+    icon: BellRing,
+  },
+  {
+    title: "Privacidade primeiro",
+    description: "Dados pessoais ficam fora do QR publico e fora de provas abertas.",
+    icon: ShieldCheck,
+  },
 ];
 
 export default function Home() {
@@ -217,8 +242,8 @@ export default function Home() {
                 Como testar
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-                Abra duas abas: uma acompanha, a outra provoca
-                eventos (navegador anônimo).
+                Abra duas abas: uma acompanha, a outra provoca eventos (navegador
+                anônimo).
               </h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">
                 Use a aba Familia como observatorio do responsavel. Na segunda aba, simule
@@ -303,9 +328,20 @@ function MetricCard({ value, label }: { value: string; label: string }) {
   );
 }
 
-function TruthCard({ title, text, positive = false }: { title: string; text: string; positive?: boolean }) {
+function TruthCard({
+  title,
+  text,
+  positive = false,
+}: {
+  title: string;
+  text: string;
+  positive?: boolean;
+}) {
   return (
-    <Card data-gsap-scroll="up" className={`rounded-2xl ${positive ? "border-emerald-200 bg-emerald-50" : "border-sky-200 bg-sky-50"}`}>
+    <Card
+      data-gsap-scroll="up"
+      className={`rounded-2xl ${positive ? "border-emerald-200 bg-emerald-50" : "border-sky-200 bg-sky-50"}`}
+    >
       <CardHeader>
         <div className="flex items-center gap-2 text-slate-950">
           <CheckCircle2 />

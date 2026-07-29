@@ -12,12 +12,31 @@ const publicPaths = [
   "/favicon.ico",
 ];
 
+/**
+ * Essas rotas administrativas não usam o JWT comum da aplicação.
+ * Elas possuem autenticação própria por meio do header:
+ *
+ * x-blockchain-admin-secret
+ */
+const blockchainAdminPaths = [
+  "/api/blockchain/faucet",
+  "/api/blockchain/submit",
+  "/api/blockchain/retry",
+  "/api/blockchain/reconcile",
+];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const isPublic = publicPaths.some((p) => pathname.startsWith(p));
+  const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
 
-  if (isPublic) {
+  if (isPublicPath) {
+    return NextResponse.next();
+  }
+
+  const isBlockchainAdminPath = blockchainAdminPaths.some((path) => pathname === path);
+
+  if (isBlockchainAdminPath && request.method === "POST") {
     return NextResponse.next();
   }
 
@@ -34,8 +53,13 @@ export function middleware(request: NextRequest) {
 
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json(
-        { ok: false, error: "Token de autenticação necessário" },
-        { status: 401 },
+        {
+          ok: false,
+          error: "Token de autenticação necessário.",
+        },
+        {
+          status: 401,
+        },
       );
     }
   }

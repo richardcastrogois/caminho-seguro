@@ -256,7 +256,6 @@ async function main() {
     },
   });
 
-
   const transportUser = await prisma.user.upsert({
     where: {
       email: "operador.transporte@caminhoseguro.demo",
