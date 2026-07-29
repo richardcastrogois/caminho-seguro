@@ -208,6 +208,7 @@ export default async function OpenGraphImage() {
             boxShadow: "0 28px 70px rgba(0, 0, 0, 0.22)",
           }}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={logoUrl}
             alt=""

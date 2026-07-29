@@ -1,5 +1,5 @@
 import { ViewTransition } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppNavigation } from "@/components/shared/app-navigation";
 import { getCurrentUser } from "@/lib/session";
@@ -16,6 +16,42 @@ const geistMono = Geist_Mono({
 });
 
 const siteUrl = "https://caminho-seguro.rcg-tech.com.br";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: "Caminho Seguro",
+      description:
+        "Rede comunitária de proteção infantil conectando famílias, escolas, transportes e comunidade.",
+      inLanguage: "pt-BR",
+    },
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "Caminho Seguro",
+      url: siteUrl,
+      logo: `${siteUrl}/CaminhoSeguroLogo.png`,
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${siteUrl}/#software`,
+      name: "Caminho Seguro",
+      applicationCategory: "SafetyApplication",
+      operatingSystem: "Web",
+      url: siteUrl,
+      description:
+        "Plataforma que conecta responsáveis, escolas, transportes e comunidade para fortalecer a proteção infantil por meio de QR Code, alertas e pontos seguros.",
+      image: `${siteUrl}/opengraph-image`,
+      publisher: {
+        "@id": `${siteUrl}/#organization`,
+      },
+    },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -83,6 +119,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#0d4164",
+  colorScheme: "light",
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -93,8 +134,18 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <script
+          id="schema-org"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+
         <AppNavigation session={session} />
+
         <div className="h-32 md:h-0" aria-hidden="true" />
+
         <ViewTransition name="main-content">{children}</ViewTransition>
       </body>
     </html>
