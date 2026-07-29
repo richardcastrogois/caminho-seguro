@@ -15,21 +15,68 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://caminho-seguro.rcg-tech.com.br";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+
   title: {
-    default: "Caminho Seguro",
+    default: "Caminho Seguro | Rede de Proteção Infantil",
     template: "%s | Caminho Seguro",
   },
+
   description:
-    "Rede comunitaria de protecao infantil que conecta familias, escolas, transportes, orgaos publicos e comunidade.",
+    "Plataforma de proteção infantil que conecta responsáveis, escolas, transportes, órgãos públicos e comunidade por meio de alertas, QR Code e pontos seguros.",
+
   keywords: [
-    "protecao infantil",
-    "Bluetooth",
+    "proteção infantil",
+    "segurança infantil",
+    "rede comunitária",
+    "Caminho Seguro",
     "QR Code",
-    "rede comunitaria",
-    "eventos de protecao",
+    "Bluetooth",
+    "pontos seguros",
+    "alertas de proteção",
+    "trajeto escolar",
   ],
+
   authors: [{ name: "Equipe Caminho Seguro" }],
+  creator: "Equipe Caminho Seguro",
+  publisher: "Caminho Seguro",
+
+  applicationName: "Caminho Seguro",
+
+  alternates: {
+    canonical: "/",
+  },
+
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: siteUrl,
+    siteName: "Caminho Seguro",
+    title: "Caminho Seguro | Rede de Proteção Infantil",
+    description:
+      "Uma rede comunitária que conecta responsáveis, escolas, transportes, órgãos públicos e comunidade para ampliar a segurança infantil.",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Caminho Seguro | Rede de Proteção Infantil",
+    description:
+      "Uma rede comunitária que conecta responsáveis, escolas e comunidade para ampliar a segurança infantil.",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
 };
 
 export default async function RootLayout({
