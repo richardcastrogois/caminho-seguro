@@ -95,16 +95,31 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: siteUrl,
     siteName: "Caminho Seguro",
+
     title: "Caminho Seguro | Rede de Proteção Infantil",
+
     description:
       "Uma rede comunitária que conecta responsáveis, escolas, transportes, órgãos públicos e comunidade para ampliar a segurança infantil.",
+
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Caminho Seguro",
+      },
+    ],
   },
 
   twitter: {
     card: "summary_large_image",
+
     title: "Caminho Seguro | Rede de Proteção Infantil",
+
     description:
       "Uma rede comunitária que conecta responsáveis, escolas e comunidade para ampliar a segurança infantil.",
+
+    images: ["/opengraph-image"],
   },
 
   robots: {
