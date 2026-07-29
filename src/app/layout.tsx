@@ -46,6 +46,10 @@ export const metadata: Metadata = {
 
   applicationName: "Caminho Seguro",
 
+  verification: {
+    google: "rpaW80VbIlLIUHKUd3FKKg5x4UxeVCulWDc9TZOzDVE",
+  },
+
   alternates: {
     canonical: "/",
   },
