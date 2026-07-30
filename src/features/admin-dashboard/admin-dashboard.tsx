@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   BadgeCheck,
@@ -10,6 +11,7 @@ import {
   LoaderCircle,
   Plus,
   ShieldCheck,
+  Smartphone,
   Trash2,
   UserPlus,
 } from "lucide-react";
@@ -229,7 +231,7 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
             </div>
           )}
 
-          <section className="grid gap-6 lg:grid-cols-3">
+          <section className="grid gap-6 lg:grid-cols-4">
             <SummaryCard title="Crianças" value={data.children.length} icon={UserPlus} />
             <SummaryCard
               title="Instituições"
@@ -241,6 +243,20 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
               value={data.child?.identifiers.length ?? 0}
               icon={ShieldCheck}
             />
+            <Link
+              href="/admin/simulador"
+              className="dashboard-panel motion-card flex items-center justify-between rounded-[22px] border p-5 transition hover:border-sky-300 hover:bg-sky-50"
+            >
+              <div>
+                <p className="text-sm text-slate-600">Simular leitura</p>
+                <p className="mt-1.5 text-sm font-semibold text-sky-700">
+                  Abrir simulador &rarr;
+                </p>
+              </div>
+              <div className="flex size-11 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
+                <Smartphone className="size-5" />
+              </div>
+            </Link>
           </section>
 
           <section className="mt-6 grid gap-6 xl:grid-cols-2">
