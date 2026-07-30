@@ -83,7 +83,10 @@ const privateItems: Array<{
   },
 ];
 
-function getPrivateLoginHref(item: (typeof privateItems)[number]) {
+function getPrivateHref(item: (typeof privateItems)[number], session: CurrentUser | null) {
+  if (session?.profileId === item.profile) {
+    return item.href;
+  }
   return `/login?next=${encodeURIComponent(item.href)}&profile=${item.profile}`;
 }
 
@@ -145,7 +148,7 @@ export function AppNavigation({ session }: AppNavigationProps) {
                   <div className="grid w-140 grid-cols-2 gap-2 p-2">
                     {privateItems.map((item) => {
                       const Icon = item.icon;
-                      const href = getPrivateLoginHref(item);
+                      const href = getPrivateHref(item, session);
 
                       return (
                         <NavigationMenuLink
@@ -237,7 +240,7 @@ export function AppNavigation({ session }: AppNavigationProps) {
                 <DropdownMenuLabel>Acessos privados</DropdownMenuLabel>
                 {privateItems.map((item) => {
                   const Icon = item.icon;
-                  const href = getPrivateLoginHref(item);
+                  const href = getPrivateHref(item, session);
 
                   return (
                     <DropdownMenuItem key={item.href} render={<Link href={href} />}>

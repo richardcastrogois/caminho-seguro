@@ -30,8 +30,10 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const initialProfile = isDemoProfileId(params.profile) ? params.profile : undefined;
   const session = await getDemoSession();
 
-  if (session && params.unauthorized !== "1" && !initialProfile) {
-    redirect(nextPath === "/" ? session.homePath : nextPath);
+  if (session && params.unauthorized !== "1") {
+    if (!initialProfile || initialProfile === session.profileId) {
+      redirect(nextPath === "/" ? session.homePath : nextPath);
+    }
   }
 
   return (

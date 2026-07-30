@@ -129,7 +129,8 @@ export function LoginForm({ nextPath, unauthorized, initialProfile }: LoginFormP
 
       setAuthToken(result.token);
       const homePath = rolePaths[result.user.role] ?? "/";
-      const finalPath = nextPath && nextPath !== "/" ? nextPath : homePath;
+      const finalPath =
+        unauthorized || !nextPath || nextPath === "/" ? homePath : nextPath;
 
       window.location.href = finalPath;
     } catch (err) {
