@@ -3,13 +3,18 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  BadgeCheck,
   BellRing,
+  BrainCircuit,
   Bluetooth,
   CheckCircle2,
   EyeOff,
   Fingerprint,
+  MapPinned,
   Network,
+  PlugZap,
   QrCode,
+  Radio,
   School,
   ShieldCheck,
   Users,
@@ -17,6 +22,12 @@ import {
 import { GsapReveal } from "@/components/shared/gsap-reveal";
 import { InteractiveParticleField } from "@/components/shared/interactive-particle-field";
 import { ProtectionNetworkVisual } from "@/components/shared/protection-network-visual";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -91,6 +102,54 @@ const protectionSteps = [
     title: "Privacidade primeiro",
     description: "Dados pessoais ficam fora do QR publico e fora de provas abertas.",
     icon: ShieldCheck,
+  },
+];
+
+const futureEvolutions = [
+  {
+    title: "IA para prevencao de riscos",
+    horizon: "Pesquisa aplicada",
+    icon: BrainCircuit,
+    description:
+      "Usar eventos historicos anonimizados para detectar atrasos recorrentes, mudancas de rotina, horarios criticos e regioes com aumento de ocorrencias.",
+    approach:
+      "Comecariamos por indicadores explicaveis e alertas de anomalia, sempre como apoio a responsaveis e gestores. A IA nao decidiria sozinha e nao dependeria de rastreamento continuo.",
+  },
+  {
+    title: "Mapa inteligente da rede",
+    horizon: "Curto prazo",
+    icon: MapPinned,
+    description:
+      "Evoluir o mapa para mostrar cobertura por bairro, pontos de apoio, concentracao de eventos e lacunas de atendimento.",
+    approach:
+      "A primeira versao pode combinar filtros por periodo, heatmap e leitura de cobertura. Depois, a rede pode sugerir onde cadastrar novos parceiros ou reforcar rotas de resposta.",
+  },
+  {
+    title: "Pontos seguros certificados",
+    horizon: "Curto prazo",
+    icon: BadgeCheck,
+    description:
+      "Criar uma rede oficial de escolas, comercios, UBS, CRAS e parceiros treinados para receber criancas em situacao de risco.",
+    approach:
+      "Cada ponto teria cadastro, protocolo simples, responsavel validado e selo Caminho Seguro. A plataforma registraria o atendimento sem expor dados sensiveis no QR publico.",
+  },
+  {
+    title: "API publica para integracoes",
+    horizon: "Curto prazo",
+    icon: PlugZap,
+    description:
+      "Permitir que sistemas de escolas, transporte, assistencia social e prefeituras registrem eventos sem substituir suas ferramentas atuais.",
+    approach:
+      "O caminho seria publicar uma API autenticada com OpenAPI, escopos por parceiro, webhooks de notificacao e logs auditaveis para integracoes graduais.",
+  },
+  {
+    title: "Integracao com wearables",
+    horizon: "Longo prazo",
+    icon: Radio,
+    description:
+      "Ampliar a identificacao fisica para pulseiras, crachas, relogios infantis, mochilas inteligentes, BLE, NFC ou outros dispositivos.",
+    approach:
+      "A evolucao manteria a mesma identidade protegida. O dispositivo so ajudaria a criar eventos confiaveis, considerando custo, bateria, manutencao e contexto de cada instituicao.",
   },
 ];
 
@@ -242,12 +301,12 @@ export default function Home() {
                 Como testar
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-                Abra duas abas: uma acompanha, a outra provoca eventos (navegador
-                anônimo).
+                Abra duas abas: uma acompanha, a outra provoca eventos no navegador
+                anonimo.
               </h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">
                 Use a aba Familia como observatorio do responsavel. Na segunda aba, simule
-                Escola, Transporte ou QR publico. Assim você acompanha os resultador sem
+                Escola, Transporte ou QR publico. Assim voce acompanha os resultados sem
                 precisar de explicacao longa.
               </p>
             </div>
@@ -289,7 +348,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="relative py-16">
+        <section className="relative border-b border-sky-100 py-16">
           <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-10">
             <div data-gsap-scroll="left">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
@@ -310,6 +369,74 @@ export default function Home() {
                 text="Nao mostra dados pessoais no QR e nao acompanha GPS continuo da crianca."
               />
             </div>
+          </div>
+        </section>
+
+        <section className="relative py-16">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:px-10">
+            <div data-gsap-scroll="left" className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+                Visao de futuro
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
+                Como essa rede pode evoluir sem abandonar privacidade e confianca.
+              </h2>
+              <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+                As proximas evolucoes partem do mesmo principio do MVP: criar eventos
+                confiaveis, acionar a rede certa e evitar vigilancia permanente da
+                crianca.
+              </p>
+            </div>
+
+            <Card
+              data-gsap-scroll="up"
+              className="home-surface overflow-hidden rounded-3xl border-sky-100 bg-white/90"
+            >
+              <CardHeader className="gap-2 p-5 sm:p-6">
+                <CardTitle className="text-xl text-slate-950 sm:text-2xl">
+                  Evolucoes planejadas para a rede
+                </CardTitle>
+                <CardDescription className="leading-6">
+                  Cada frente pode ser validada em pequenos incrementos antes de entrar no
+                  roadmap principal.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+                <Accordion defaultValue={["future-0"]} className="gap-1">
+                  {futureEvolutions.map((item, index) => {
+                    const Icon = item.icon;
+
+                    return (
+                      <AccordionItem
+                        key={item.title}
+                        value={`future-${index}`}
+                        className="rounded-2xl border border-sky-100 bg-white/80 px-4 shadow-sm not-last:border-b"
+                      >
+                        <AccordionTrigger className="gap-3 py-4 no-underline hover:no-underline">
+                          <span className="flex min-w-0 flex-1 items-center gap-3">
+                            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                              <Icon />
+                            </span>
+                            <span className="min-w-0">
+                              <span className="block text-base font-semibold leading-6 text-slate-950">
+                                {item.title}
+                              </span>
+                              <span className="mt-1 block text-sm font-medium text-sky-700">
+                                {item.horizon}
+                              </span>
+                            </span>
+                          </span>
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-4 pl-0 text-sm leading-6 text-slate-600 sm:pl-13">
+                          <p>{item.description}</p>
+                          <p className="mt-3 text-slate-700">{item.approach}</p>
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
+                </Accordion>
+              </CardContent>
+            </Card>
           </div>
         </section>
       </GsapReveal>
