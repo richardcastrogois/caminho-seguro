@@ -1,9 +1,17 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { BellRing, Home, School, ShieldCheck, Users } from "lucide-react";
+import {
+  BellRing,
+  Home,
+  Pause,
+  Play,
+  School,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 
 gsap.registerPlugin(useGSAP);
 
@@ -13,24 +21,28 @@ const scenarioSteps = [
     label: "Saiu de casa",
     icon: Home,
     tone: "blue",
+    detail: "O QR é lido na saída e o evento é registrado.",
   },
   {
     id: "nao-chegou-na-escola",
     label: "Não chegou na escola",
     icon: School,
     tone: "blue",
+    detail: "O horário passa sem registro de chegada.",
   },
   {
     id: "alerta-dispara",
     label: "Alerta dispara",
     icon: BellRing,
     tone: "amber",
+    detail: "O responsável recebe o alerta na hora.",
   },
   {
     id: "pais-agem",
     label: "Pais agem",
     icon: Users,
     tone: "green",
+    detail: "Família e rede pública são acionadas.",
   },
 ] as const;
 
@@ -46,6 +58,12 @@ const toneStyles: Record<string, string> = {
   green: "border-emerald-200 bg-white text-emerald-800 shadow-emerald-950/10",
 };
 
+const activeToneStyles: Record<string, string> = {
+  blue: "ring-sky-400",
+  amber: "ring-amber-400",
+  green: "ring-emerald-400",
+};
+
 const iconToneStyles: Record<string, string> = {
   blue: "bg-sky-50 text-sky-700",
   amber: "bg-amber-50 text-amber-600",
@@ -54,6 +72,48 @@ const iconToneStyles: Record<string, string> = {
 
 export function HowItWorksScenario() {
   const scope = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const isFirstRun = useRef(true);
+
+  const activeStep = scenarioSteps[activeIndex];
+
+  useEffect(() => {
+    if (!isPlaying) {
+      return;
+    }
+
+    const id = window.setInterval(() => {
+      setActiveIndex((current) => (current + 1) % scenarioSteps.length);
+    }, 2600);
+
+    return () => window.clearInterval(id);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const root = scope.current;
+
+    if (!root || isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const node = root.querySelector<HTMLElement>(
+      `[data-scenario-node="${activeStep.id}"]`,
+    );
+
+    if (node) {
+      gsap.fromTo(
+        node,
+        { scale: 0.9 },
+        { scale: 1, duration: 0.5, ease: "back.out(2)", overwrite: "auto" },
+      );
+    }
+  }, [activeIndex, activeStep.id]);
 
   useGSAP(
     () => {
@@ -187,50 +247,99 @@ export function HowItWorksScenario() {
             markerHeight="6"
             orient="auto-start-reverse"
           >
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#0e7490" />
           </marker>
         </defs>
-        {edges.map((edge) => (
-          <line
-            key={`${edge.from}-${edge.to}`}
-            data-scenario-edge
-            data-from={edge.from}
-            data-to={edge.to}
-            stroke="#64748b"
-            strokeWidth={1.4}
-            strokeDasharray="6 8"
-            strokeLinecap="round"
-            markerEnd="url(#scenario-arrow)"
-            opacity={0.5}
-          />
-        ))}
+        {edges.map((edge) => {
+          const isActive =
+            edge.to === activeStep.id || edge.from === activeStep.id;
+
+          return (
+            <line
+              key={`${edge.from}-${edge.to}`}
+              data-scenario-edge
+              data-from={edge.from}
+              data-to={edge.to}
+              stroke={isActive ? "#0e7490" : "#94a3b8"}
+              strokeWidth={isActive ? 2.4 : 1.4}
+              strokeDasharray="6 8"
+              strokeLinecap="round"
+              markerEnd="url(#scenario-arrow)"
+              opacity={isActive ? 0.95 : 0.45}
+            />
+          );
+        })}
       </svg>
 
-      <div className="relative z-20 flex flex-col items-stretch gap-4 px-6 py-12 sm:px-10 md:flex-row md:items-center md:justify-between md:gap-2 md:px-14">
+      <div className="relative z-20 flex flex-col items-stretch gap-4 px-6 py-16 sm:px-12 sm:py-20 md:flex-row md:items-center md:justify-between md:gap-4">
         {scenarioSteps.map((step, index) => {
           const Icon = step.icon;
+          const isActive = activeIndex === index;
+
           return (
-            <div
+            <button
               key={step.id}
+              type="button"
               data-scenario-node
               data-scenario-anchor={step.id}
-              className={`flex min-h-12 items-center gap-2.5 rounded-full border px-4 py-2.5 text-sm font-semibold shadow-lg will-change-transform ${toneStyles[step.tone]}`}
+              aria-pressed={isActive}
+              onClick={() => {
+                setActiveIndex(index);
+                setIsPlaying(false);
+              }}
+              className={`flex min-h-14 items-center gap-3 rounded-2xl border px-5 py-4 text-base font-semibold shadow-lg outline-offset-2 will-change-transform transition-[box-shadow,border-color,outline-color] duration-300 focus-visible:outline-2 focus-visible:outline-emerald-500 hover:shadow-xl ${toneStyles[step.tone]} ${isActive ? `ring-[3px] ring-offset-2 ring-offset-white/90 ${activeToneStyles[step.tone]}` : ""}`}
             >
               <span
-                className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${iconToneStyles[step.tone]}`}
+                className={`flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${iconToneStyles[step.tone]}`}
               >
                 0{index + 1}
               </span>
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className="h-5 w-5 shrink-0" />
               {step.label}
-            </div>
+            </button>
           );
         })}
       </div>
 
-      <div className="relative z-20 flex flex-wrap items-center justify-center gap-2 border-t border-sky-100/90 bg-white/70 px-4 py-3 text-xs font-semibold text-emerald-800 backdrop-blur">
-        <ShieldCheck className="h-4 w-4" />
-        O Caminho Seguro nao rastreia: acompanha os eventos importantes
+      <div className="relative z-20 flex items-center gap-4 border-t border-sky-100/90 bg-white/80 px-5 py-4 backdrop-blur sm:px-8">
+        <button
+          type="button"
+          onClick={() => setIsPlaying((playing) => !playing)}
+          aria-label={isPlaying ? "Pausar demonstração" : "Reproduzir demonstração"}
+          className="flex size-11 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white shadow-md outline-offset-2 transition-colors duration-300 hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-emerald-600"
+        >
+          {isPlaying ? (
+            <Pause className="h-5 w-5" />
+          ) : (
+            <Play className="h-5 w-5 translate-x-px" />
+          )}
+        </button>
+
+        <div className="min-w-0 flex-1">
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
+            <ShieldCheck className="h-4 w-4" />
+            Passo 0{activeIndex + 1} de 0{scenarioSteps.length}
+          </p>
+          <p className="mt-1 text-sm font-semibold leading-snug text-slate-950 sm:text-base">
+            {activeStep.detail}
+          </p>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1.5" role="group" aria-label="Passos do cenário">
+          {scenarioSteps.map((step, index) => (
+            <button
+              key={step.id}
+              type="button"
+              aria-label={`Passo ${index + 1}: ${step.label}`}
+              aria-pressed={activeIndex === index}
+              onClick={() => {
+                setActiveIndex(index);
+                setIsPlaying(false);
+              }}
+              className={`size-2.5 rounded-full outline-offset-2 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-emerald-500 ${activeIndex === index ? "bg-emerald-600" : "bg-slate-300 hover:bg-slate-400"}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

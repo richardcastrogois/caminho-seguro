@@ -88,25 +88,25 @@ const protectionSteps = [
   {
     title: "Identificacao simples",
     description:
-      "A crianca tem um cartao ou pulseira com um codigo unico. Basta alguem ler para pedir ajuda — sem precisar de celular, internet ou aplicativo.",
+      "Um cartao ou pulseira com codigo unico. Leitura por QR, NFC ou BLE, sem aplicativo.",
     icon: QrCode,
   },
   {
     title: "So os momentos que importam",
     description:
-      "O sistema registra apenas os pontos-chave: saiu de casa, chegou na escola, entrou no transporte. Nada de localizacao o tempo todo.",
+      "Saiu de casa, chegou na escola, entrou no transporte. Sem GPS continuo.",
     icon: Bluetooth,
   },
   {
     title: "Alerta na hora certa",
     description:
-      "Se algo sai do esperado, os responsaveis recebem um aviso claro com o que fazer e quem contatar.",
+      "Se algo sai do esperado, o responsavel recebe um aviso claro.",
     icon: BellRing,
   },
   {
     title: "Dados protegidos",
     description:
-      "As informacoes pessoais da crianca ficam guardadas em seguranca. O codigo publico nao mostra nome, endereco nem dados sensiveis.",
+      "O codigo publico nao mostra nome, endereco nem dados sensiveis.",
     icon: ShieldCheck,
   },
 ];
@@ -267,23 +267,12 @@ export default function Home() {
                 Como funciona
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-                Cada crianca recebe uma identificacao simples e segura. O sistema
-                acompanha os momentos importantes do trajeto. Pais, escola e rede
-                de apoio agem juntos.
+                Veja o cenario na pratica. Clique nos passos para acompanhar cada
+                alerta.
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
-                Se a crianca nao chega na escola no horario, os pais recebem um
-                alerta. Se alguem encontra uma crianca perdida, le o codigo e pede
-                ajuda sem ver informacoes pessoais. A escola confirma a chegada. O
-                transporte avisa o embarque. Cada um faz a sua parte, e a rede
-                publica coordena os casos que precisam de acao oficial.
-              </p>
             </div>
 
             <div data-gsap-scroll="up" className="mt-10">
-              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
-                Na pratica
-              </p>
               <HowItWorksScenario />
             </div>
 
