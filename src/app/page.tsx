@@ -21,6 +21,7 @@ import {
   Users,
 } from "lucide-react";
 import { GsapReveal } from "@/components/shared/gsap-reveal";
+import { HowItWorksScenario } from "@/components/shared/how-it-works-scenario";
 import { InteractiveParticleField } from "@/components/shared/interactive-particle-field";
 import { ProtectionNetworkVisual } from "@/components/shared/protection-network-visual";
 import {
@@ -84,24 +85,27 @@ const testSteps = [
 
 const protectionSteps = [
   {
-    title: "Identidade fisica",
+    title: "Identificacao simples",
     description:
-      "A crianca usa QR e BLE sem depender de celular, internet ou aplicativo.",
+      "A crianca tem um cartao ou pulseira com um codigo unico. Basta alguem ler para pedir ajuda — sem precisar de celular, internet ou aplicativo.",
     icon: QrCode,
   },
   {
-    title: "Evento, nao rota",
-    description: "A rede registra passagens importantes, nao cada passo da rotina.",
+    title: "So os momentos que importam",
+    description:
+      "O sistema registra apenas os pontos-chave: saiu de casa, chegou na escola, entrou no transporte. Nada de localizacao o tempo todo.",
     icon: Bluetooth,
   },
   {
-    title: "Alerta acionavel",
-    description: "Responsaveis e instituicoes recebem contexto suficiente para agir.",
+    title: "Alerta na hora certa",
+    description:
+      "Se algo sai do esperado, os responsaveis recebem um aviso claro com o que fazer e quem contatar.",
     icon: BellRing,
   },
   {
-    title: "Privacidade primeiro",
-    description: "Dados pessoais ficam fora do QR publico e fora de provas abertas.",
+    title: "Dados protegidos",
+    description:
+      "As informacoes pessoais da crianca ficam guardadas em seguranca. O codigo publico nao mostra nome, endereco nem dados sensiveis.",
     icon: ShieldCheck,
   },
 ];
@@ -260,14 +264,24 @@ export default function Home() {
                 Como funciona
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-                A crianca carrega uma identidade protegida. A rede registra eventos. As
-                pessoas certas agem.
+                Cada crianca recebe uma identificacao simples e segura. O sistema
+                acompanha os momentos importantes do trajeto. Pais, escola e rede
+                de apoio agem juntos.
               </h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">
-                O cidadao pode ler o QR e pedir ajuda sem ver dados sensiveis. A escola
-                confirma chegada. O transporte registra embarque. O responsavel acompanha
-                alertas. A rede publica coordena casos formais.
+                Se a crianca nao chega na escola no horario, os pais recebem um
+                alerta. Se alguem encontra uma crianca perdida, le o codigo e pede
+                ajuda sem ver informacoes pessoais. A escola confirma a chegada. O
+                transporte avisa o embarque. Cada um faz a sua parte, e a rede
+                publica coordena os casos que precisam de acao oficial.
               </p>
+            </div>
+
+            <div data-gsap-scroll="up" className="mt-10">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                Na pratica
+              </p>
+              <HowItWorksScenario />
             </div>
 
             <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
