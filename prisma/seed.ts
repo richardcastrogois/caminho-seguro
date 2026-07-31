@@ -526,6 +526,110 @@ async function main() {
     },
   });
 
+  const partnerInstitution = await prisma.institution.findUnique({
+    where: { publicId: "instituicao-demo-parceiro" },
+    select: { id: true },
+  });
+
+  let helpRequestEventId: string | null = null;
+  const existingHelpRequestEvent = await prisma.protectionEvent.findUnique({
+    where: { publicId: "evento-demo-pedido-ajuda-maria" },
+    select: { id: true },
+  });
+  if (existingHelpRequestEvent) {
+    helpRequestEventId = existingHelpRequestEvent.id;
+  } else if (partnerInstitution) {
+    const { eventsService: es } = await import("../src/features/events/events.service");
+    const helpRequestResult = await es.createEvent({
+      publicId: "evento-demo-pedido-ajuda-maria",
+      childId: child.id,
+      institutionId: partnerInstitution.id,
+      type: EventType.HELP_REQUEST,
+      source: EventSource.QR_PUBLIC_SCAN,
+      severity: EventSeverity.ATTENTION,
+      latitude: -22.903,
+      longitude: -47.058,
+      locationLabel: "Farmácia Proteção Parceira",
+      occurredAt: new Date(Date.now() - 45 * 60 * 1000),
+      metadata: { demonstration: true, readerType: "public" },
+    });
+    helpRequestEventId = helpRequestResult.event.id;
+    console.log(
+      `Pedido de ajuda: blockchain ${helpRequestResult.blockchain?.status} (tx: ${helpRequestResult.blockchain?.transactionHash ?? "nenhuma"})`,
+    );
+  }
+
+  const crasInstitution = await prisma.institution.findUnique({
+    where: { publicId: "instituicao-demo-cras" },
+    select: { id: true },
+  });
+
+  let atRiskEventId: string | null = null;
+  const existingAtRiskEvent = await prisma.protectionEvent.findUnique({
+    where: { publicId: "evento-demo-risco-maria" },
+    select: { id: true },
+  });
+  if (existingAtRiskEvent) {
+    atRiskEventId = existingAtRiskEvent.id;
+  } else if (crasInstitution) {
+    const { eventsService: es } = await import("../src/features/events/events.service");
+    const atRiskResult = await es.createEvent({
+      publicId: "evento-demo-risco-maria",
+      childId: child.id,
+      institutionId: crasInstitution.id,
+      type: EventType.CHILD_AT_RISK,
+      source: EventSource.QR_PUBLIC_SCAN,
+      severity: EventSeverity.CRITICAL,
+      latitude: -22.907,
+      longitude: -47.064,
+      locationLabel: "CRAS Jardim Esperança",
+      occurredAt: new Date(Date.now() - 20 * 60 * 1000),
+      metadata: { demonstration: true, readerType: "public" },
+    });
+    atRiskEventId = atRiskResult.event.id;
+    console.log(
+      `Situação de risco: blockchain ${atRiskResult.blockchain?.status} (tx: ${atRiskResult.blockchain?.transactionHash ?? "nenhuma"})`,
+    );
+  }
+
+  await prisma.alert.upsert({
+    where: {
+      publicId: "alerta-demo-pedido-ajuda-maria",
+    },
+    update: {},
+    create: {
+      publicId: "alerta-demo-pedido-ajuda-maria",
+      childId: child.id,
+      eventId: helpRequestEventId,
+      institutionId: partnerInstitution?.id ?? null,
+      type: AlertType.HELP_REQUEST,
+      severity: AlertSeverity.HIGH,
+      status: AlertStatus.OPEN,
+      title: "Pedido de ajuda registrado",
+      message:
+        "Maria pediu ajuda em um ponto público. Localização compartilhada pela pessoa que realizou a leitura.",
+    },
+  });
+
+  await prisma.alert.upsert({
+    where: {
+      publicId: "alerta-demo-risco-maria",
+    },
+    update: {},
+    create: {
+      publicId: "alerta-demo-risco-maria",
+      childId: child.id,
+      eventId: atRiskEventId,
+      institutionId: crasInstitution?.id ?? null,
+      type: AlertType.CHILD_AT_RISK,
+      severity: AlertSeverity.CRITICAL,
+      status: AlertStatus.OPEN,
+      title: "Situação de risco relatada",
+      message:
+        "Uma pessoa relatou que Maria pode estar em situação de risco. Verificar com urgência e acionar o protocolo local.",
+    },
+  });
+
   console.log("Dados criados com sucesso.");
   console.log(`Criança: ${child.firstName} ${child.lastName}`);
   console.log(`Responsável: ${guardianUser.name}`);
