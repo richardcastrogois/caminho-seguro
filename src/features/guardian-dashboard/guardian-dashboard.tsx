@@ -626,7 +626,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
                             Blockchain verificado
                             {event.transactionHash && (
                               <span
-                                className="hidden max-w-[100px] truncate text-[10px] text-emerald-500 sm:inline-block"
+                                className="hidden max-w-25 truncate text-[10px] text-emerald-500 sm:inline-block"
                                 title={event.transactionHash}
                               >
                                 {event.transactionHash.slice(0, 8)}...

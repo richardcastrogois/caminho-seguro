@@ -315,7 +315,7 @@ export function AppNavigation({ session }: AppNavigationProps) {
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="z-[200] w-[min(86vw,22rem)] overflow-y-auto p-0 sm:max-w-sm"
+              className="z-200 w-[min(86vw,22rem)] overflow-y-auto p-0 sm:max-w-sm"
             >
               <SheetHeader className="pr-12">
                 <SheetTitle>Caminho Seguro</SheetTitle>

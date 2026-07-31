@@ -120,7 +120,7 @@ export function ProtectionNetworkDashboard({ data }: ProtectionNetworkDashboardP
 
           <section className="dashboard-panel motion-card mt-6 overflow-hidden rounded-[28px] border">
             <div className="grid gap-0 lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="relative min-h-[360px] overflow-hidden border-b border-sky-100 bg-[linear-gradient(90deg,rgba(14,165,233,0.10)_1px,transparent_1px),linear-gradient(0deg,rgba(16,185,129,0.10)_1px,transparent_1px),radial-gradient(circle_at_20%_20%,rgba(14,165,233,0.14),transparent_34%),radial-gradient(circle_at_82%_72%,rgba(16,185,129,0.18),transparent_32%)] bg-[size:36px_36px,36px_36px,100%_100%,100%_100%] sm:min-h-[420px] sm:bg-[size:44px_44px,44px_44px,100%_100%,100%_100%] lg:border-b-0 lg:border-r">
+              <div className="relative min-h-90 overflow-hidden border-b border-sky-100 bg-[linear-gradient(90deg,rgba(14,165,233,0.10)_1px,transparent_1px),linear-gradient(0deg,rgba(16,185,129,0.10)_1px,transparent_1px),radial-gradient(circle_at_20%_20%,rgba(14,165,233,0.14),transparent_34%),radial-gradient(circle_at_82%_72%,rgba(16,185,129,0.18),transparent_32%)] bg-size-[36px_36px,36px_36px,100%_100%,100%_100%] sm:min-h-105 sm:bg-size-[44px_44px,44px_44px,100%_100%,100%_100%] lg:border-b-0 lg:border-r">
                 <div className="absolute left-4 top-4 rounded-full border border-white/80 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm sm:left-6 sm:top-6">
                   Mapa agregado da rede
                 </div>
@@ -139,7 +139,7 @@ export function ProtectionNetworkDashboard({ data }: ProtectionNetworkDashboardP
                         className="absolute -translate-x-1/2 -translate-y-1/2"
                         style={position}
                       >
-                        <div className="flex max-w-[11.5rem] items-center gap-1.5 rounded-full border border-sky-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-800 shadow-lg shadow-sky-950/10 sm:max-w-52 sm:gap-2 sm:px-3 sm:text-sm">
+                        <div className="flex max-w-46 items-center gap-1.5 rounded-full border border-sky-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-800 shadow-lg shadow-sky-950/10 sm:max-w-52 sm:gap-2 sm:px-3 sm:text-sm">
                           <MapPin className="h-4 w-4 text-sky-700" />
                           <span className="min-w-0 truncate">{institution.name}</span>
                         </div>
