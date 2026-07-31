@@ -371,7 +371,7 @@ a {
 }
 
 ::view-transition-new(main-content) {
-  animation: page-fade-in 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: page-fade-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
   mix-blend-mode: normal;
 }
 

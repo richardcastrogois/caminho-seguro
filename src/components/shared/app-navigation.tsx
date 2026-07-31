@@ -126,7 +126,7 @@ function MobileNavLink({
 }) {
   return (
     <SheetClose
-      render={<Link href={href} onClick={onNavigate} />}
+      render={<Link href={href} transitionTypes={["nav-soft"]} onClick={onNavigate} />}
       className={cn(
         "flex min-h-12 w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm font-medium transition hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
         active && "bg-muted text-foreground",
@@ -164,7 +164,12 @@ export function AppNavigation({ session }: AppNavigationProps) {
       style={{ viewTransitionName: "site-header" }}
     >
       <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3">
-        <Link href="/" className="min-w-0 shrink" onClick={closeMenus}>
+        <Link
+          href="/"
+          transitionTypes={["nav-soft"]}
+          className="min-w-0 shrink"
+          onClick={closeMenus}
+        >
           <BrandLogo />
         </Link>
 
