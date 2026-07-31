@@ -38,7 +38,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   return (
     <main className="dashboard-page min-h-screen">
-      <section className="app-first-content mx-auto max-w-6xl px-5 pb-8 pt-6 sm:px-8 lg:px-10">
+      <section className="route-top mx-auto max-w-6xl px-5 pb-8 sm:px-8 lg:px-10">
         <LoginForm
           nextPath={nextPath}
           unauthorized={params.unauthorized === "1"}

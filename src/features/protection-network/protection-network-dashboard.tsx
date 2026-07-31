@@ -67,8 +67,8 @@ function buildMapPosition(points: Array<{ latitude: number; longitude: number }>
   const longitudeSpan = Math.max(maxLongitude - minLongitude, 0.01);
 
   return (point: { latitude: number; longitude: number }) => ({
-    left: `${14 + ((point.longitude - minLongitude) / longitudeSpan) * 72}%`,
-    top: `${15 + (1 - (point.latitude - minLatitude) / latitudeSpan) * 70}%`,
+    left: `${30 + ((point.longitude - minLongitude) / longitudeSpan) * 40}%`,
+    top: `${20 + (1 - (point.latitude - minLatitude) / latitudeSpan) * 58}%`,
   });
 }
 
@@ -120,14 +120,14 @@ export function ProtectionNetworkDashboard({ data }: ProtectionNetworkDashboardP
 
           <section className="dashboard-panel motion-card mt-6 overflow-hidden rounded-[28px] border">
             <div className="grid gap-0 lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="relative min-h-[420px] overflow-hidden border-b border-sky-100 bg-[linear-gradient(90deg,rgba(14,165,233,0.10)_1px,transparent_1px),linear-gradient(0deg,rgba(16,185,129,0.10)_1px,transparent_1px),radial-gradient(circle_at_20%_20%,rgba(14,165,233,0.14),transparent_34%),radial-gradient(circle_at_82%_72%,rgba(16,185,129,0.18),transparent_32%)] bg-[size:44px_44px,44px_44px,100%_100%,100%_100%] lg:border-b-0 lg:border-r">
-                <div className="absolute left-6 top-6 rounded-full border border-white/80 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm">
+              <div className="relative min-h-[360px] overflow-hidden border-b border-sky-100 bg-[linear-gradient(90deg,rgba(14,165,233,0.10)_1px,transparent_1px),linear-gradient(0deg,rgba(16,185,129,0.10)_1px,transparent_1px),radial-gradient(circle_at_20%_20%,rgba(14,165,233,0.14),transparent_34%),radial-gradient(circle_at_82%_72%,rgba(16,185,129,0.18),transparent_32%)] bg-[size:36px_36px,36px_36px,100%_100%,100%_100%] sm:min-h-[420px] sm:bg-[size:44px_44px,44px_44px,100%_100%,100%_100%] lg:border-b-0 lg:border-r">
+                <div className="absolute left-4 top-4 rounded-full border border-white/80 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm sm:left-6 sm:top-6">
                   Mapa agregado da rede
                 </div>
 
-                <div className="absolute inset-x-[14%] top-1/2 border-t border-dashed border-sky-300" />
-                <div className="absolute inset-y-[15%] left-1/2 border-l border-dashed border-emerald-300" />
-                <div className="absolute left-[18%] right-[18%] top-[22%] bottom-[22%] rounded-full border border-dashed border-sky-200" />
+                <div className="absolute inset-x-[18%] top-1/2 border-t border-dashed border-sky-300" />
+                <div className="absolute inset-y-[18%] left-1/2 border-l border-dashed border-emerald-300" />
+                <div className="absolute left-[23%] right-[23%] top-[24%] bottom-[24%] rounded-full border border-dashed border-sky-200 sm:left-[18%] sm:right-[18%] sm:top-[22%] sm:bottom-[22%]" />
 
                 {getPosition &&
                   institutionPoints.map((institution) => {
@@ -139,9 +139,9 @@ export function ProtectionNetworkDashboard({ data }: ProtectionNetworkDashboardP
                         className="absolute -translate-x-1/2 -translate-y-1/2"
                         style={position}
                       >
-                        <div className="flex items-center gap-2 rounded-full border border-sky-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-lg shadow-sky-950/10">
+                        <div className="flex max-w-[11.5rem] items-center gap-1.5 rounded-full border border-sky-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-800 shadow-lg shadow-sky-950/10 sm:max-w-52 sm:gap-2 sm:px-3 sm:text-sm">
                           <MapPin className="h-4 w-4 text-sky-700" />
-                          <span className="max-w-36 truncate">{institution.name}</span>
+                          <span className="min-w-0 truncate">{institution.name}</span>
                         </div>
                       </div>
                     );
@@ -157,8 +157,8 @@ export function ProtectionNetworkDashboard({ data }: ProtectionNetworkDashboardP
                         className="absolute -translate-x-1/2 -translate-y-1/2"
                         style={position}
                       >
-                        <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white shadow-xl shadow-red-900/25">
-                          <span className="absolute h-12 w-12 animate-ping rounded-full bg-red-400/40" />
+                        <div className="relative flex size-10 items-center justify-center rounded-full bg-red-600 text-white shadow-xl shadow-red-900/25 sm:size-12">
+                          <span className="absolute size-10 animate-ping rounded-full bg-red-400/40 sm:size-12" />
                           <ShieldAlert className="relative h-5 w-5" />
                         </div>
                       </div>
@@ -166,7 +166,7 @@ export function ProtectionNetworkDashboard({ data }: ProtectionNetworkDashboardP
                   })}
               </div>
 
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <div className="flex items-center gap-3">
                   <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
                     <RadioTower className="h-5 w-5" />
@@ -214,7 +214,7 @@ export function ProtectionNetworkDashboard({ data }: ProtectionNetworkDashboardP
           </section>
 
           <section className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-            <div className="dashboard-panel rounded-[28px] border p-6">
+            <div className="dashboard-panel rounded-[22px] border p-4 sm:rounded-[28px] sm:p-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-100 text-red-700">
                   <ShieldAlert className="h-5 w-5" />
@@ -265,7 +265,7 @@ export function ProtectionNetworkDashboard({ data }: ProtectionNetworkDashboardP
               </div>
             </div>
 
-            <div className="dashboard-panel rounded-[28px] border p-6">
+            <div className="dashboard-panel rounded-[22px] border p-4 sm:rounded-[28px] sm:p-6">
               <div className="flex items-center gap-3">
                 <HeartHandshake className="h-5 w-5 text-emerald-700" />
                 <div>
@@ -318,7 +318,7 @@ function Summary({
   tone?: "default" | "alert";
 }) {
   return (
-    <article className="dashboard-panel motion-card rounded-[22px] border p-5">
+    <article className="dashboard-panel motion-card rounded-[20px] border p-4 sm:rounded-[22px] sm:p-5">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-slate-600">{title}</p>

@@ -165,7 +165,7 @@ export default function Home() {
         <section className="relative border-b border-sky-100/80">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-180 bg-[linear-gradient(115deg,rgba(14,165,233,.14),rgba(23, 176, 203, 0.11)_45%,rgba(16,185,129,.14))]" />
 
-          <div className="relative mx-auto grid max-w-7xl gap-9 px-4 pb-14 pt-[calc(var(--app-nav-offset)+0.50rem)] sm:px-6 lg:grid-cols-[0.94fr_1.06fr] lg:items-center lg:px-10 lg:pb-20">
+          <div className="relative mx-auto grid max-w-7xl gap-6 px-4 pb-10 pt-[calc(var(--app-nav-offset)+0.50rem)] sm:gap-9 sm:px-6 sm:pb-14 lg:grid-cols-[0.94fr_1.06fr] lg:items-center lg:px-10 lg:pb-20">
             <div className="flex flex-col justify-center">
               <div
                 data-gsap="hero"
@@ -204,8 +204,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="relative border-b border-sky-100 py-16">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:px-10">
+        <section className="relative border-b border-sky-100 py-10 sm:py-16">
+          <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:gap-10 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:px-10">
             <Card
               data-gsap-scroll="left"
               className="rounded-3xl border-sky-100 bg-linear-to-br from-sky-600 via-cyan-600 to-emerald-600 text-white shadow-[0_26px_60px_rgba(3,105,161,0.24)]"
@@ -250,7 +250,10 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="como-funciona" className="relative border-b border-sky-100 py-16">
+        <section
+          id="como-funciona"
+          className="relative border-b border-sky-100 py-10 sm:py-16"
+        >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
             <div data-gsap-scroll="up" className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
@@ -297,7 +300,10 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="como-testar" className="relative border-b border-sky-100 py-16">
+        <section
+          id="como-testar"
+          className="relative border-b border-sky-100 py-10 sm:py-16"
+        >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
             <div data-gsap-scroll="up" className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
@@ -351,8 +357,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="relative border-b border-sky-100 py-16">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-10">
+        <section className="relative border-b border-sky-100 py-10 sm:py-16">
+          <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:gap-8 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-10">
             <div data-gsap-scroll="left">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
                 O que ele faz e nao faz
@@ -375,8 +381,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="relative py-16">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:px-10">
+        <section className="relative py-10 sm:py-16">
+          <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:gap-8 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:px-10">
             <div data-gsap-scroll="left" className="max-w-2xl">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
                 Visao de futuro
@@ -395,7 +401,7 @@ export default function Home() {
               data-gsap-scroll="up"
               className="home-surface overflow-hidden rounded-3xl border-sky-100 bg-white/90"
             >
-              <CardHeader className="gap-2 p-5 sm:p-6">
+              <CardHeader className="gap-2 p-4 sm:p-6">
                 <CardTitle className="text-xl text-slate-950 sm:text-2xl">
                   Evolucoes planejadas para a rede
                 </CardTitle>
@@ -404,7 +410,7 @@ export default function Home() {
                   roadmap principal.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+              <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
                 <Accordion
                   multiple
                   value={futureOpen}

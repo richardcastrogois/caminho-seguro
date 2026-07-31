@@ -262,7 +262,7 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
           <section className="mt-6 grid gap-6 xl:grid-cols-2">
             <form
               onSubmit={createInstitution}
-              className="dashboard-panel motion-card rounded-[24px] border p-6"
+              className="dashboard-panel motion-card rounded-[22px] border p-4 sm:rounded-[24px] sm:p-6"
             >
               <PanelHeading
                 icon={Building2}
@@ -330,7 +330,7 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
 
             <form
               onSubmit={createChild}
-              className="dashboard-panel motion-card rounded-[24px] border p-6"
+              className="dashboard-panel motion-card rounded-[22px] border p-4 sm:rounded-[24px] sm:p-6"
             >
               <PanelHeading
                 icon={UserPlus}
@@ -443,7 +443,7 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
           <section className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
             <form
               onSubmit={createIdentifier}
-              className="dashboard-panel motion-card rounded-[24px] border p-6"
+              className="dashboard-panel motion-card rounded-[22px] border p-4 sm:rounded-[24px] sm:p-6"
             >
               <PanelHeading
                 icon={KeyRound}
@@ -474,13 +474,13 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
               />
             </form>
 
-            <section className="dashboard-panel rounded-[24px] border p-6">
+            <section className="dashboard-panel rounded-[22px] border p-4 sm:rounded-[24px] sm:p-6">
               <PanelHeading
                 icon={BadgeCheck}
                 title="Identificadores da demo"
                 description="Revogação bloqueia novas leituras, mas preserva histórico."
               />
-              <div className="mt-6 grid gap-3">
+              <div className="mt-4 grid gap-3 sm:mt-6">
                 {data.child?.identifiers.map((identifier) => (
                   <article
                     key={identifier.publicToken}
@@ -689,12 +689,12 @@ function ListPanel({
   children: React.ReactNode;
 }) {
   return (
-    <section className="dashboard-panel rounded-[28px] border p-6">
+    <section className="dashboard-panel rounded-[22px] border p-4 sm:rounded-[28px] sm:p-6">
       <div className="flex items-center gap-3">
         <Icon className="h-5 w-5 text-sky-700" />
         <h2 className="text-xl font-semibold text-slate-950">{title}</h2>
       </div>
-      <div className="mt-6 grid gap-3">{children}</div>
+      <div className="mt-4 grid gap-3 sm:mt-6">{children}</div>
     </section>
   );
 }

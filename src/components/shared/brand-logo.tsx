@@ -8,8 +8,8 @@ type BrandLogoProps = {
 
 export function BrandLogo({ compact = false }: BrandLogoProps) {
   return (
-    <div className="flex items-center gap-3">
-      <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-sky-900/10">
+    <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+      <div className="relative flex size-10 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-sky-900/10 sm:size-12">
         <Image
           src="/CaminhoSeguroLogo.png"
           alt="Caminho Seguro"
@@ -25,8 +25,8 @@ export function BrandLogo({ compact = false }: BrandLogoProps) {
       </div>
 
       {!compact && (
-        <div>
-          <p className="text-lg font-semibold tracking-tight text-slate-950">
+        <div className="min-w-0">
+          <p className="truncate text-base font-semibold tracking-tight text-slate-950 sm:text-lg">
             Caminho Seguro
           </p>
 

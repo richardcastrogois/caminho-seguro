@@ -32,7 +32,7 @@ export default async function PublicHelpPage({ params }: PublicHelpPageProps) {
   }
 
   return (
-    <main className="app-surface -mt-12 min-h-screen md:mt-0">
+    <main className="app-surface min-h-screen">
       <GsapReveal>
         <section className="border-b border-slate-200 bg-white">
           <div className="mx-auto grid max-w-7xl gap-5 px-4 pb-5 pt-4 sm:px-6 sm:pb-6 md:pt-[calc(var(--app-nav-offset)+0.75rem)] lg:grid-cols-[0.74fr_1.26fr] lg:items-center lg:gap-7 lg:px-10 lg:pb-8">

@@ -73,12 +73,19 @@ html {
 }
 
 :root {
-  --app-nav-offset: 7.25rem;
+  --app-nav-offset: clamp(5.45rem, 16vw, 6.25rem);
+  --page-top-gap: clamp(0.5rem, 2.2vw, 1rem);
+  --page-x: clamp(1rem, 4vw, 2.5rem);
+  --page-y: clamp(1.25rem, 3.5vw, 2rem);
+  --content-gap: clamp(1rem, 3vw, 1.5rem);
+  --panel-padding: clamp(1rem, 3.6vw, 1.5rem);
+  --panel-radius: clamp(1.25rem, 4vw, 1.75rem);
 }
 
 @media (min-width: 768px) {
   :root {
-    --app-nav-offset: 6.75rem;
+    --app-nav-offset: 6.25rem;
+    --page-top-gap: 1rem;
   }
 }
 
@@ -86,16 +93,81 @@ main {
   padding-top: 0;
 }
 
+.route-top,
 .app-first-content,
 .dashboard-header > div,
 .app-surface > section:first-child > div {
-  padding-top: calc(var(--app-nav-offset) + 2.75rem) !important;
+  padding-top: calc(var(--app-nav-offset) + var(--page-top-gap)) !important;
+}
+
+.route-top,
+.app-first-content,
+.dashboard-header > div,
+.app-surface > section:first-child > div,
+.dashboard-page > main.mx-auto,
+.dashboard-page > div.mx-auto,
+.dashboard-page > section.mx-auto,
+.app-surface > section > div.mx-auto {
+  padding-inline: var(--page-x) !important;
+}
+
+.dashboard-page > main.mx-auto,
+.dashboard-page > div.mx-auto,
+.dashboard-page > section.mx-auto {
+  padding-block: var(--page-y) !important;
+}
+
+.dashboard-page > section.route-top {
+  padding-top: calc(var(--app-nav-offset) + var(--page-top-gap)) !important;
 }
 
 .dashboard-header > div {
-  padding-bottom: 1.5rem;
+  padding-bottom: var(--page-y) !important;
 }
+@media (max-width: 640px) {
+  .dashboard-header h1,
+  .route-top h1,
+  .app-first-content h1,
+  .app-surface h1 {
+    font-size: clamp(1.9rem, 8vw, 2.35rem) !important;
+    line-height: 1.08 !important;
+    letter-spacing: 0 !important;
+  }
 
+  .dashboard-header p,
+  .route-top p,
+  .app-first-content p,
+  .app-surface p {
+    line-height: 1.6;
+  }
+
+  .dashboard-panel {
+    border-radius: var(--panel-radius) !important;
+    box-shadow:
+      0 12px 28px rgb(14 116 144 / 0.08),
+      0 1px 4px rgb(15 23 42 / 0.04) !important;
+  }
+
+  .dashboard-panel[class*="p-5"],
+  .dashboard-panel[class*="p-6"] {
+    padding: var(--panel-padding) !important;
+  }
+
+  .dashboard-panel[class*="mt-6"],
+  section[class*="mt-6"] {
+    margin-top: var(--content-gap) !important;
+  }
+
+  .dashboard-page [class*="gap-6"],
+  .app-surface [class*="gap-6"] {
+    gap: var(--content-gap) !important;
+  }
+
+  .dashboard-page [class*="rounded-3xl"],
+  .app-surface [class*="rounded-3xl"] {
+    border-radius: var(--panel-radius) !important;
+  }
+}
 body {
   min-height: 100vh;
   margin: 0;
@@ -462,7 +534,6 @@ a {
   * {
     @apply border-border outline-ring/50;
   }
-
   body {
     @apply bg-background text-foreground;
   }

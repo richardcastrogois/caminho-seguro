@@ -117,7 +117,7 @@ export function TransportDashboard({ data }: TransportDashboardProps) {
           )}
 
           <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="dashboard-panel motion-card rounded-[24px] border p-6">
+            <div className="dashboard-panel motion-card rounded-[22px] border p-4 sm:rounded-[24px] sm:p-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
                   <BusFront className="h-5 w-5" />
@@ -132,7 +132,7 @@ export function TransportDashboard({ data }: TransportDashboardProps) {
                 </div>
               </div>
 
-              <div className="mt-6 grid gap-4">
+              <div className="mt-4 grid gap-3 sm:mt-6 sm:gap-4">
                 {data.children.length === 0 ? (
                   <p className="rounded-2xl bg-slate-50 p-5 text-sm text-slate-600">
                     Nenhuma crianca vinculada ao transporte.
@@ -209,7 +209,7 @@ export function TransportDashboard({ data }: TransportDashboardProps) {
               </div>
             </div>
 
-            <div className="dashboard-panel motion-card rounded-[24px] border p-6">
+            <div className="dashboard-panel motion-card rounded-[22px] border p-4 sm:rounded-[24px] sm:p-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
                   <Users className="h-5 w-5" />
@@ -223,7 +223,7 @@ export function TransportDashboard({ data }: TransportDashboardProps) {
                   </p>
                 </div>
               </div>
-              <div className="mt-6 grid gap-3">
+              <div className="mt-4 grid gap-3 sm:mt-6">
                 <RuleItem text="Cada acao gera evento com data, rota e fonte assistida." />
                 <RuleItem text="A demo permite repetir eventos no mesmo dia para testar a apresentacao sem reiniciar o banco." />
                 <RuleItem text="O responsavel visualiza o evento sem receber a rota do veiculo." />
@@ -231,7 +231,7 @@ export function TransportDashboard({ data }: TransportDashboardProps) {
             </div>
           </section>
 
-          <section className="dashboard-panel mt-6 rounded-[28px] border p-6">
+          <section className="dashboard-panel mt-6 rounded-[22px] border p-4 sm:rounded-[28px] sm:p-6">
             <div className="flex items-center gap-3">
               <Clock3 className="h-5 w-5 text-sky-700" />
               <div>
@@ -241,7 +241,7 @@ export function TransportDashboard({ data }: TransportDashboardProps) {
                 </p>
               </div>
             </div>
-            <div className="mt-6 grid gap-3">
+            <div className="mt-4 grid gap-3 sm:mt-6">
               {data.recentEvents.length === 0 ? (
                 <p className="rounded-2xl bg-slate-50 p-5 text-sm text-slate-600">
                   Nenhum evento de transporte foi registrado hoje.
