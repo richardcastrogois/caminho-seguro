@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -154,6 +155,8 @@ const futureEvolutions = [
 ];
 
 export default function Home() {
+  const [futureOpen, setFutureOpen] = useState<string[]>([]);
+
   return (
     <main className="relative isolate min-h-screen overflow-hidden bg-[linear-gradient(135deg,#CFDAE0_0%,#ffffff_45%,#DDECE5_100%)]">
       <InteractiveParticleField className="z-0 opacity-90" />
@@ -402,7 +405,15 @@ export default function Home() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
-                <Accordion defaultValue={["future-0"]} className="gap-1">
+                <Accordion
+                  multiple
+                  value={futureOpen}
+                  onValueChange={(value) => {
+                    const nextValue = Array.isArray(value) ? value.slice(-1) : [];
+                    setFutureOpen(nextValue);
+                  }}
+                  className="gap-2"
+                >
                   {futureEvolutions.map((item, index) => {
                     const Icon = item.icon;
 
@@ -410,7 +421,7 @@ export default function Home() {
                       <AccordionItem
                         key={item.title}
                         value={`future-${index}`}
-                        className="rounded-2xl border border-sky-100 bg-white/80 px-4 shadow-sm not-last:border-b"
+                        className="rounded-2xl border border-sky-100 bg-white/90 px-4 shadow-sm transition-[border-color,box-shadow,background-color] duration-300 data-open:border-emerald-200 data-open:bg-white data-open:shadow-md not-last:border-b"
                       >
                         <AccordionTrigger className="gap-3 py-4 no-underline hover:no-underline">
                           <span className="flex min-w-0 flex-1 items-center gap-3">
@@ -427,7 +438,7 @@ export default function Home() {
                             </span>
                           </span>
                         </AccordionTrigger>
-                        <AccordionContent className="pb-4 pl-0 text-sm leading-6 text-slate-600 sm:pl-13">
+                        <AccordionContent className="pb-4 pl-13 text-sm leading-6 text-slate-600">
                           <p>{item.description}</p>
                           <p className="mt-3 text-slate-700">{item.approach}</p>
                         </AccordionContent>

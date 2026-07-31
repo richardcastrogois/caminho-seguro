@@ -257,14 +257,59 @@ a {
   }
 }
 
-::view-transition-group(main-content) {
-  animation-duration: 260ms;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+@keyframes page-fade-out {
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    filter: blur(2px);
+    transform: translateY(-6px) scale(0.997);
+  }
 }
 
-::view-transition-old(main-content),
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+    transform: translateY(10px) scale(0.997);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+::view-transition-group(site-header) {
+  animation-duration: 0ms;
+}
+
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(main-content) {
+  animation: page-fade-out 180ms ease both;
+  mix-blend-mode: normal;
+}
+
 ::view-transition-new(main-content) {
-  animation-duration: 260ms;
+  animation: page-fade-in 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(main-content),
+  ::view-transition-new(main-content),
+  ::view-transition-old(site-header),
+  ::view-transition-new(site-header) {
+    animation-duration: 0.01ms !important;
+  }
 }
 
 @theme inline {

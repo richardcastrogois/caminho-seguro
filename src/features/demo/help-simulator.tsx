@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  CheckCircle2,
-  Loader2,
-  QrCode,
-  School,
-  XCircle,
-} from "lucide-react";
+import { CheckCircle2, Loader2, QrCode, School, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,8 +16,45 @@ type SimResult = {
   ok: boolean;
   error?: string;
   event?: { id: string; publicId: string; type: string; status: string };
-  blockchain?: { status: string; transactionHash: string | null; slot: string | null } | null;
+  blockchain?: {
+    status: string;
+    transactionHash: string | null;
+    slot: string | null;
+  } | null;
 };
+
+function ResultBlock({ result }: { result: SimResult | null }) {
+  if (!result) return null;
+
+  if (!result.ok) {
+    return (
+      <div className="mt-3 flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+        <XCircle className="mt-0.5 size-4 shrink-0" />
+        <span>{result.error}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+      <div className="flex items-center gap-2 font-medium">
+        <CheckCircle2 className="size-4 text-emerald-600" />
+        Evento {result.event?.type} criado com sucesso
+      </div>
+      <div className="flex flex-col gap-1 text-emerald-800">
+        <p>Status: {result.event?.status}</p>
+        {result.blockchain && (
+          <p>
+            Blockchain: {result.blockchain.status}
+            {result.blockchain.transactionHash && (
+              <> - tx: {result.blockchain.transactionHash.slice(0, 8)}...</>
+            )}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function HelpSimulator({ token }: { token: string }) {
   const [publicLoading, setPublicLoading] = useState(false);
@@ -45,7 +76,7 @@ export function HelpSimulator({ token }: { token: string }) {
           latitude: null,
           longitude: null,
           locationAccuracy: null,
-          notes: "Simulação de leitura pública — demonstração Caminho Seguro.",
+          notes: "Simulacao de leitura publica - demonstracao Caminho Seguro.",
         }),
       });
 
@@ -54,14 +85,25 @@ export function HelpSimulator({ token }: { token: string }) {
       if (response.ok && data.ok) {
         setPublicResult({
           ok: true,
-          event: { id: data.event, publicId: data.event, type: "CHILD_FOUND", status: "VALIDATED" },
+          event: {
+            id: data.event,
+            publicId: data.event,
+            type: "CHILD_FOUND",
+            status: "VALIDATED",
+          },
           blockchain: data.blockchain,
         });
       } else {
-        setPublicResult({ ok: false, error: data.error ?? "Erro ao simular leitura pública." });
+        setPublicResult({
+          ok: false,
+          error: data.error ?? "Erro ao simular leitura publica.",
+        });
       }
     } catch {
-      setPublicResult({ ok: false, error: "Erro de conexão ao simular leitura pública." });
+      setPublicResult({
+        ok: false,
+        error: "Erro de conexao ao simular leitura publica.",
+      });
     } finally {
       setPublicLoading(false);
     }
@@ -71,43 +113,13 @@ export function HelpSimulator({ token }: { token: string }) {
     setInstitutionalLoading(true);
     setInstitutionalResult(null);
 
-    const result = await simulateInstitutionalAction();
-    setInstitutionalResult(result as SimResult);
-    setInstitutionalLoading(false);
-  }
-
-  const ResultBlock = ({ result }: { result: SimResult | null }) => {
-    if (!result) return null;
-
-    if (!result.ok) {
-      return (
-        <div className="mt-3 flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-900">
-          <XCircle className="mt-0.5 size-4 shrink-0" />
-          <span>{result.error}</span>
-        </div>
-      );
+    try {
+      const result = await simulateInstitutionalAction();
+      setInstitutionalResult(result as SimResult);
+    } finally {
+      setInstitutionalLoading(false);
     }
-
-    return (
-      <div className="mt-3 space-y-2 rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
-        <div className="flex items-center gap-2 font-medium">
-          <CheckCircle2 className="size-4 text-emerald-600" />
-          Evento {result.event?.type} criado com sucesso
-        </div>
-        <div className="space-y-1 text-emerald-800">
-          <p>Status: {result.event?.status}</p>
-          {result.blockchain && (
-            <p>
-              Blockchain: {result.blockchain.status}
-              {result.blockchain.transactionHash && (
-                <> — tx: {result.blockchain.transactionHash.slice(0, 8)}...</>
-              )}
-            </p>
-          )}
-        </div>
-      </div>
-    );
-  };
+  }
 
   return (
     <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
@@ -116,12 +128,10 @@ export function HelpSimulator({ token }: { token: string }) {
           <div className="flex size-14 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
             <QrCode className="size-7" />
           </div>
-          <CardTitle className="text-2xl text-slate-950">
-            Leitura Pública
-          </CardTitle>
+          <CardTitle className="text-2xl text-slate-950">Leitura Publica</CardTitle>
           <CardDescription className="text-base leading-7">
-            Simula um cidadão escaneando o QR Code da pulseira e registrando
-            que encontrou a criança. Não precisa de login.
+            Simula um cidadao escaneando o QR Code da pulseira e registrando que encontrou
+            a crianca. Nao precisa de login.
           </CardDescription>
         </CardHeader>
 
@@ -140,7 +150,7 @@ export function HelpSimulator({ token }: { token: string }) {
             ) : (
               <>
                 <QrCode className="size-5" />
-                Simular Leitura Pública
+                Simular Leitura Publica
               </>
             )}
           </Button>
@@ -154,12 +164,10 @@ export function HelpSimulator({ token }: { token: string }) {
           <div className="flex size-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
             <School className="size-7" />
           </div>
-          <CardTitle className="text-2xl text-slate-950">
-            Leitura Institucional
-          </CardTitle>
+          <CardTitle className="text-2xl text-slate-950">Leitura Institucional</CardTitle>
           <CardDescription className="text-base leading-7">
-            Simula a escola registrando a chegada da criança via leitura do QR
-            Code. Requer login como Escola.
+            Simula, a partir do admin da demo, um registro institucional de chegada
+            escolar para testar o fluxo completo.
           </CardDescription>
         </CardHeader>
 

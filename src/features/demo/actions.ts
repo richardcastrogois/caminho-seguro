@@ -7,8 +7,11 @@ import { eventsService } from "@/features/events/events.service";
 
 export async function simulateInstitutionalAction() {
   const session = await getDemoSession();
-  if (!session) {
-    return { ok: false, error: "Faça login com um perfil de demonstração para simular leitura institucional." };
+  if (!session || session.profileId !== "admin") {
+    return {
+      ok: false,
+      error: "Entre como Admin para simular a leitura institucional.",
+    };
   }
 
   const child = await prisma.child.findFirst({
@@ -17,7 +20,7 @@ export async function simulateInstitutionalAction() {
   });
 
   if (!child) {
-    return { ok: false, error: "Criança demo não encontrada." };
+    return { ok: false, error: "Crianca demo nao encontrada." };
   }
 
   const school = await prisma.institution.findFirst({
@@ -26,7 +29,7 @@ export async function simulateInstitutionalAction() {
   });
 
   if (!school) {
-    return { ok: false, error: "Instituição escola não encontrada." };
+    return { ok: false, error: "Instituicao escola nao encontrada." };
   }
 
   const identifier = await prisma.childIdentifier.findFirst({
@@ -35,7 +38,7 @@ export async function simulateInstitutionalAction() {
   });
 
   if (!identifier) {
-    return { ok: false, error: "QR Code da criança não encontrado." };
+    return { ok: false, error: "QR Code da crianca nao encontrado." };
   }
 
   try {
@@ -46,7 +49,7 @@ export async function simulateInstitutionalAction() {
       severity: EventSeverity.INFORMATIONAL,
       institutionId: school.id,
       identifierId: identifier.id,
-      locationLabel: "Portão principal da escola (simulação)",
+      locationLabel: "Portao principal da escola (simulacao)",
       publicId: `sim-ins-${Date.now()}`,
       metadata: { simulation: true, type: "institutional" },
     });
@@ -55,7 +58,8 @@ export async function simulateInstitutionalAction() {
   } catch (error) {
     return {
       ok: false,
-      error: error instanceof Error ? error.message : "Erro ao simular evento institucional.",
+      error:
+        error instanceof Error ? error.message : "Erro ao simular evento institucional.",
     };
   }
 }
