@@ -15,6 +15,8 @@ export type ProtectionNetworkData = {
     severity: string;
     status: string;
     createdAt: string;
+    acknowledgedAt: string | null;
+    resolvedAt: string | null;
     institutionName: string | null;
     latitude: number | null;
     longitude: number | null;
@@ -30,4 +32,16 @@ export type ProtectionNetworkData = {
     longitude: number | null;
     locationLabel: string | null;
   }>;
+  severityCounts: {
+    LOW: number;
+    MEDIUM: number;
+    HIGH: number;
+    CRITICAL: number;
+  };
+  responseTime: {
+    averageMinutes: number | null;
+    actedCount: number;
+  };
+  eventsByType: Array<{ type: string; count: number }>;
+  eventsByInstitution: Array<{ name: string; count: number }>;
 };

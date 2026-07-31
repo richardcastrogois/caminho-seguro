@@ -25,4 +25,21 @@ export type AdminDashboardData = {
     type: string;
     active: boolean;
   }>;
+  analytics: {
+    events24h: number;
+    events7d: number;
+    eventsByDay: Array<{ date: string; count: number }>;
+    eventsByType: Array<{ type: string; count: number }>;
+    eventsBySource: Array<{ source: string; count: number }>;
+  };
+  blockchainHealth: {
+    byStatus: Array<{ status: string; count: number }>;
+    wallet: {
+      configured: boolean;
+      publicKey: string | null;
+      balanceSOL: number | null;
+      low: boolean;
+    };
+  };
+  openAlerts: number;
 };
