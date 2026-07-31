@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ProtectedJourney } from "@/components/home/protected-journey";
 import {
   ArrowRight,
   BadgeCheck,
@@ -203,6 +204,8 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <ProtectedJourney />
 
         <section className="relative border-b border-sky-100 py-10 sm:py-16">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:gap-10 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:px-10">

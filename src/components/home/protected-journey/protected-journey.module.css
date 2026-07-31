@@ -1,0 +1,992 @@
+.section {
+  --journey-progress: 0;
+  position: relative;
+  overflow: clip;
+  border-block: 1px solid rgb(186 230 253 / 0.72);
+  background: #f3fbfb;
+}
+
+.section::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background-image:
+    linear-gradient(rgb(14 165 233 / 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(14 165 233 / 0.075) 1px, transparent 1px);
+  background-size: clamp(2.5rem, 5vw, 4.5rem) clamp(2.5rem, 5vw, 4.5rem);
+  mask-image: linear-gradient(180deg, transparent, black 8%, black 92%, transparent);
+}
+
+.motionControlRow {
+  position: relative;
+  z-index: 4;
+  margin-inline: auto;
+  display: flex;
+  width: min(100%, 80rem);
+  justify-content: flex-end;
+  padding: 0.85rem clamp(1rem, 4vw, 2.5rem) 0;
+}
+
+.motionControl {
+  border-color: rgb(186 230 253 / 0.9);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.92);
+  box-shadow: 0 10px 28px rgb(8 47 73 / 0.08);
+}
+
+.pinFrame {
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+  align-items: center;
+  padding: calc(var(--app-nav-offset, 5rem) + 0.4rem) 0 0.85rem;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  margin-inline: auto;
+  display: grid;
+  width: min(100%, 80rem);
+  gap: 1rem;
+  padding-inline: clamp(0.75rem, 3vw, 2rem);
+}
+
+.stage {
+  position: relative;
+  height: min(46rem, calc(100svh - var(--app-nav-offset, 5rem) - 1.5rem));
+  min-height: 34rem;
+  overflow: hidden;
+  border: 1px solid rgb(125 211 252 / 0.58);
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  background: rgb(248 253 252 / 0.9);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 24px 70px rgb(8 47 73 / 0.1);
+  isolation: isolate;
+}
+
+.cameraLayer {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.background,
+.backgroundGrid,
+.backgroundGlowOne,
+.backgroundGlowTwo,
+.backgroundRoad {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.background {
+  background: linear-gradient(145deg, #f8fdff 0%, #eefbf6 100%);
+}
+
+.backgroundGrid {
+  background-image:
+    linear-gradient(rgb(14 165 233 / 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(14 165 233 / 0.09) 1px, transparent 1px);
+  background-size: 3.75rem 3.75rem;
+}
+
+.backgroundGlowOne,
+.backgroundGlowTwo {
+  display: none;
+}
+
+.backgroundRoad {
+  inset: 47% -8% auto -8%;
+  height: 20%;
+  transform: rotate(-6deg);
+  border-block: 1px solid rgb(14 165 233 / 0.13);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 2.5rem,
+      rgb(14 165 233 / 0.17) 2.5rem 4.2rem,
+      transparent 4.2rem 7rem
+    ),
+    rgb(255 255 255 / 0.5);
+}
+
+.route {
+  position: absolute;
+  inset: 8% 4% 10%;
+  z-index: 2;
+  width: 92%;
+  height: 82%;
+  overflow: visible;
+}
+
+.routeBase {
+  fill: none;
+  stroke: rgb(2 132 199 / 0.2);
+  stroke-dasharray: 10 13;
+  stroke-linecap: round;
+  stroke-width: 6;
+}
+
+.routeProgress {
+  fill: none;
+  stroke: url("#journeyRouteGradient");
+  stroke-linecap: round;
+  stroke-width: 6;
+}
+
+.routeMarkerHalo {
+  fill: rgb(236 253 245 / 0.96);
+  stroke: rgb(16 185 129 / 0.42);
+  stroke-width: 2;
+}
+
+.routeMarker {
+  fill: #00856f;
+}
+
+.city {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+
+.zone {
+  position: absolute;
+  display: grid;
+  width: clamp(10rem, 17vw, 14rem);
+  justify-items: center;
+  gap: 0.45rem;
+  transform-origin: center bottom;
+  will-change: transform, opacity;
+}
+
+.zone > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 9rem;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 14px rgb(15 23 42 / 0.12));
+}
+
+.homeZone {
+  bottom: 11%;
+  left: 2%;
+}
+
+.communityZone {
+  top: 9%;
+  left: 26%;
+  width: clamp(9rem, 15vw, 12.5rem);
+}
+
+.busStopZone {
+  right: 30%;
+  bottom: 10%;
+  width: clamp(8rem, 13vw, 11rem);
+}
+
+.zoneText {
+  position: absolute;
+  top: -0.2rem;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  white-space: nowrap;
+}
+
+.zoneText h3 {
+  border: 1px solid rgb(186 230 253 / 0.9);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.92);
+  padding: 0.35rem 0.65rem;
+  color: #075985;
+  font-size: 0.76rem;
+  font-weight: 800;
+  box-shadow: 0 9px 24px rgb(8 47 73 / 0.08);
+}
+
+.childFigure,
+.busFigure,
+.schoolFigure {
+  position: absolute;
+  z-index: 5;
+  margin: 0;
+  transform-origin: center bottom;
+  will-change: transform, opacity;
+}
+
+.childFigure {
+  bottom: 18%;
+  left: 8%;
+  width: clamp(4.8rem, 7vw, 6.25rem);
+}
+
+.busFigure {
+  bottom: 15%;
+  left: 54%;
+  width: clamp(10rem, 18vw, 14rem);
+}
+
+.schoolFigure {
+  top: 8%;
+  right: 2%;
+  width: clamp(13rem, 23vw, 18rem);
+}
+
+.childFigure img,
+.busFigure img,
+.schoolFigure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 14px 16px rgb(15 23 42 / 0.14));
+}
+
+.childFigure figcaption,
+.busFigure figcaption,
+.schoolFigure figcaption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.copy,
+.phone {
+  position: absolute;
+  z-index: 20;
+  border: 1px solid rgb(186 230 253 / 0.88);
+  background: rgb(255 255 255 / 0.94);
+  box-shadow: 0 18px 48px rgb(8 47 73 / 0.13);
+  backdrop-filter: blur(10px);
+  will-change: transform, opacity;
+}
+
+.copy {
+  bottom: 1rem;
+  left: 1rem;
+  width: min(31rem, calc(100% - 2rem));
+  border-radius: 1.1rem;
+  padding: clamp(0.85rem, 2vw, 1.1rem);
+}
+
+.copyViewport {
+  min-height: 6.8rem;
+}
+
+.copyMotionPanel {
+  max-width: 29rem;
+}
+
+.eyebrow {
+  color: #0077b6;
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.copy h2 {
+  margin-top: 0.3rem;
+  color: #020617;
+  font-size: clamp(1.3rem, 2.8vw, 2rem);
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.lead {
+  margin-top: 0.45rem;
+  max-width: 28rem;
+  color: #40536d;
+  font-size: clamp(0.82rem, 1.5vw, 0.96rem);
+  line-height: 1.45;
+}
+
+.phone {
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  width: min(22rem, calc(100% - 2rem));
+  gap: 0.55rem;
+  border-radius: 1.1rem;
+  padding: 0.8rem;
+}
+
+.phoneHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.phoneIcon,
+.mapIcon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.8rem;
+  background: #dcfce7;
+  color: #0077b6;
+}
+
+.phoneIcon svg,
+.mapIcon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.phoneEyebrow,
+.mapHeader p {
+  color: #0077b6;
+  font-size: 0.65rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.phoneHeader h3,
+.mapHeader h3 {
+  margin-top: 0.08rem;
+  color: #020617;
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.phoneStatusViewport {
+  min-height: 3rem;
+}
+
+.phoneStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  border: 1px solid rgb(16 185 129 / 0.3);
+  border-radius: 0.9rem;
+  background: rgb(236 253 245 / 0.92);
+  padding: 0.45rem 0.6rem;
+  color: #047857;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.phoneStatus svg {
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 1rem;
+}
+
+.phoneStatus strong {
+  display: block;
+  color: #064e3b;
+  font-size: 0.78rem;
+}
+
+.latestNotification {
+  display: flex;
+  gap: 0.35rem;
+  color: #475569;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.latestNotification strong {
+  color: #0369a1;
+}
+
+.boardingStatus {
+  position: absolute;
+  right: 32%;
+  bottom: 28%;
+  z-index: 8;
+  display: grid;
+  gap: 0.08rem;
+  min-width: 13rem;
+  border: 1px solid rgb(125 211 252 / 0.86);
+  border-radius: 0.95rem;
+  background: rgb(255 255 255 / 0.94);
+  padding: 0.65rem 0.75rem;
+  color: #0f172a;
+  box-shadow: 0 14px 34px rgb(8 47 73 / 0.12);
+  will-change: transform, opacity;
+}
+
+.boardingStatus span {
+  color: #53657d;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.boardingStatus strong {
+  color: #0369a1;
+  font-size: 0.9rem;
+  font-weight: 850;
+}
+
+.schoolCheckpoint,
+.attentionCheckpoint {
+  position: absolute;
+  z-index: 8;
+}
+
+.schoolCheckpoint {
+  top: 34%;
+  right: 4%;
+}
+
+.attentionCheckpoint {
+  right: 18%;
+  bottom: 24%;
+}
+
+.checkpoint {
+  --checkpoint-bg: rgb(255 255 255 / 0.95);
+  --checkpoint-border: rgb(203 213 225 / 0.9);
+  --checkpoint-color: #0f172a;
+  --checkpoint-soft: rgb(241 245 249 / 0.95);
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.48rem;
+  align-items: center;
+  min-width: 10rem;
+  max-width: 15rem;
+  border: 1px solid var(--checkpoint-border);
+  border-radius: 999px;
+  background: var(--checkpoint-bg);
+  padding: 0.42rem 0.62rem;
+  color: var(--checkpoint-color);
+  box-shadow: 0 11px 28px rgb(8 47 73 / 0.11);
+}
+
+.checkpointCompact {
+  min-width: 0;
+}
+
+.checkpointIdle {
+  --checkpoint-border: rgb(186 230 253 / 0.9);
+  --checkpoint-color: #0369a1;
+  --checkpoint-soft: #eff6ff;
+}
+
+.checkpointDetecting,
+.checkpointValidating {
+  --checkpoint-border: rgb(56 189 248 / 0.9);
+  --checkpoint-color: #0369a1;
+  --checkpoint-soft: #e0f2fe;
+}
+
+.checkpointValidated {
+  --checkpoint-border: rgb(110 231 183 / 0.95);
+  --checkpoint-color: #047857;
+  --checkpoint-soft: #dcfce7;
+}
+
+.checkpointAttention {
+  --checkpoint-border: rgb(251 191 36 / 0.9);
+  --checkpoint-color: #92400e;
+  --checkpoint-soft: #fef3c7;
+}
+
+.checkpointWaves {
+  position: absolute;
+  inset: -0.3rem;
+  border: 1px solid currentColor;
+  border-radius: inherit;
+  opacity: 0.12;
+}
+
+.checkpointBase {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: var(--checkpoint-soft);
+}
+
+.checkpointRing {
+  position: absolute;
+  inset: 0.18rem;
+  border: 1px dashed currentColor;
+  border-radius: inherit;
+  opacity: 0.48;
+}
+
+.checkpointIcon {
+  position: relative;
+  z-index: 1;
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.checkpointText {
+  min-width: 0;
+}
+
+.checkpointLabel {
+  display: block;
+  overflow: hidden;
+  color: #0f172a;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.checkpointMeta {
+  display: block;
+  margin-top: 0.05rem;
+  color: #64748b;
+  font-size: 0.62rem;
+  font-weight: 650;
+}
+
+.checkpointDetecting .checkpointBase {
+  box-shadow: 0 0 0 5px rgb(14 165 233 / 0.1);
+}
+
+.checkpointValidating .checkpointIcon {
+  animation: journeyCheckpointSpin 1.1s linear infinite;
+}
+
+.checkpointAttention .checkpointBase {
+  border-radius: 0.55rem;
+  box-shadow: 0 0 0 4px rgb(251 191 36 / 0.14);
+}
+
+.mapPanel {
+  position: absolute;
+  top: 5%;
+  right: 2%;
+  z-index: 11;
+  width: min(20rem, 29%);
+  overflow: hidden;
+  border: 1px solid rgb(186 230 253 / 0.85);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.94);
+  box-shadow: 0 20px 50px rgb(8 47 73 / 0.13);
+  will-change: transform, opacity;
+}
+
+.mapHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem;
+}
+
+.mapCanvas {
+  position: relative;
+  min-height: 11rem;
+  overflow: hidden;
+  border-top: 1px solid rgb(226 232 240 / 0.85);
+}
+
+.mapCanvas img {
+  object-fit: cover;
+  opacity: 0.66;
+}
+
+.mapOverlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.mapOverlay path {
+  fill: none;
+  stroke: #0284c7;
+  stroke-dasharray: 8 8;
+  stroke-width: 3;
+}
+
+.mapOverlay circle {
+  fill: #00856f;
+  stroke: white;
+  stroke-width: 3;
+}
+
+.mapTag {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid rgb(226 232 240 / 0.9);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.94);
+  padding: 0.32rem 0.45rem;
+  color: #334155;
+  font-size: 0.62rem;
+  font-weight: 800;
+  box-shadow: 0 8px 20px rgb(8 47 73 / 0.1);
+}
+
+.mapTag svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.mapTagSafe {
+  top: 11%;
+  left: 6%;
+  color: #047857;
+}
+
+.mapTagGap {
+  top: 40%;
+  right: 5%;
+  color: #b45309;
+}
+
+.mapTagNetwork {
+  bottom: 12%;
+  left: 18%;
+  color: #0369a1;
+}
+
+.mapCheckpoints {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.65rem;
+}
+
+.finalMessage {
+  position: absolute;
+  right: 25%;
+  bottom: 4%;
+  z-index: 12;
+  width: min(29rem, 42%);
+  border: 1px solid rgb(110 231 183 / 0.8);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.96);
+  padding: 0.9rem;
+  box-shadow: 0 22px 54px rgb(8 47 73 / 0.14);
+  will-change: transform, opacity;
+}
+
+.finalMessage p {
+  color: #047857;
+  font-size: 0.65rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.finalMessage h3 {
+  margin-top: 0.25rem;
+  color: #020617;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.finalMessage > span {
+  display: block;
+  margin-top: 0.35rem;
+  color: #40536d;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.finalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.actionMotionShell {
+  display: inline-flex;
+  width: fit-content;
+  transform-origin: center;
+}
+
+.action {
+  min-height: 2.45rem;
+  border-radius: 999px;
+  box-shadow: 0 9px 22px rgb(8 47 73 / 0.08);
+}
+
+.action:focus-visible {
+  outline: 3px solid rgb(14 165 233 / 0.32);
+  outline-offset: 3px;
+}
+
+.reducedMotionSummary {
+  border: 1px solid rgb(186 230 253 / 0.85);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.92);
+  padding: clamp(0.9rem, 2vw, 1.2rem);
+  box-shadow: 0 16px 40px rgb(8 47 73 / 0.08);
+}
+
+.reducedMotionSummary p {
+  color: #0077b6;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.reducedMotionSummary h3 {
+  margin-top: 0.35rem;
+  color: #020617;
+  font-size: clamp(1.1rem, 2.5vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.reducedMotionSummary ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem 1.5rem;
+  margin: 0.75rem 0 0;
+  padding-left: 1.1rem;
+  color: #40536d;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.notificationList,
+.notification {
+  display: none;
+}
+
+.notificationTime,
+.notificationTitle,
+.notificationDescription,
+.notificationIcon,
+.notificationBody,
+.phoneMetrics {
+  display: none;
+}
+
+.section[data-journey-reduced-motion="true"] .pinFrame {
+  min-height: auto;
+  padding: 1rem 0 2rem;
+}
+
+.section[data-journey-reduced-motion="true"] .stage {
+  height: 40rem;
+  min-height: 40rem;
+}
+
+.section[data-journey-reduced-motion="true"] .copy,
+.section[data-journey-reduced-motion="true"] .phone {
+  display: none;
+}
+
+@keyframes journeyCheckpointSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 899px) {
+  .pinFrame {
+    padding-top: calc(var(--app-nav-offset, 5rem) + 0.25rem);
+  }
+
+  .inner {
+    padding-inline: 0.65rem;
+  }
+
+  .stage {
+    height: min(44rem, calc(100svh - var(--app-nav-offset, 5rem) - 1rem));
+    min-height: 32rem;
+  }
+
+  .cameraLayer {
+    right: auto;
+    width: 70rem;
+    max-width: none;
+  }
+
+  .copy {
+    bottom: 0.65rem;
+    left: 0.65rem;
+    width: min(28rem, calc(100% - 1.3rem));
+    padding: 0.75rem;
+  }
+
+  .copyViewport {
+    min-height: 6.2rem;
+  }
+
+  .copy h2 {
+    font-size: clamp(1.15rem, 5.2vw, 1.55rem);
+  }
+
+  .lead {
+    font-size: 0.78rem;
+  }
+
+  .phone {
+    top: 0.65rem;
+    right: 0.65rem;
+    width: min(20rem, calc(100% - 1.3rem));
+    padding: 0.65rem;
+  }
+
+  .zone {
+    width: 12rem;
+  }
+
+  .communityZone {
+    width: 10.5rem;
+  }
+
+  .busStopZone {
+    width: 9.5rem;
+  }
+
+  .childFigure {
+    width: 5.2rem;
+  }
+
+  .busFigure {
+    width: 12rem;
+  }
+
+  .schoolFigure {
+    width: 16rem;
+  }
+
+  .mapPanel {
+    width: 19rem;
+  }
+
+  .finalMessage {
+    right: 23%;
+    width: 26rem;
+  }
+
+  .section[data-journey-reduced-motion="true"] .cameraLayer {
+    width: 100%;
+  }
+
+  .section[data-journey-reduced-motion="true"] .stage {
+    height: 37rem;
+    min-height: 37rem;
+  }
+
+  .section[data-journey-reduced-motion="true"] .zone,
+  .section[data-journey-reduced-motion="true"] .route,
+  .section[data-journey-reduced-motion="true"] .childFigure,
+  .section[data-journey-reduced-motion="true"] .busFigure,
+  .section[data-journey-reduced-motion="true"] .schoolFigure,
+  .section[data-journey-reduced-motion="true"] .boardingStatus,
+  .section[data-journey-reduced-motion="true"] .schoolCheckpoint,
+  .section[data-journey-reduced-motion="true"] .attentionCheckpoint {
+    display: none;
+  }
+
+  .section[data-journey-reduced-motion="true"] .mapPanel {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: calc(100% - 1.5rem);
+  }
+
+  .section[data-journey-reduced-motion="true"] .finalMessage {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: calc(100% - 1.5rem);
+  }
+
+  .reducedMotionSummary ol {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .motionControlRow {
+    justify-content: center;
+    padding-inline: 0.75rem;
+  }
+
+  .motionControl {
+    width: 100%;
+  }
+
+  .phoneHeader {
+    display: none;
+  }
+
+  .phoneStatusViewport {
+    min-height: 2.75rem;
+  }
+
+  .phoneStatus {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .latestNotification {
+    display: none;
+  }
+
+  .copyViewport {
+    min-height: 6.6rem;
+  }
+
+  .checkpoint {
+    max-width: 11rem;
+  }
+
+  .mapCheckpoints {
+    display: none;
+  }
+
+  .mapCanvas {
+    min-height: 10rem;
+  }
+
+  .section[data-journey-reduced-motion="true"] .stage {
+    height: 32rem;
+    min-height: 32rem;
+  }
+
+  .section[data-journey-reduced-motion="true"] .phone {
+    display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .stage {
+    min-height: 31rem;
+  }
+
+  .copy h2 {
+    font-size: 1.08rem;
+  }
+
+  .copyViewport {
+    min-height: 7rem;
+  }
+
+  .phoneStatus {
+    font-size: 0.66rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkpointValidating .checkpointIcon {
+    animation: none;
+  }
+}
