@@ -159,8 +159,6 @@ export default async function RootLayout({
 
         <AppNavigation session={session} />
 
-        <div className="h-32 md:h-0" aria-hidden="true" />
-
         <ViewTransition name="main-content">{children}</ViewTransition>
       </body>
     </html>

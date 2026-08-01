@@ -1,13 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { ProtectedJourney } from "@/components/home/protected-journey";
 import {
   ArrowRight,
   BadgeCheck,
   BellRing,
   BrainCircuit,
   Bluetooth,
-  CheckCircle2,
   EyeOff,
   Fingerprint,
   MapPinned,
@@ -20,6 +21,7 @@ import {
   Users,
 } from "lucide-react";
 import { GsapReveal } from "@/components/shared/gsap-reveal";
+import { HowItWorksScenario } from "@/components/shared/how-it-works-scenario";
 import { InteractiveParticleField } from "@/components/shared/interactive-particle-field";
 import { ProtectionNetworkVisual } from "@/components/shared/protection-network-visual";
 import {
@@ -83,25 +85,49 @@ const testSteps = [
 
 const protectionSteps = [
   {
-    title: "Identidade fisica",
+    title: "Identificacao simples",
     description:
-      "A crianca usa QR e BLE sem depender de celular, internet ou aplicativo.",
+      "Um cartao ou pulseira com codigo unico. Leitura por QR, NFC ou BLE, sem aplicativo.",
     icon: QrCode,
   },
   {
-    title: "Evento, nao rota",
-    description: "A rede registra passagens importantes, nao cada passo da rotina.",
+    title: "So os momentos que importam",
+    description:
+      "Saiu de casa, chegou na escola, entrou no transporte. Sem GPS continuo.",
     icon: Bluetooth,
   },
   {
-    title: "Alerta acionavel",
-    description: "Responsaveis e instituicoes recebem contexto suficiente para agir.",
+    title: "Alerta na hora certa",
+    description: "Se algo sai do esperado, o responsavel recebe um aviso claro.",
     icon: BellRing,
   },
   {
-    title: "Privacidade primeiro",
-    description: "Dados pessoais ficam fora do QR publico e fora de provas abertas.",
+    title: "Dados protegidos",
+    description: "O codigo publico nao mostra nome, endereco nem dados sensiveis.",
     icon: ShieldCheck,
+  },
+];
+
+const architectureSteps = [
+  {
+    title: "Evento nasce na rede",
+    text: "QR, BLE, escola ou transporte registram apenas o que aconteceu.",
+    icon: QrCode,
+  },
+  {
+    title: "Aplicacao organiza",
+    text: "A API valida, salva no banco e entrega cada painel ao perfil certo.",
+    icon: Network,
+  },
+  {
+    title: "Prova sem expor",
+    text: "O sistema gera um hash do evento. Dados pessoais nao vao para a blockchain.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Blockchain confirma",
+    text: "A Solana Devnet guarda a evidencia para auditoria e verificacao posterior.",
+    icon: BadgeCheck,
   },
 ];
 
@@ -154,6 +180,8 @@ const futureEvolutions = [
 ];
 
 export default function Home() {
+  const [futureOpen, setFutureOpen] = useState<string[]>([]);
+
   return (
     <main className="relative isolate min-h-screen overflow-hidden bg-[linear-gradient(135deg,#CFDAE0_0%,#ffffff_45%,#DDECE5_100%)]">
       <InteractiveParticleField className="z-0 opacity-90" />
@@ -162,8 +190,8 @@ export default function Home() {
         <section className="relative border-b border-sky-100/80">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-180 bg-[linear-gradient(115deg,rgba(14,165,233,.14),rgba(23, 176, 203, 0.11)_45%,rgba(16,185,129,.14))]" />
 
-          <div className="relative mx-auto grid max-w-7xl gap-9 px-4 pb-14 pt-[calc(var(--app-nav-offset)+0.50rem)] sm:px-6 lg:grid-cols-[0.94fr_1.06fr] lg:items-center lg:px-10 lg:pb-20">
-            <div className="flex flex-col justify-center">
+          <div className="relative mx-auto grid max-w-7xl gap-6 px-4 pb-10 pt-[calc(var(--app-nav-offset)+0.50rem)] sm:gap-9 sm:px-6 sm:pb-14 lg:grid-cols-[0.94fr_1.06fr] lg:items-center lg:px-10 lg:pb-20">
+            <div className="flex flex-col justify-center lg:pt-10">
               <div
                 data-gsap="hero"
                 className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-white/95 px-4 py-2 b-2 text-sm font-semibold text-emerald-700 shadow-sm"
@@ -183,26 +211,25 @@ export default function Home() {
                 data-gsap="hero"
                 className="mt-6 max-w-2xl text-lg leading-8 text-slate-600"
               >
-                Um MVP para conectar familia, escola, transporte, servicos publicos e
+                Um serviço para conectar familia, escola, transporte, servicos publicos e
                 comunidade em torno de eventos de protecao infantil. A proposta e simples:
                 acompanhar sinais importantes sem acompanhar cada passo da crianca.
               </p>
-
-              <div data-gsap="metrics" className="mt-9 grid gap-3 sm:grid-cols-3">
-                <MetricCard value="0" label="dados pessoais no QR" />
-                <MetricCard value="7" label="atores da rede conectados" />
-                <MetricCard value="24h" label="eventos prontos para resposta" />
-              </div>
             </div>
 
-            <div data-gsap="visual">
+            <div
+              data-gsap="visual"
+              className="lg:mx-auto lg:w-[88%] **:data-network-visual:lg:min-h-117.5"
+            >
               <ProtectionNetworkVisual />
             </div>
           </div>
         </section>
 
-        <section className="relative border-b border-sky-100 py-16">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:px-10">
+        <ProtectedJourney />
+
+        <section className="relative border-b border-sky-100 py-10 sm:py-16">
+          <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:gap-10 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:px-10">
             <Card
               data-gsap-scroll="left"
               className="rounded-3xl border-sky-100 bg-linear-to-br from-sky-600 via-cyan-600 to-emerald-600 text-white shadow-[0_26px_60px_rgba(3,105,161,0.24)]"
@@ -247,21 +274,22 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="como-funciona" className="relative border-b border-sky-100 py-16">
+        <section
+          id="como-funciona"
+          className="relative border-b border-sky-100 py-10 sm:py-16"
+        >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
             <div data-gsap-scroll="up" className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
                 Como funciona
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-                A crianca carrega uma identidade protegida. A rede registra eventos. As
-                pessoas certas agem.
+                Veja o cenario na pratica. Clique nos passos para acompanhar cada alerta.
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
-                O cidadao pode ler o QR e pedir ajuda sem ver dados sensiveis. A escola
-                confirma chegada. O transporte registra embarque. O responsavel acompanha
-                alertas. A rede publica coordena casos formais.
-              </p>
+            </div>
+
+            <div data-gsap-scroll="up" className="mt-10">
+              <HowItWorksScenario />
             </div>
 
             <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -294,7 +322,80 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="como-testar" className="relative border-b border-sky-100 py-16">
+        <section className="relative border-b border-sky-100 py-10 sm:py-16">
+          <div className="mx-auto grid max-w-7xl gap-7 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:px-10">
+            <div data-gsap-scroll="left" className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                Arquitetura confiavel
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
+                Blockchain entra como prova, nao como exposicao de dados.
+              </h2>
+              <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+                A rede registra eventos importantes, protege as informacoes sensiveis no
+                sistema e publica apenas uma evidencia verificavel na blockchain.
+              </p>
+            </div>
+
+            <div data-gsap-scroll="up" className="grid gap-4">
+              <Card className="overflow-hidden rounded-3xl border-sky-100 bg-slate-950 text-white shadow-[0_24px_64px_rgba(2,6,23,0.22)]">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {architectureSteps.map((step, index) => {
+                      const Icon = step.icon;
+                      return (
+                        <div
+                          key={step.title}
+                          className="rounded-2xl border border-white/10 bg-white/6 p-4"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="flex size-10 items-center justify-center rounded-xl bg-white text-slate-950">
+                              <Icon />
+                            </span>
+                            <span className="text-xs font-semibold text-slate-500">
+                              0{index + 1}
+                            </span>
+                          </div>
+                          <h3 className="mt-4 text-base font-semibold leading-5">
+                            {step.title}
+                          </h3>
+                          <p className="mt-2 text-sm leading-6 text-slate-300">
+                            {step.text}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-4 grid gap-3 rounded-2xl border border-emerald-300/25 bg-emerald-400/10 p-4 text-sm text-emerald-50 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-200">
+                        Dentro do sistema
+                      </span>
+                      <p className="mt-1 font-semibold">
+                        Evento completo e acesso por perfil
+                      </p>
+                    </div>
+                    <ArrowRight className="hidden text-emerald-200 sm:block" />
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-200">
+                        Na blockchain
+                      </span>
+                      <p className="mt-1 font-semibold">
+                        Hash verificavel, sem dados pessoais
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="como-testar"
+          className="relative border-b border-sky-100 py-10 sm:py-16"
+        >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
             <div data-gsap-scroll="up" className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
@@ -348,32 +449,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="relative border-b border-sky-100 py-16">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-10">
-            <div data-gsap-scroll="left">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
-                O que ele faz e nao faz
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-                O valor do produto esta no limite: ajudar sem expor.
-              </h2>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <TruthCard
-                title="Faz"
-                text="Registra eventos de protecao e notifica responsaveis, instituicoes e rede formal."
-                positive
-              />
-              <TruthCard
-                title="Nao faz"
-                text="Nao mostra dados pessoais no QR e nao acompanha GPS continuo da crianca."
-              />
-            </div>
-          </div>
-        </section>
-
-        <section className="relative py-16">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:px-10">
+        <section className="relative py-10 sm:py-16">
+          <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:gap-8 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:px-10">
             <div data-gsap-scroll="left" className="max-w-2xl">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
                 Visao de futuro
@@ -392,7 +469,7 @@ export default function Home() {
               data-gsap-scroll="up"
               className="home-surface overflow-hidden rounded-3xl border-sky-100 bg-white/90"
             >
-              <CardHeader className="gap-2 p-5 sm:p-6">
+              <CardHeader className="gap-2 p-4 sm:p-6">
                 <CardTitle className="text-xl text-slate-950 sm:text-2xl">
                   Evolucoes planejadas para a rede
                 </CardTitle>
@@ -401,8 +478,16 @@ export default function Home() {
                   roadmap principal.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
-                <Accordion defaultValue={["future-0"]} className="gap-1">
+              <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+                <Accordion
+                  multiple
+                  value={futureOpen}
+                  onValueChange={(value) => {
+                    const nextValue = Array.isArray(value) ? value.slice(-1) : [];
+                    setFutureOpen(nextValue);
+                  }}
+                  className="gap-2"
+                >
                   {futureEvolutions.map((item, index) => {
                     const Icon = item.icon;
 
@@ -410,7 +495,7 @@ export default function Home() {
                       <AccordionItem
                         key={item.title}
                         value={`future-${index}`}
-                        className="rounded-2xl border border-sky-100 bg-white/80 px-4 shadow-sm not-last:border-b"
+                        className="rounded-2xl border border-sky-100 bg-white/90 px-4 shadow-sm transition-[border-color,box-shadow,background-color] duration-300 data-open:border-emerald-200 data-open:bg-white data-open:shadow-md not-last:border-b"
                       >
                         <AccordionTrigger className="gap-3 py-4 no-underline hover:no-underline">
                           <span className="flex min-w-0 flex-1 items-center gap-3">
@@ -427,7 +512,7 @@ export default function Home() {
                             </span>
                           </span>
                         </AccordionTrigger>
-                        <AccordionContent className="pb-4 pl-0 text-sm leading-6 text-slate-600 sm:pl-13">
+                        <AccordionContent className="pb-4 pl-13 text-sm leading-6 text-slate-600">
                           <p>{item.description}</p>
                           <p className="mt-3 text-slate-700">{item.approach}</p>
                         </AccordionContent>
@@ -441,41 +526,5 @@ export default function Home() {
         </section>
       </GsapReveal>
     </main>
-  );
-}
-
-function MetricCard({ value, label }: { value: string; label: string }) {
-  return (
-    <Card className="home-surface rounded-2xl border-sky-100 bg-white/90">
-      <CardContent className="p-4">
-        <p className="text-2xl font-semibold text-slate-950">{value}</p>
-        <p className="mt-1 text-sm leading-5 text-slate-500">{label}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function TruthCard({
-  title,
-  text,
-  positive = false,
-}: {
-  title: string;
-  text: string;
-  positive?: boolean;
-}) {
-  return (
-    <Card
-      data-gsap-scroll="up"
-      className={`rounded-2xl ${positive ? "border-emerald-200 bg-emerald-50" : "border-sky-200 bg-sky-50"}`}
-    >
-      <CardHeader>
-        <div className="flex items-center gap-2 text-slate-950">
-          <CheckCircle2 />
-          <CardTitle>{title}</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="leading-7 text-slate-700">{text}</CardContent>
-    </Card>
   );
 }

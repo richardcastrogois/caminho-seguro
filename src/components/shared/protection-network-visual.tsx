@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { type CSSProperties, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import {
@@ -18,24 +18,64 @@ import {
 gsap.registerPlugin(useGSAP);
 
 const nodes = [
-  { id: "familia", label: "Família", icon: Home, left: "7%", top: "25%", tone: "blue" },
-  { id: "escola", label: "Escola", icon: School, left: "40%", top: "8%", tone: "green" },
+  {
+    id: "familia",
+    label: "Familia",
+    icon: Home,
+    left: "7%",
+    top: "25%",
+    mobileLeft: "9%",
+    mobileTop: "24%",
+    tone: "blue",
+  },
+  {
+    id: "escola",
+    label: "Escola",
+    icon: School,
+    left: "40%",
+    top: "8%",
+    mobileLeft: "37%",
+    mobileTop: "9%",
+    tone: "green",
+  },
   {
     id: "transporte",
     label: "Transporte",
     icon: BusFront,
     left: "73%",
     top: "27%",
+    mobileLeft: "58%",
+    mobileTop: "27%",
     tone: "blue",
   },
-  { id: "ubs", label: "UBS", icon: Hospital, left: "78%", top: "62%", tone: "green" },
-  { id: "cras", label: "CRAS", icon: Building2, left: "43%", top: "78%", tone: "blue" },
+  {
+    id: "ubs",
+    label: "UBS",
+    icon: Hospital,
+    left: "78%",
+    top: "62%",
+    mobileLeft: "64%",
+    mobileTop: "62%",
+    tone: "green",
+  },
+  {
+    id: "cras",
+    label: "CRAS",
+    icon: Building2,
+    left: "43%",
+    top: "78%",
+    mobileLeft: "42%",
+    mobileTop: "78%",
+    tone: "blue",
+  },
   {
     id: "comunidade",
     label: "Comunidade",
     icon: HeartHandshake,
     left: "6%",
     top: "64%",
+    mobileLeft: "7%",
+    mobileTop: "63%",
     tone: "green",
   },
 ] as const;
@@ -141,11 +181,21 @@ export function ProtectionNetworkVisual() {
         "-=0.45",
       );
 
+      const isCompact = window.matchMedia("(max-width: 640px)").matches;
+      const travelX = isCompact ? 5 : 14;
+      const travelY = isCompact ? 6 : 13;
+
       nodeElements.forEach((node, index) => {
         gsap.to(node, {
-          x: index % 2 === 0 ? 25 + index * 1.5 : -(21 + index * 1.5),
-          y: index % 3 === 0 ? -(22 + index) : 20 + (index % 2) * 5,
-          rotation: index % 2 === 0 ? 2.4 : -2.1,
+          x:
+            index % 2 === 0
+              ? travelX + index * (isCompact ? 0.25 : 0.85)
+              : -(travelX + index * (isCompact ? 0.25 : 0.85)),
+          y:
+            index % 3 === 0
+              ? -(travelY + index * (isCompact ? 0.18 : 0.65))
+              : travelY + (index % 2) * (isCompact ? 1.2 : 3),
+          rotation: index % 2 === 0 ? 1.4 : -1.2,
           duration: 1.85 + index * 0.18,
           repeat: -1,
           yoyo: true,
@@ -155,8 +205,8 @@ export function ProtectionNetworkVisual() {
 
       if (center) {
         gsap.to(center, {
-          y: -11,
-          scale: 1.025,
+          y: -7,
+          scale: 1.015,
           duration: 2.15,
           repeat: -1,
           yoyo: true,
@@ -199,10 +249,10 @@ export function ProtectionNetworkVisual() {
     <div
       ref={scope}
       data-network-visual
-      className="relative min-h-[490px] overflow-hidden rounded-lg border border-sky-200/80 bg-white/88 shadow-[0_28px_70px_rgba(8,47,73,0.16)] backdrop-blur-sm sm:min-h-[540px]"
+      className="relative min-h-117.5 overflow-hidden rounded-lg border border-sky-200/80 bg-white/88 shadow-[0_28px_70px_rgba(8,47,73,0.16)] backdrop-blur-sm sm:min-h-135"
     >
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(224,242,254,.88),rgba(255,255,255,.35)_46%,rgba(209,250,229,.78))]" />
-      <div className="absolute inset-0 opacity-45 [background-image:linear-gradient(rgba(14,165,233,.13)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,.11)_1px,transparent_1px)] [background-size:42px_42px]" />
+      <div className="absolute inset-0 opacity-45 bg-[linear-gradient(rgba(14,165,233,.13)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,.11)_1px,transparent_1px)] bg-size-[42px_42px]" />
 
       <svg
         className="pointer-events-none absolute inset-0 z-10 h-full w-full"
@@ -225,15 +275,15 @@ export function ProtectionNetworkVisual() {
 
       <div
         data-network-anchor="center"
-        className="absolute left-1/2 top-[48%] z-30 flex h-[148px] w-[148px] -translate-x-1/2 -translate-y-1/2 will-change-transform items-center justify-center rounded-full border border-cyan-200 bg-[radial-gradient(circle_at_34%_24%,#ecfdf5_0%,#a7f3d0_26%,#0e7490_68%,#082f49_100%)] shadow-[0_20px_62px_rgba(8,145,178,0.34)] sm:h-[170px] sm:w-[170px]"
+        className="absolute left-1/2 top-[48%] z-30 flex size-34 -translate-x-1/2 -translate-y-1/2 will-change-transform items-center justify-center rounded-full border border-cyan-200 bg-[radial-gradient(circle_at_34%_24%,#ecfdf5_0%,#a7f3d0_26%,#0e7490_68%,#082f49_100%)] shadow-[0_20px_62px_rgba(8,145,178,0.34)] sm:size-42.5"
       >
         <span
           data-network-pulse
-          className="absolute inset-[-12px] -z-10 rounded-full border border-emerald-300/90"
+          className="absolute -inset-3 -z-10 rounded-full border border-emerald-300/90"
         />
         <span
           data-network-pulse
-          className="absolute inset-[-26px] -z-10 rounded-full border border-sky-300/80"
+          className="absolute -inset-6.5 -z-10 rounded-full border border-sky-300/80"
         />
 
         <div className="text-center">
@@ -262,16 +312,23 @@ export function ProtectionNetworkVisual() {
             key={node.id}
             data-network-node
             data-network-anchor={node.id}
-            className={`absolute z-20 flex min-h-10 items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold shadow-lg will-change-transform sm:text-sm ${tone}`}
-            style={{ left: node.left, top: node.top }}
+            className={`absolute left-(--node-left) top-(--node-top) z-20 flex min-h-10 max-w-[42vw] items-center gap-2 truncate rounded-full border px-3 py-2 text-xs font-semibold shadow-lg will-change-transform sm:left-(--node-left-sm) sm:top-(--node-top-sm) sm:max-w-none sm:text-sm ${tone}`}
+            style={
+              {
+                "--node-left": node.mobileLeft,
+                "--node-top": node.mobileTop,
+                "--node-left-sm": node.left,
+                "--node-top-sm": node.top,
+              } as CSSProperties
+            }
           >
             <Icon className="h-4 w-4 shrink-0" />
-            {node.label}
+            <span className="truncate">{node.label}</span>
           </div>
         );
       })}
 
-      <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-emerald-200 bg-white/92 px-3 py-2 text-xs font-semibold text-emerald-800 shadow-sm backdrop-blur">
+      <div className="absolute bottom-4 left-1/2 z-20 flex w-[min(82%,20rem)] -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-emerald-200 bg-white/92 px-3 py-2 text-center text-xs font-semibold text-emerald-800 shadow-sm backdrop-blur sm:w-auto">
         <ShieldCheck className="h-4 w-4" />
         Rede ativa ao redor da criança
       </div>

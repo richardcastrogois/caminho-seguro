@@ -6,7 +6,6 @@ import {
   Building2,
   BusFront,
   HeartHandshake,
-  Loader2,
   ShieldCheck,
   Users,
 } from "lucide-react";
@@ -19,10 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import type { DemoProfileId } from "@/lib/demo-auth";
-import { setAuthToken } from "@/lib/auth-fetch";
 import { cn } from "@/lib/utils";
 
 const profiles: Array<{
@@ -69,14 +65,6 @@ const profiles: Array<{
   },
 ];
 
-const rolePaths: Record<string, string> = {
-  GUARDIAN: "/responsavel",
-  INSTITUTION_MEMBER: "/escola",
-  TRANSPORT_MEMBER: "/transporte",
-  PUBLIC_AGENT: "/rede",
-  ADMIN: "/admin",
-};
-
 type LoginFormProps = {
   nextPath: string;
   unauthorized: boolean;
@@ -87,57 +75,6 @@ export function LoginForm({ nextPath, unauthorized, initialProfile }: LoginFormP
   const [selected, setSelected] = useState(
     profiles.find((profile) => profile.id === initialProfile) ?? profiles[0],
   );
-  const [password, setPassword] = useState("123456");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: selected.email, password }),
-      });
-
-      const data: unknown = await response.json();
-
-      if (
-        !response.ok ||
-        typeof data !== "object" ||
-        data === null ||
-        !("ok" in data) ||
-        data.ok !== true
-      ) {
-        const message =
-          typeof data === "object" &&
-          data !== null &&
-          "error" in data &&
-          typeof data.error === "string"
-            ? data.error
-            : "Erro ao fazer login";
-        throw new Error(message);
-      }
-
-      const result = data as unknown as {
-        token: string;
-        user: { name: string; role: string };
-      };
-
-      setAuthToken(result.token);
-      const homePath = rolePaths[result.user.role] ?? "/";
-      const finalPath = nextPath && nextPath !== "/" ? nextPath : homePath;
-
-      window.location.href = finalPath;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao fazer login");
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <div className="grid gap-5 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
@@ -156,64 +93,32 @@ export function LoginForm({ nextPath, unauthorized, initialProfile }: LoginFormP
         </CardHeader>
         <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
           <div className="rounded-2xl border border-sky-100 bg-sky-50/80 p-4 text-sm leading-6 text-slate-700">
-            Esta tela nao autentica pessoas reais. Ela simula privacidade por perfil para
-            demonstrar o produto no hackathon sem criar atrito durante a avaliacao.
+            Esta tela nao autentica pessoas reais. Ela troca o personagem da demonstracao
+            e grava apenas uma sessao demo temporaria no navegador.
           </div>
         </CardContent>
       </Card>
 
       <Card className="overflow-hidden rounded-3xl border-emerald-100 bg-white/90 shadow-xl shadow-emerald-950/5">
-        <form onSubmit={handleSubmit}>
+        <form action="/api/auth/demo-login" method="post">
+          <input type="hidden" name="profileId" value={selected.id} />
+          <input type="hidden" name="next" value={nextPath} />
+
           <CardHeader className="gap-1 p-5 pb-3 sm:p-6 sm:pb-3">
             <CardTitle className="text-2xl text-slate-950">
-              Login de demonstracao
+              Perfil da demonstracao
             </CardTitle>
             <CardDescription>
-              Use o cartao para alternar o perfil antes de entrar na tela privada.
+              Selecione um papel e entre direto na tela privada correspondente.
             </CardDescription>
           </CardHeader>
 
           <CardContent className="flex flex-col gap-4 p-5 pt-0 sm:p-6 sm:pt-0">
             {unauthorized && (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm font-medium text-amber-900">
-                Esse perfil nao acessa a area escolhida. Selecione o perfil correto
-                abaixo.
+                O perfil atual nao acessa a area escolhida. Troque para o papel correto.
               </div>
             )}
-
-            {error && (
-              <div
-                className="rounded-2xl border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-900"
-                role="alert"
-              >
-                {error}
-              </div>
-            )}
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="flex min-w-0 flex-col gap-2">
-                <Label htmlFor="email">E-mail do perfil</Label>
-                <Input
-                  id="email"
-                  value={selected.email}
-                  readOnly
-                  className="h-11 min-w-0 rounded-2xl bg-slate-50"
-                />
-              </div>
-
-              <div className="flex min-w-0 flex-col gap-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Sua senha"
-                  required
-                  className="h-11 min-w-0 rounded-2xl"
-                />
-              </div>
-            </div>
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {profiles.map((profile) => {
@@ -221,18 +126,19 @@ export function LoginForm({ nextPath, unauthorized, initialProfile }: LoginFormP
                 const active = selected.id === profile.id;
 
                 return (
-                  <button
+                  <Button
                     key={profile.id}
                     type="button"
+                    variant="outline"
                     onClick={() => setSelected(profile)}
                     className={cn(
-                      "min-w-0 rounded-2xl border p-3 text-left transition",
+                      "h-auto min-w-0 justify-start rounded-2xl p-3 text-left transition",
                       active
                         ? "border-emerald-300 bg-emerald-50 shadow-md shadow-emerald-950/10"
                         : "border-slate-200 bg-white hover:border-sky-200 hover:bg-sky-50",
                     )}
                   >
-                    <span className="flex min-w-0 items-center gap-3">
+                    <span className="flex min-w-0 items-start gap-3">
                       <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
                         <Icon />
                       </span>
@@ -243,12 +149,12 @@ export function LoginForm({ nextPath, unauthorized, initialProfile }: LoginFormP
                         <span className="block truncate text-xs text-slate-500">
                           {profile.email}
                         </span>
+                        <span className="mt-2 block whitespace-normal text-sm leading-5 text-slate-600">
+                          {profile.description}
+                        </span>
                       </span>
                     </span>
-                    <span className="mt-3 block text-sm leading-5 text-slate-600">
-                      {profile.description}
-                    </span>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -257,21 +163,11 @@ export function LoginForm({ nextPath, unauthorized, initialProfile }: LoginFormP
           <CardFooter className="border-t border-slate-100 p-5 sm:p-6">
             <Button
               type="submit"
-              disabled={loading}
               size="lg"
-              className="h-12 w-full rounded-2xl bg-linear-to-r from-sky-600 via-cyan-600 to-emerald-600 text-white hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-12 w-full rounded-2xl bg-linear-to-r from-sky-600 via-cyan-600 to-emerald-600 text-white hover:brightness-105"
             >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Entrando...
-                </>
-              ) : (
-                <>
-                  Entrar como {selected.label}
-                  <ArrowRight data-icon="inline-end" />
-                </>
-              )}
+              Entrar como {selected.label}
+              <ArrowRight data-icon="inline-end" />
             </Button>
           </CardFooter>
         </form>

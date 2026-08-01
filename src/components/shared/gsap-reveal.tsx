@@ -204,7 +204,7 @@ export function GsapReveal({ children, className = "" }: GsapRevealProps) {
             trigger: element,
             start: "top 86%",
             end: "bottom 14%",
-            toggleActions: "play reverse play reverse",
+            toggleActions: "play none none reverse",
             invalidateOnRefresh: true,
             refreshPriority: index,
           },

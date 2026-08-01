@@ -344,7 +344,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
                 </div>
               </div>
 
-              <div className="mt-6 rounded-2xl bg-slate-950 p-5 text-white">
+              <div className="mt-4 rounded-2xl sm:mt-6 bg-slate-950 p-5 text-white">
                 <p className="text-sm text-slate-400">Status atual</p>
 
                 <p className="mt-1 text-xl font-semibold">
@@ -418,7 +418,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
               )}
 
               {activeAlerts.length === 0 ? (
-                <div className="mt-6 rounded-3xl border border-dashed border-emerald-300 bg-emerald-50 p-8 text-center">
+                <div className="mt-4 rounded-2xl sm:mt-6 border border-dashed border-emerald-300 bg-emerald-50 p-5 sm:rounded-3xl sm:p-8 text-center">
                   <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-700" />
 
                   <p className="mt-4 font-semibold text-emerald-950">
@@ -430,7 +430,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
                   </p>
                 </div>
               ) : (
-                <div className="mt-6 grid gap-4">
+                <div className="mt-4 grid gap-3 sm:mt-6 sm:gap-4">
                   {activeAlerts.map((alert) => {
                     const classes = getAlertClasses(alert.severity, alert.status);
 
@@ -455,7 +455,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
                     return (
                       <article
                         key={alert.publicId}
-                        className={`rounded-3xl border p-5 ${classes.container}`}
+                        className={`rounded-2xl border p-4 sm:rounded-3xl sm:p-5 ${classes.container}`}
                       >
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                           <div
@@ -569,7 +569,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
           </section>
 
           <section className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="dashboard-panel rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="dashboard-panel rounded-[22px] border border-slate-200 bg-white p-4 sm:rounded-[28px] sm:p-6 shadow-sm">
               <h2 className="text-xl font-semibold text-slate-950">
                 Histórico de eventos
               </h2>
@@ -626,7 +626,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
                             Blockchain verificado
                             {event.transactionHash && (
                               <span
-                                className="hidden max-w-[100px] truncate text-[10px] text-emerald-500 sm:inline-block"
+                                className="hidden max-w-25 truncate text-[10px] text-emerald-500 sm:inline-block"
                                 title={event.transactionHash}
                               >
                                 {event.transactionHash.slice(0, 8)}...
@@ -653,7 +653,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
               </div>
             </div>
 
-            <div className="dashboard-panel rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="dashboard-panel rounded-[22px] border border-slate-200 bg-white p-4 sm:rounded-[28px] sm:p-6 shadow-sm">
               <h2 className="text-xl font-semibold text-slate-950">Alertas encerrados</h2>
 
               <p className="mt-1 text-sm text-slate-500">
@@ -661,7 +661,7 @@ export function GuardianDashboard({ data }: GuardianDashboardProps) {
               </p>
 
               {resolvedAlerts.length === 0 ? (
-                <p className="mt-6 rounded-2xl bg-slate-50 p-5 text-sm leading-6 text-slate-600">
+                <p className="mt-4 rounded-2xl sm:mt-6 bg-slate-50 p-5 text-sm leading-6 text-slate-600">
                   Nenhum alerta foi encerrado até o momento.
                 </p>
               ) : (

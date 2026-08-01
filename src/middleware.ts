@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+const DEMO_SESSION_COOKIE = "caminho_seguro_demo_session";
+
 const publicPaths = [
   "/api/auth/login",
   "/api/auth/demo-login",
@@ -13,9 +15,7 @@ const publicPaths = [
 ];
 
 /**
- * Essas rotas administrativas não usam o JWT comum da aplicação.
- * Elas possuem autenticação própria por meio do header:
- *
+ * Essas rotas administrativas usam autenticacao propria por header:
  * x-blockchain-admin-secret
  */
 const blockchainAdminPaths = [
@@ -49,13 +49,13 @@ export function middleware(request: NextRequest) {
   }
 
   if (pathname.startsWith("/api/")) {
-    const authHeader = request.headers.get("authorization");
+    const hasDemoSession = request.cookies.has(DEMO_SESSION_COOKIE);
 
-    if (!authHeader?.startsWith("Bearer ")) {
+    if (!hasDemoSession) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Token de autenticação necessário.",
+          error: "Sessao de demonstracao necessaria.",
         },
         {
           status: 401,

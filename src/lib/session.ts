@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import type { InstitutionType, UserRole } from "@/generated/prisma/client";
 import { demoProfiles, getDemoSession, type DemoProfileId } from "@/lib/demo-auth";
 import { prisma } from "@/lib/prisma";
-import { authService } from "@/features/auth/auth.service";
 
 export type CurrentUser = {
   id: string;
@@ -30,7 +29,7 @@ export function accessForProfile(profileId: DemoProfileId) {
   return profileAccess[profileId];
 }
 
-export async function getCurrentUser(request?: Request): Promise<CurrentUser | null> {
+export async function getCurrentUser(): Promise<CurrentUser | null> {
   const session = await getDemoSession();
 
   if (session) {
@@ -49,31 +48,6 @@ export async function getCurrentUser(request?: Request): Promise<CurrentUser | n
       label: session.label,
       homePath: session.homePath,
     };
-  }
-
-  if (request) {
-    const authHeader = request.headers.get("authorization");
-    if (authHeader?.startsWith("Bearer ")) {
-      const token = authHeader.slice(7);
-      const payload = authService.verifyToken(token);
-      if (payload) {
-        const user = await prisma.user.findUnique({
-          where: { id: payload.userId },
-          select: { id: true, name: true, email: true, role: true },
-        });
-        if (user) {
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            profileId: "admin" as DemoProfileId,
-            label: user.name,
-            homePath: "/",
-          };
-        }
-      }
-    }
   }
 
   return null;
@@ -97,7 +71,8 @@ export async function requireCurrentUser(
 }
 
 export async function authorizeRequest(allowedRoles: UserRole[], request?: Request) {
-  const user = await getCurrentUser(request);
+  void request;
+  const user = await getCurrentUser();
 
   if (!user || !allowedRoles.includes(user.role)) {
     return null;

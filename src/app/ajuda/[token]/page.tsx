@@ -32,10 +32,10 @@ export default async function PublicHelpPage({ params }: PublicHelpPageProps) {
   }
 
   return (
-    <main className="app-surface -mt-12 min-h-screen md:mt-0">
+    <main className="app-surface min-h-screen">
       <GsapReveal>
         <section className="border-b border-slate-200 bg-white">
-          <div className="mx-auto grid max-w-7xl gap-5 px-4 pb-5 pt-4 sm:px-6 sm:pb-6 md:pt-[calc(var(--app-nav-offset)+0.75rem)] lg:grid-cols-[0.74fr_1.26fr] lg:items-center lg:gap-7 lg:px-10 lg:pb-8">
+          <div className="mx-auto grid max-w-7xl gap-4 px-4 pb-5 pt-[calc(var(--app-nav-offset)+var(--page-top-gap))] sm:px-6 sm:pb-6 lg:grid-cols-[0.74fr_1.26fr] lg:items-center lg:gap-7 lg:px-10 lg:pb-8">
             <div className="flex min-h-0 flex-col justify-start lg:justify-center">
               <div
                 data-gsap="hero"
@@ -68,12 +68,12 @@ export default async function PublicHelpPage({ params }: PublicHelpPageProps) {
 
               <div
                 data-gsap="timeline"
-                className="mt-4 max-w-xl rounded-[22px] border border-emerald-200 bg-emerald-50 p-4"
+                className="mt-4 max-w-xl rounded-[20px] border border-emerald-200 bg-emerald-50 p-3.5 sm:p-4"
               >
                 <p className="font-semibold text-emerald-950">
                   Permaneça em local visível e seguro
                 </p>
-                <p className="mt-2 text-sm leading-6 text-emerald-800">
+                <p className="mt-1.5 text-sm leading-6 text-emerald-800">
                   Em risco imediato, procure autoridades ou serviços de emergência. A
                   localização é opcional e vem do aparelho de quem está ajudando.
                 </p>
