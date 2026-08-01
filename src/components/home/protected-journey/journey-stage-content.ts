@@ -1,4 +1,4 @@
-﻿import type { JourneyStage } from "./journey.types";
+import type { JourneyStage } from "./journey.types";
 
 export type JourneyStageCopy = {
   eyebrow: string;
@@ -41,9 +41,9 @@ export const journeyStageCopy: Record<JourneyStage, JourneyStageCopy> = {
     lead: "O transporte e identificado e o responsavel recebe a confirmacao.",
   },
   "bus-route": {
-    eyebrow: "Durante o trajeto",
-    title: "Uma area precisa de cobertura.",
-    lead: "A rede diferencia checkpoints confirmados de pontos de atencao.",
+    eyebrow: "Rota alternativa",
+    title: "Um caminho possivel ainda nao tem cobertura.",
+    lead: "Maria nao passou por ali; a rede sinaliza o ponto para reforco.",
   },
   "school-arrival": {
     eyebrow: "07:46",
@@ -122,8 +122,8 @@ export const phoneStatusByStage: Record<JourneyStage, JourneyPhoneStatus> = {
     metrics: ["07:28", "Transporte identificado"],
   },
   "bus-route": {
-    title: "Trajeto em andamento",
-    description: "Uma area pede reforco.",
+    title: "Rota principal confirmada",
+    description: "Uma alternativa pede reforco.",
     metrics: ["2 checkpoints", "1 atencao"],
   },
   "school-arrival": {

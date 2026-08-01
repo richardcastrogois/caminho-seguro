@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { PauseCircle, PlayCircle } from "lucide-react";
@@ -29,7 +29,7 @@ export function ProtectedJourney() {
     <section
       ref={scope}
       className={styles.section}
-      aria-labelledby="protected-journey-title"
+      aria-labelledby="protected-journey-heading"
       data-protected-journey
       data-journey-stage={journeyStage}
       data-journey-reduced-motion={staticMode ? "true" : "false"}
@@ -39,7 +39,12 @@ export function ProtectedJourney() {
         mapa final.
       </div>
 
-      <div className={styles.motionControlRow}>
+      <div className={styles.sectionIntro}>
+        <div className={styles.sectionIntroCopy}>
+          <span>Jornada protegida</span>
+          <h2 id="protected-journey-heading">Veja a rede agir em cada checkpoint.</h2>
+          <p>Role devagar para acompanhar casa, ponto seguro, transporte e escola.</p>
+        </div>
         <Button
           type="button"
           variant="outline"

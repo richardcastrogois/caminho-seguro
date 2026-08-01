@@ -10,6 +10,8 @@ export function JourneyBus() {
         alt={journeyAssets.schoolBus.alt}
         width={260}
         height={160}
+        loading="eager"
+        style={{ height: "auto" }}
       />
       <figcaption>Transporte confirmado</figcaption>
     </figure>

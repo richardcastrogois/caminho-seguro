@@ -42,59 +42,62 @@ function getSemanticSnapshot(progress: number): {
   const checkpoints: CheckpointStateMap = { ...initialCheckpointStates };
   let stage: JourneyStage = "intro";
 
-  if (progress >= 0.04) {
+  if (progress >= 0.05) {
     stage = "leaving-home";
+  }
+
+  if (progress >= 0.1) {
     checkpoints["home-start"] = "validated";
   }
 
-  if (progress >= 0.2) {
+  if (progress >= 0.13) {
     stage = "community-checkpoint";
     checkpoints["safe-point"] = "detecting";
   }
 
-  if (progress >= 0.25) {
+  if (progress >= 0.17) {
     checkpoints["safe-point"] = "validating";
   }
 
-  if (progress >= 0.31) {
+  if (progress >= 0.21) {
     checkpoints["safe-point"] = "validated";
   }
 
-  if (progress >= 0.34) {
+  if (progress >= 0.313) {
     stage = "boarding";
     checkpoints.boarding = "detecting";
   }
 
-  if (progress >= 0.4) {
+  if (progress >= 0.35) {
     checkpoints.boarding = "validating";
   }
 
-  if (progress >= 0.47) {
+  if (progress >= 0.38) {
     checkpoints.boarding = "validated";
   }
 
-  if (progress >= 0.5) {
+  if (progress >= 0.394) {
     stage = "bus-route";
   }
 
-  if (progress >= 0.68) {
+  if (progress >= 0.535) {
     stage = "school-arrival";
     checkpoints["school-arrival"] = "detecting";
   }
 
-  if (progress >= 0.74) {
+  if (progress >= 0.58) {
     checkpoints["school-arrival"] = "validating";
   }
 
-  if (progress >= 0.8) {
+  if (progress >= 0.63) {
     checkpoints["school-arrival"] = "validated";
   }
 
-  if (progress >= 0.83) {
+  if (progress >= 0.717) {
     stage = "camera-rise";
   }
 
-  if (progress >= 0.93) {
+  if (progress >= 0.788) {
     stage = "network-map";
     return { stage, checkpoints: completedCheckpointStates };
   }
@@ -129,6 +132,8 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
       const copy = first<HTMLElement>("[data-journey-copy]");
       const phone = first<HTMLElement>("[data-journey-phone]");
       const routePath = first<SVGPathElement>("[data-journey-route-path]");
+      const attentionPath = first<SVGPathElement>("[data-journey-attention-path]");
+      const attentionMarker = first<SVGGElement>("[data-journey-attention-marker]");
       const child = first<HTMLElement>("[data-journey-child]");
       const bus = first<HTMLElement>("[data-journey-bus]");
       const school = first<HTMLElement>("[data-journey-school]");
@@ -152,6 +157,8 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
         !copy ||
         !phone ||
         !routePath ||
+        !attentionPath ||
+        !attentionMarker ||
         !child ||
         !bus ||
         !school ||
@@ -188,10 +195,21 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
       ScrollTrigger.getById("protected-journey-main")?.kill(true);
 
       const routeLength = routePath.getTotalLength();
+      const attentionLength = attentionPath.getTotalLength();
       gsap.set(root, { "--journey-progress": staticMode ? 1 : 0 });
       gsap.set(routePath, {
         strokeDasharray: routeLength,
         strokeDashoffset: staticMode ? 0 : routeLength,
+      });
+      gsap.set(attentionPath, {
+        autoAlpha: staticMode ? 0.72 : 0,
+        strokeDasharray: attentionLength,
+        strokeDashoffset: staticMode ? 0 : attentionLength,
+      });
+      gsap.set(attentionMarker, {
+        autoAlpha: staticMode ? 1 : 0,
+        scale: staticMode ? 1 : 0.65,
+        transformOrigin: "center center",
       });
       gsap.set(routeMarkers, {
         autoAlpha: staticMode ? 1 : 0,
@@ -238,12 +256,24 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
         (context) => {
           const conditions = context.conditions as MatchMediaConditions;
           const isDesktop = Boolean(conditions.isDesktop);
+          const isCompactViewport = !isDesktop && window.innerHeight < 680;
+          const centerCameraOn = (element: HTMLElement, scale = 1) => {
+            const cameraCenter = camera.offsetWidth / 2;
+            const elementCenter = element.offsetLeft + element.offsetWidth / 2;
+
+            return Math.round(
+              stage.clientWidth / 2 -
+                ((elementCenter - cameraCenter) * scale + cameraCenter),
+            );
+          };
+          const centerCamera = Math.round((stage.clientWidth - camera.offsetWidth) / 2);
 
           const travel = isDesktop
             ? {
                 childHome: { x: 72, y: -4 },
                 childStore: { x: 300, y: -160 },
                 childBoarding: { x: 520, y: 8 },
+                childSchoolExit: { x: 780, y: -174 },
                 childSchool: { x: 820, y: -210 },
                 busStart: { x: 120, y: 12 },
                 busBoarding: { x: 0, y: 0 },
@@ -253,28 +283,55 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
                 cameraBus: { x: -72, y: -8, scale: 1.04 },
                 cameraSchool: { x: -88, y: 26, scale: 1.02 },
                 cameraRise: { x: 0, y: 0, scale: 0.88 },
-                endMultiplier: 5.4,
-                scrub: 0.7,
+                endMultiplier: 8,
+                scrub: 0.75,
               }
             : {
                 childHome: { x: 72, y: -4 },
                 childStore: { x: 300, y: -160 },
                 childBoarding: { x: 520, y: 8 },
+                childSchoolExit: { x: 780, y: -174 },
                 childSchool: { x: 820, y: -210 },
                 busStart: { x: 120, y: 12 },
                 busBoarding: { x: 0, y: 0 },
                 busSchool: { x: 282, y: -210 },
-                cameraHome: { x: -24, y: 0, scale: 1 },
-                cameraStore: { x: -230, y: 18, scale: 1.02 },
-                cameraBus: { x: -450, y: -6, scale: 1.02 },
-                cameraSchool: { x: -720, y: 30, scale: 1 },
-                cameraRise: { x: -470, y: 26, scale: 0.72 },
-                endMultiplier: 6.2,
-                scrub: 0.48,
+                cameraHome: {
+                  x: centerCameraOn(homeZone, isCompactViewport ? 0.9 : 1),
+                  y: 0,
+                  scale: isCompactViewport ? 0.9 : 1,
+                },
+                cameraStore: {
+                  x: centerCameraOn(communityZone, isCompactViewport ? 0.88 : 1.02),
+                  y: 16,
+                  scale: isCompactViewport ? 0.88 : 1.02,
+                },
+                cameraBus: {
+                  x: centerCameraOn(busStopZone, isCompactViewport ? 0.84 : 1.02),
+                  y: -4,
+                  scale: isCompactViewport ? 0.84 : 1.02,
+                },
+                cameraSchool: {
+                  x: centerCameraOn(school, isCompactViewport ? 0.84 : 1),
+                  y: 24,
+                  scale: isCompactViewport ? 0.84 : 1,
+                },
+                cameraRise: {
+                  x: centerCamera,
+                  y: 20,
+                  scale: isCompactViewport ? 0.68 : 0.72,
+                },
+                endMultiplier: 9,
+                scrub: 0.5,
               };
 
           gsap.set([copy, phone, stage], { autoAlpha: 1, x: 0, y: 0 });
-          gsap.set(camera, { x: 0, y: 0, scale: 1, transformOrigin: "50% 50%" });
+          gsap.set(camera, {
+            autoAlpha: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            transformOrigin: "50% 50%",
+          });
           gsap.set(child, { autoAlpha: 1, x: 0, y: 0, scale: 1 });
           gsap.set(bus, {
             autoAlpha: 0,
@@ -287,6 +344,7 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
             y: 14,
             scale: 0.96,
           });
+          gsap.set([attentionPath, attentionMarker], { autoAlpha: 0 });
 
           const timeline = gsap.timeline({
             defaults: { ease: "none" },
@@ -308,35 +366,41 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
           });
 
           timeline
-            .addLabel("leaving-home", 0)
-            .to(routePath, { strokeDashoffset: routeLength * 0.84, duration: 15 }, 0)
-            .to(child, { ...travel.childHome, duration: 15 }, 0)
-            .to(camera, { ...travel.cameraHome, duration: 15 }, 0)
+            .addLabel("intro", 0)
+            .addLabel("leaving-home", 10)
+            .to(routePath, { strokeDashoffset: routeLength * 0.84, duration: 16 }, 10)
+            .to(child, { ...travel.childHome, duration: 16, ease: "power1.inOut" }, 10)
+            .to(camera, { ...travel.cameraHome, duration: 16, ease: "power1.inOut" }, 10)
             .to(
               homeMarker,
               { autoAlpha: 1, scale: 1, duration: 4, ease: "back.out(1.4)" },
-              2,
+              13,
             )
-            .addLabel("community-checkpoint", 18)
-            .to(routePath, { strokeDashoffset: routeLength * 0.64, duration: 16 }, 18)
-            .to(child, { ...travel.childStore, duration: 16 }, 18)
-            .to(camera, { ...travel.cameraStore, duration: 16 }, 18)
-            .to(communityZone, { scale: 1.05, duration: 4, ease: "power2.out" }, 20)
+            .addLabel("community-checkpoint", 26)
+            .to(routePath, { strokeDashoffset: routeLength * 0.64, duration: 18 }, 26)
+            .to(child, { ...travel.childStore, duration: 18, ease: "power1.inOut" }, 26)
+            .to(camera, { ...travel.cameraStore, duration: 18, ease: "power1.inOut" }, 26)
+            .to(communityZone, { scale: 1.05, duration: 4, ease: "power2.out" }, 29)
             .to(
               checkpointWaves,
               { autoAlpha: 0.42, scale: 1.42, duration: 7, stagger: 0.04 },
-              22,
+              31,
             )
             .to(
               communityMarker,
               { autoAlpha: 1, scale: 1, duration: 4, ease: "back.out(1.4)" },
-              26,
+              37,
             )
-            .to(communityZone, { scale: 1, duration: 4, ease: "power2.out" }, 31)
-            .addLabel("boarding", 34)
-            .to(routePath, { strokeDashoffset: routeLength * 0.46, duration: 14 }, 34)
-            .to(child, { ...travel.childBoarding, duration: 14 }, 34)
-            .to(camera, { ...travel.cameraBus, duration: 14 }, 34)
+            .to(communityZone, { scale: 1, duration: 4, ease: "power2.out" }, 42)
+            .addLabel("community-hold", 44)
+            .addLabel("boarding", 62)
+            .to(routePath, { strokeDashoffset: routeLength * 0.46, duration: 16 }, 62)
+            .to(
+              child,
+              { ...travel.childBoarding, duration: 16, ease: "power1.inOut" },
+              62,
+            )
+            .to(camera, { ...travel.cameraBus, duration: 16, ease: "power1.inOut" }, 62)
             .to(
               bus,
               {
@@ -346,39 +410,65 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
                 duration: 7,
                 ease: "power2.out",
               },
-              36,
+              65,
             )
             .to(
               boardingStatus,
               { autoAlpha: 1, y: 0, scale: 1, duration: 5, ease: "power2.out" },
-              38,
+              67,
             )
             .to(
               boardingMarker,
               { autoAlpha: 1, scale: 1, duration: 4, ease: "back.out(1.4)" },
-              42,
+              71,
             )
-            .to(child, { autoAlpha: 0, scale: 0.72, duration: 4 }, 46)
-            .addLabel("bus-route", 50)
-            .to(routePath, { strokeDashoffset: routeLength * 0.2, duration: 17 }, 50)
-            .to(bus, { ...travel.busSchool, duration: 17 }, 50)
-            .to(camera, { ...travel.cameraSchool, duration: 17 }, 50)
+            .to(child, { autoAlpha: 0, scale: 0.72, duration: 3 }, 75)
+            .addLabel("bus-route", 78)
+            .to(routePath, { strokeDashoffset: routeLength * 0.2, duration: 28 }, 78)
+            .to(bus, { ...travel.busSchool, duration: 28, ease: "power1.inOut" }, 78)
+            .to(
+              camera,
+              { ...travel.cameraSchool, duration: 28, ease: "power1.inOut" },
+              78,
+            )
+            .to(attentionPath, { autoAlpha: 0.9, duration: 3 }, 82)
+            .to(attentionPath, { strokeDashoffset: 0, duration: 12 }, 82)
+            .to(
+              attentionMarker,
+              { autoAlpha: 1, scale: 1, duration: 4, ease: "back.out(1.5)" },
+              91,
+            )
             .to(
               attentionSlot,
               { autoAlpha: 1, y: 0, scale: 1, duration: 5, ease: "power2.out" },
-              56,
+              90,
             )
-            .addLabel("school-arrival", 68)
-            .to(routePath, { strokeDashoffset: routeLength * 0.05, duration: 13 }, 68)
+            .addLabel("school-arrival", 106)
+            .to(routePath, { strokeDashoffset: routeLength * 0.05, duration: 18 }, 106)
             .to(
               bus,
               {
                 x: travel.busSchool.x + 42,
                 y: travel.busSchool.y + 42,
                 scale: 0.86,
-                duration: 13,
+                duration: 14,
+                ease: "power1.inOut",
               },
-              68,
+              106,
+            )
+            .to(
+              [attentionPath, attentionMarker, attentionSlot],
+              { autoAlpha: 0.28, duration: 6 },
+              106,
+            )
+            .set(
+              child,
+              {
+                autoAlpha: 0,
+                ...travel.childSchoolExit,
+                scale: 0.82,
+              },
+              116,
             )
             .to(
               child,
@@ -389,33 +479,41 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
                 duration: 7,
                 ease: "power2.out",
               },
-              72,
+              117,
             )
             .to(
               schoolMarker,
               { autoAlpha: 1, scale: 1, duration: 4, ease: "back.out(1.4)" },
-              75,
+              117,
             )
-            .addLabel("camera-rise", 82)
-            .to(camera, { ...travel.cameraRise, duration: 11, ease: "power1.inOut" }, 82)
+            .addLabel("school-hold", 124)
+            .addLabel("camera-rise", 142)
+            .to(camera, { ...travel.cameraRise, duration: 14, ease: "power1.inOut" }, 142)
             .to(
               [homeZone, communityZone, busStopZone, school],
-              { autoAlpha: 0.62, scale: 0.95, duration: 9 },
-              82,
+              { autoAlpha: 0.5, scale: 0.95, duration: 12 },
+              142,
             )
-            .addLabel("network-map", 93)
-            .to(routePath, { strokeDashoffset: 0, duration: 7 }, 93)
+            .to(
+              [copy, phone],
+              { autoAlpha: 0, y: 8, duration: 5, ease: "power2.in" },
+              153,
+            )
+            .addLabel("network-map", 156)
+            .to(routePath, { strokeDashoffset: 0, duration: 8 }, 156)
+            .to(camera, { autoAlpha: 0.32, duration: 8 }, 156)
             .to(
               mapPanel,
-              { autoAlpha: 1, y: 0, scale: 1, duration: 5, ease: "power2.out" },
-              93,
+              { autoAlpha: 1, y: 0, scale: 1, duration: 7, ease: "power2.out" },
+              158,
             )
             .to(
               finalMessage,
-              { autoAlpha: 1, y: 0, scale: 1, duration: 5, ease: "power2.out" },
-              94,
+              { autoAlpha: 1, y: 0, scale: 1, duration: 7, ease: "power2.out" },
+              160,
             )
-            .to(root, { "--journey-progress": 1, duration: 0.1 }, 100);
+            .addLabel("final-hold", 170)
+            .to(root, { "--journey-progress": 1, duration: 0.1 }, 198);
 
           const refreshFrame = window.requestAnimationFrame(() => {
             ScrollTrigger.refresh();

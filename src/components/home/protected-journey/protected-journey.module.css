@@ -18,14 +18,43 @@
   mask-image: linear-gradient(180deg, transparent, black 8%, black 92%, transparent);
 }
 
-.motionControlRow {
+.sectionIntro {
   position: relative;
   z-index: 4;
   margin-inline: auto;
   display: flex;
   width: min(100%, 80rem);
-  justify-content: flex-end;
-  padding: 0.85rem clamp(1rem, 4vw, 2.5rem) 0;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1.15rem, 3vw, 2rem) clamp(1rem, 4vw, 2.5rem) 0.35rem;
+}
+
+.sectionIntroCopy {
+  max-width: 39rem;
+}
+
+.sectionIntroCopy > span {
+  color: #0077b6;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sectionIntroCopy h2 {
+  margin-top: 0.2rem;
+  color: #020617;
+  font-size: clamp(1.35rem, 3vw, 2.15rem);
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+.sectionIntroCopy p {
+  margin-top: 0.3rem;
+  color: #40536d;
+  font-size: clamp(0.82rem, 1.4vw, 0.95rem);
+  line-height: 1.45;
 }
 
 .motionControl {
@@ -39,8 +68,8 @@
   position: relative;
   display: flex;
   min-height: 100svh;
-  align-items: center;
-  padding: calc(var(--app-nav-offset, 5rem) + 0.4rem) 0 0.85rem;
+  align-items: flex-start;
+  padding: calc(var(--app-nav-offset, 5rem) + 0.15rem) 0 0.85rem;
 }
 
 .inner {
@@ -54,8 +83,10 @@
 }
 
 .stage {
+  --journey-status-rail: 4.35rem;
+  --journey-copy-rail: 7.6rem;
   position: relative;
-  height: min(46rem, calc(100svh - var(--app-nav-offset, 5rem) - 1.5rem));
+  height: min(46rem, calc(100svh - var(--app-nav-offset, 5rem) - 0.75rem));
   min-height: 34rem;
   overflow: hidden;
   border: 1px solid rgb(125 211 252 / 0.58);
@@ -69,7 +100,7 @@
 
 .cameraLayer {
   position: absolute;
-  inset: 0;
+  inset: var(--journey-status-rail) 0 var(--journey-copy-rail);
   transform-origin: 50% 50%;
   will-change: transform;
 }
@@ -149,6 +180,29 @@
   fill: #00856f;
 }
 
+.attentionRoute {
+  fill: none;
+  stroke: #f59e0b;
+  stroke-dasharray: 7 9;
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.attentionRouteMarker {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.attentionMarkerHalo {
+  fill: rgb(255 251 235 / 0.96);
+  stroke: rgb(245 158 11 / 0.48);
+  stroke-width: 2;
+}
+
+.attentionMarker {
+  fill: #d97706;
+}
+
 .city {
   position: absolute;
   inset: 0;
@@ -175,7 +229,7 @@
 }
 
 .homeZone {
-  bottom: 11%;
+  bottom: 15%;
   left: 2%;
 }
 
@@ -272,17 +326,17 @@
 .copy {
   bottom: 1rem;
   left: 1rem;
-  width: min(31rem, calc(100% - 2rem));
+  width: min(28rem, calc(100% - 2rem));
   border-radius: 1.1rem;
   padding: clamp(0.85rem, 2vw, 1.1rem);
 }
 
 .copyViewport {
-  min-height: 6.8rem;
+  min-height: 5.9rem;
 }
 
 .copyMotionPanel {
-  max-width: 29rem;
+  max-width: 26rem;
 }
 
 .eyebrow {
@@ -296,7 +350,7 @@
 .copy h2 {
   margin-top: 0.3rem;
   color: #020617;
-  font-size: clamp(1.3rem, 2.8vw, 2rem);
+  font-size: clamp(1.2rem, 2.4vw, 1.7rem);
   font-weight: 750;
   letter-spacing: 0;
   line-height: 1.08;
@@ -306,7 +360,7 @@
   margin-top: 0.45rem;
   max-width: 28rem;
   color: #40536d;
-  font-size: clamp(0.82rem, 1.5vw, 0.96rem);
+  font-size: clamp(0.78rem, 1.3vw, 0.9rem);
   line-height: 1.45;
 }
 
@@ -315,13 +369,13 @@
   right: 1rem;
   display: grid;
   width: min(22rem, calc(100% - 2rem));
-  gap: 0.55rem;
+  gap: 0;
   border-radius: 1.1rem;
-  padding: 0.8rem;
+  padding: 0.55rem;
 }
 
 .phoneHeader {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 0.65rem;
 }
@@ -364,7 +418,7 @@
 }
 
 .phoneStatusViewport {
-  min-height: 3rem;
+  min-height: 2.8rem;
 }
 
 .phoneStatus {
@@ -395,7 +449,7 @@
 }
 
 .latestNotification {
-  display: flex;
+  display: none;
   gap: 0.35rem;
   color: #475569;
   font-size: 0.72rem;
@@ -408,8 +462,8 @@
 
 .boardingStatus {
   position: absolute;
-  right: 32%;
-  bottom: 28%;
+  right: 28%;
+  bottom: 20%;
   z-index: 8;
   display: grid;
   gap: 0.08rem;
@@ -447,8 +501,10 @@
 }
 
 .attentionCheckpoint {
-  right: 18%;
-  bottom: 24%;
+  top: 12%;
+  right: auto;
+  bottom: auto;
+  left: 58%;
 }
 
 .checkpoint {
@@ -572,10 +628,10 @@
 
 .mapPanel {
   position: absolute;
-  top: 5%;
-  right: 2%;
+  top: 1rem;
+  right: 1rem;
   z-index: 11;
-  width: min(20rem, 29%);
+  width: min(20rem, 32%);
   overflow: hidden;
   border: 1px solid rgb(186 230 253 / 0.85);
   border-radius: 1rem;
@@ -669,10 +725,11 @@
 
 .finalMessage {
   position: absolute;
-  right: 25%;
-  bottom: 4%;
+  right: auto;
+  bottom: 1rem;
+  left: 1rem;
   z-index: 12;
-  width: min(29rem, 42%);
+  width: min(30rem, 46%);
   border: 1px solid rgb(110 231 183 / 0.8);
   border-radius: 1rem;
   background: rgb(255 255 255 / 0.96);
@@ -800,6 +857,15 @@
 }
 
 @media (max-width: 899px) {
+  .sectionIntro {
+    align-items: stretch;
+    padding-inline: 0.75rem;
+  }
+
+  .sectionIntroCopy {
+    max-width: 31rem;
+  }
+
   .pinFrame {
     padding-top: calc(var(--app-nav-offset, 5rem) + 0.25rem);
   }
@@ -809,29 +875,31 @@
   }
 
   .stage {
-    height: min(44rem, calc(100svh - var(--app-nav-offset, 5rem) - 1rem));
-    min-height: 32rem;
+    --journey-status-rail: 4.2rem;
+    --journey-copy-rail: 7.25rem;
+    height: min(44rem, calc(100svh - var(--app-nav-offset, 5rem) - 0.5rem));
+    min-height: 34rem;
   }
 
   .cameraLayer {
     right: auto;
-    width: 70rem;
+    width: 68rem;
     max-width: none;
   }
 
   .copy {
     bottom: 0.65rem;
     left: 0.65rem;
-    width: min(28rem, calc(100% - 1.3rem));
+    width: calc(100% - 1.3rem);
     padding: 0.75rem;
   }
 
   .copyViewport {
-    min-height: 6.2rem;
+    min-height: 5.75rem;
   }
 
   .copy h2 {
-    font-size: clamp(1.15rem, 5.2vw, 1.55rem);
+    font-size: clamp(1.05rem, 4.8vw, 1.35rem);
   }
 
   .lead {
@@ -869,13 +937,33 @@
     width: 16rem;
   }
 
+  .boardingStatus {
+    display: none;
+  }
+
+  .attentionCheckpoint {
+    left: 62%;
+  }
+
   .mapPanel {
-    width: 19rem;
+    top: 0.65rem;
+    right: 0.65rem;
+    width: calc(100% - 1.3rem);
   }
 
   .finalMessage {
-    right: 23%;
-    width: 26rem;
+    right: 0.65rem;
+    bottom: 0.65rem;
+    left: 0.65rem;
+    width: auto;
+  }
+
+  .mapCheckpoints {
+    display: none;
+  }
+
+  .mapCanvas {
+    min-height: 10rem;
   }
 
   .section[data-journey-reduced-motion="true"] .cameraLayer {
@@ -916,9 +1004,10 @@
 }
 
 @media (max-width: 520px) {
-  .motionControlRow {
-    justify-content: center;
-    padding-inline: 0.75rem;
+  .sectionIntro {
+    display: grid;
+    gap: 0.7rem;
+    padding-top: 1rem;
   }
 
   .motionControl {
@@ -942,7 +1031,7 @@
   }
 
   .copyViewport {
-    min-height: 6.6rem;
+    min-height: 6rem;
   }
 
   .checkpoint {
@@ -969,7 +1058,9 @@
 
 @media (max-width: 360px) {
   .stage {
-    min-height: 31rem;
+    --journey-status-rail: 4rem;
+    --journey-copy-rail: 7rem;
+    min-height: 33rem;
   }
 
   .copy h2 {
@@ -977,7 +1068,7 @@
   }
 
   .copyViewport {
-    min-height: 7rem;
+    min-height: 6.1rem;
   }
 
   .phoneStatus {

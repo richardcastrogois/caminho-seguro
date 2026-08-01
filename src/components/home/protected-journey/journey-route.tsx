@@ -1,15 +1,15 @@
-﻿import { journeyCheckpoints } from "./journey.constants";
+import { journeyCheckpoints } from "./journey.constants";
 import styles from "./protected-journey.module.css";
 
 const routePath =
   "M82 360 C170 330 238 190 330 190 C430 190 470 350 560 350 C650 350 690 190 780 190 C860 190 900 120 940 105";
+const attentionPath = "M405 245 C470 170 545 125 650 145";
 
-const markerPoints = [
-  { x: 82, y: 360 },
-  { x: 330, y: 190 },
-  { x: 560, y: 350 },
-  { x: 710, y: 225 },
-  { x: 940, y: 105 },
+const mainMarkerPoints = [
+  { id: "home-start", x: 82, y: 360 },
+  { id: "safe-point", x: 330, y: 190 },
+  { id: "boarding", x: 560, y: 350 },
+  { id: "school-arrival", x: 940, y: 105 },
 ];
 
 export function JourneyRoute() {
@@ -19,7 +19,7 @@ export function JourneyRoute() {
       className={styles.route}
       viewBox="0 0 1000 520"
       role="img"
-      aria-label="Rota ilustrativa conectando casa, ponto seguro, transporte e escola"
+      aria-label="Rota principal entre casa e escola, com uma alternativa sem cobertura"
     >
       <defs>
         <linearGradient id="journeyRouteGradient" x1="0" y1="0" x2="1" y2="0">
@@ -30,11 +30,22 @@ export function JourneyRoute() {
       </defs>
       <path className={styles.routeBase} d={routePath} />
       <path data-journey-route-path className={styles.routeProgress} d={routePath} />
-      {journeyCheckpoints.map((checkpoint, index) => {
-        const point = markerPoints[index] ?? markerPoints[0];
+
+      <path
+        data-journey-attention-path
+        className={styles.attentionRoute}
+        d={attentionPath}
+      />
+      <g data-journey-attention-marker className={styles.attentionRouteMarker}>
+        <circle cx="650" cy="145" r="14" className={styles.attentionMarkerHalo} />
+        <circle cx="650" cy="145" r="6" className={styles.attentionMarker} />
+      </g>
+
+      {mainMarkerPoints.map((point) => {
+        const checkpoint = journeyCheckpoints.find((item) => item.id === point.id);
 
         return (
-          <g key={checkpoint.id} data-route-marker={checkpoint.state}>
+          <g key={point.id} data-route-marker={checkpoint?.state ?? "idle"}>
             <circle cx={point.x} cy={point.y} r="12" className={styles.routeMarkerHalo} />
             <circle cx={point.x} cy={point.y} r="5" className={styles.routeMarker} />
           </g>

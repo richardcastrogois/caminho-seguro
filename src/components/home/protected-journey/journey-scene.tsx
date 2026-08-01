@@ -1,4 +1,4 @@
-﻿import { ArrowRight, MapPinned } from "lucide-react";
+import { ArrowRight, MapPinned } from "lucide-react";
 import { JourneyBackground } from "./journey-background";
 import { JourneyBus } from "./journey-bus";
 import { JourneyChild } from "./journey-child";
@@ -81,30 +81,27 @@ export function JourneyScene({ checkpointStates, children }: JourneySceneProps) 
           <JourneyCheckpoint
             compact
             state={checkpoints["attention-zone"].state}
-            label="Area a reforcar"
+            label="Rota alternativa"
             time="sem cobertura"
           />
         </div>
+      </div>
 
-        <JourneyMap />
+      <JourneyMap />
 
-        <div className={styles.finalMessage} data-journey-final>
-          <p>Rede conectada</p>
-          <h3>Chegada confirmada. Dados pessoais continuam protegidos.</h3>
-          <span>
-            Familia, comunidade, transporte e escola compartilharam apenas os eventos
-            necessarios.
-          </span>
-          <div className={styles.finalActions}>
-            <MotionActionLink href="#como-funciona">
-              Como funciona
-              <ArrowRight data-icon="inline-end" />
-            </MotionActionLink>
-            <MotionActionLink href="/rede" variant="outline">
-              <MapPinned data-icon="inline-start" />
-              Ver a rede
-            </MotionActionLink>
-          </div>
+      <div className={styles.finalMessage} data-journey-final>
+        <p>Rede conectada</p>
+        <h3>Chegada confirmada com privacidade preservada.</h3>
+        <span>A rede compartilhou somente os eventos necessarios.</span>
+        <div className={styles.finalActions}>
+          <MotionActionLink href="#como-funciona">
+            Como funciona
+            <ArrowRight data-icon="inline-end" />
+          </MotionActionLink>
+          <MotionActionLink href="/rede" variant="outline">
+            <MapPinned data-icon="inline-start" />
+            Ver a rede
+          </MotionActionLink>
         </div>
       </div>
     </div>

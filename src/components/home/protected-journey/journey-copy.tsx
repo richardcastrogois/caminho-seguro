@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { AnimatePresence, motion } from "motion/react";
 import type { JourneyStage } from "./journey.types";
@@ -29,7 +29,7 @@ export function JourneyCopy({ stage }: JourneyCopyProps) {
             exit="exit"
           >
             <p className={styles.eyebrow}>{copy.eyebrow}</p>
-            <h2 id="protected-journey-title">{copy.title}</h2>
+            <h2>{copy.title}</h2>
             <p className={styles.lead}>{copy.lead}</p>
           </motion.div>
         </AnimatePresence>
