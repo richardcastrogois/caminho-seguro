@@ -182,20 +182,20 @@ export function ProtectionNetworkVisual() {
       );
 
       const isCompact = window.matchMedia("(max-width: 640px)").matches;
-      const travelX = isCompact ? 7 : 25;
-      const travelY = isCompact ? 8 : 22;
+      const travelX = isCompact ? 5 : 14;
+      const travelY = isCompact ? 6 : 13;
 
       nodeElements.forEach((node, index) => {
         gsap.to(node, {
           x:
             index % 2 === 0
-              ? travelX + index * (isCompact ? 0.4 : 1.5)
-              : -(travelX + index * (isCompact ? 0.4 : 1.5)),
+              ? travelX + index * (isCompact ? 0.25 : 0.85)
+              : -(travelX + index * (isCompact ? 0.25 : 0.85)),
           y:
             index % 3 === 0
-              ? -(travelY + index * (isCompact ? 0.25 : 1))
-              : travelY + (index % 2) * (isCompact ? 2 : 5),
-          rotation: index % 2 === 0 ? 2.4 : -2.1,
+              ? -(travelY + index * (isCompact ? 0.18 : 0.65))
+              : travelY + (index % 2) * (isCompact ? 1.2 : 3),
+          rotation: index % 2 === 0 ? 1.4 : -1.2,
           duration: 1.85 + index * 0.18,
           repeat: -1,
           yoyo: true,
@@ -205,8 +205,8 @@ export function ProtectionNetworkVisual() {
 
       if (center) {
         gsap.to(center, {
-          y: -11,
-          scale: 1.025,
+          y: -7,
+          scale: 1.015,
           duration: 2.15,
           repeat: -1,
           yoyo: true,

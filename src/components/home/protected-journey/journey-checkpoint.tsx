@@ -9,6 +9,7 @@ type JourneyCheckpointProps = {
   time?: string;
   compact?: boolean;
   className?: string;
+  dataJourneyBoardingStatus?: boolean;
 };
 
 const stateConfig = {
@@ -48,6 +49,7 @@ export function JourneyCheckpoint({
   time,
   compact = false,
   className,
+  dataJourneyBoardingStatus = false,
 }: JourneyCheckpointProps) {
   const config = stateConfig[state];
   const Icon = config.Icon;
@@ -55,6 +57,7 @@ export function JourneyCheckpoint({
   return (
     <div
       data-journey-checkpoint={state}
+      data-journey-boarding-status={dataJourneyBoardingStatus ? true : undefined}
       className={cn(
         styles.checkpoint,
         config.className,

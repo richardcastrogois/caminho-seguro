@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PauseCircle, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { GuardianPhone } from "./guardian-phone";
+
 import { JourneyCopy } from "./journey-copy";
 import { JourneyScene } from "./journey-scene";
 import { ReducedMotionJourneySummary } from "./reduced-motion-summary";
@@ -62,7 +62,6 @@ export function ProtectedJourney() {
         <div className={styles.inner}>
           <JourneyScene checkpointStates={checkpointStates}>
             <JourneyCopy stage={journeyStage} />
-            <GuardianPhone stage={journeyStage} />
           </JourneyScene>
           {staticMode ? <ReducedMotionJourneySummary /> : null}
         </div>

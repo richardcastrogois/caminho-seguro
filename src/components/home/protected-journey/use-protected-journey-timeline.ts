@@ -42,62 +42,62 @@ function getSemanticSnapshot(progress: number): {
   const checkpoints: CheckpointStateMap = { ...initialCheckpointStates };
   let stage: JourneyStage = "intro";
 
-  if (progress >= 0.05) {
+  if (progress >= 0.036) {
     stage = "leaving-home";
   }
 
-  if (progress >= 0.1) {
+  if (progress >= 0.109) {
     checkpoints["home-start"] = "validated";
   }
 
-  if (progress >= 0.13) {
+  if (progress >= 0.131) {
     stage = "community-checkpoint";
     checkpoints["safe-point"] = "detecting";
   }
 
-  if (progress >= 0.17) {
+  if (progress >= 0.19) {
     checkpoints["safe-point"] = "validating";
   }
 
-  if (progress >= 0.21) {
+  if (progress >= 0.248) {
     checkpoints["safe-point"] = "validated";
   }
 
-  if (progress >= 0.313) {
+  if (progress >= 0.263) {
     stage = "boarding";
     checkpoints.boarding = "detecting";
   }
 
-  if (progress >= 0.35) {
+  if (progress >= 0.321) {
     checkpoints.boarding = "validating";
   }
 
-  if (progress >= 0.38) {
+  if (progress >= 0.372) {
     checkpoints.boarding = "validated";
   }
 
-  if (progress >= 0.394) {
+  if (progress >= 0.387) {
     stage = "bus-route";
   }
 
-  if (progress >= 0.535) {
+  if (progress >= 0.577) {
     stage = "school-arrival";
     checkpoints["school-arrival"] = "detecting";
   }
 
-  if (progress >= 0.58) {
+  if (progress >= 0.642) {
     checkpoints["school-arrival"] = "validating";
   }
 
-  if (progress >= 0.63) {
+  if (progress >= 0.701) {
     checkpoints["school-arrival"] = "validated";
   }
 
-  if (progress >= 0.717) {
+  if (progress >= 0.715) {
     stage = "camera-rise";
   }
 
-  if (progress >= 0.788) {
+  if (progress >= 0.81) {
     stage = "network-map";
     return { stage, checkpoints: completedCheckpointStates };
   }
@@ -130,7 +130,6 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
       const camera = first<HTMLElement>("[data-journey-camera]");
       const stage = first<HTMLElement>("[data-journey-scene]");
       const copy = first<HTMLElement>("[data-journey-copy]");
-      const phone = first<HTMLElement>("[data-journey-phone]");
       const routePath = first<SVGPathElement>("[data-journey-route-path]");
       const attentionPath = first<SVGPathElement>("[data-journey-attention-path]");
       const attentionMarker = first<SVGGElement>("[data-journey-attention-marker]");
@@ -138,7 +137,6 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
       const bus = first<HTMLElement>("[data-journey-bus]");
       const school = first<HTMLElement>("[data-journey-school]");
       const mapPanel = first<HTMLElement>("[data-journey-map]");
-      const finalMessage = first<HTMLElement>("[data-journey-final]");
       const boardingStatus = first<HTMLElement>("[data-journey-boarding-status]");
       const attentionSlot = first<HTMLElement>(
         "[data-journey-checkpoint-slot='attention']",
@@ -155,7 +153,6 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
         !camera ||
         !stage ||
         !copy ||
-        !phone ||
         !routePath ||
         !attentionPath ||
         !attentionMarker ||
@@ -163,7 +160,6 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
         !bus ||
         !school ||
         !mapPanel ||
-        !finalMessage ||
         !boardingStatus ||
         !attentionSlot ||
         !homeZone ||
@@ -220,14 +216,14 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
 
       if (staticMode) {
         setSemanticSnapshot("network-map", completedCheckpointStates);
-        gsap.set([copy, phone, stage, camera, child, bus, school], {
+        gsap.set([copy, stage, camera, child, bus, school], {
           autoAlpha: 1,
           x: 0,
           y: 0,
           scale: 1,
           rotation: 0,
         });
-        gsap.set([mapPanel, finalMessage, boardingStatus, attentionSlot], {
+        gsap.set([mapPanel, boardingStatus, attentionSlot], {
           autoAlpha: 1,
           x: 0,
           y: 0,
@@ -267,34 +263,43 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
             );
           };
           const centerCamera = Math.round((stage.clientWidth - camera.offsetWidth) / 2);
+          const distanceScale = isDesktop ? 1 : camera.offsetWidth / 1088;
+          const scaled = (value: number) => Math.round(value * distanceScale);
+          const getPinOffset = () => {
+            const navigation = document.querySelector<HTMLElement>(
+              "[data-app-navigation]",
+            );
+
+            return Math.round(navigation?.getBoundingClientRect().height ?? 72) + 22;
+          };
 
           const travel = isDesktop
             ? {
-                childHome: { x: 72, y: -4 },
-                childStore: { x: 300, y: -160 },
-                childBoarding: { x: 520, y: 8 },
-                childSchoolExit: { x: 780, y: -174 },
-                childSchool: { x: 820, y: -210 },
-                busStart: { x: 120, y: 12 },
+                childHome: { x: scaled(72), y: scaled(-4) },
+                childStore: { x: scaled(300), y: scaled(-160) },
+                childBoarding: { x: scaled(520), y: scaled(8) },
+                childSchoolExit: { x: scaled(780), y: scaled(-174) },
+                childSchool: { x: scaled(820), y: scaled(-210) },
+                busStart: { x: scaled(120), y: scaled(12) },
                 busBoarding: { x: 0, y: 0 },
-                busSchool: { x: 282, y: -210 },
+                busSchool: { x: scaled(300), y: scaled(-204) },
                 cameraHome: { x: 0, y: 0, scale: 1.02 },
                 cameraStore: { x: -30, y: 12, scale: 1.05 },
                 cameraBus: { x: -72, y: -8, scale: 1.04 },
                 cameraSchool: { x: -88, y: 26, scale: 1.02 },
                 cameraRise: { x: 0, y: 0, scale: 0.88 },
-                endMultiplier: 8,
-                scrub: 0.75,
+                endMultiplier: 5.2,
+                scrub: 0.55,
               }
             : {
-                childHome: { x: 72, y: -4 },
-                childStore: { x: 300, y: -160 },
-                childBoarding: { x: 520, y: 8 },
-                childSchoolExit: { x: 780, y: -174 },
-                childSchool: { x: 820, y: -210 },
-                busStart: { x: 120, y: 12 },
+                childHome: { x: scaled(72), y: scaled(-4) },
+                childStore: { x: scaled(300), y: scaled(-160) },
+                childBoarding: { x: scaled(520), y: scaled(8) },
+                childSchoolExit: { x: scaled(780), y: scaled(-174) },
+                childSchool: { x: scaled(820), y: scaled(-210) },
+                busStart: { x: scaled(120), y: scaled(12) },
                 busBoarding: { x: 0, y: 0 },
-                busSchool: { x: 282, y: -210 },
+                busSchool: { x: scaled(300), y: scaled(-204) },
                 cameraHome: {
                   x: centerCameraOn(homeZone, isCompactViewport ? 0.9 : 1),
                   y: 0,
@@ -320,11 +325,11 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
                   y: 20,
                   scale: isCompactViewport ? 0.68 : 0.72,
                 },
-                endMultiplier: 9,
-                scrub: 0.5,
+                endMultiplier: 5.8,
+                scrub: 0.35,
               };
 
-          gsap.set([copy, phone, stage], { autoAlpha: 1, x: 0, y: 0 });
+          gsap.set([copy, stage], { autoAlpha: 1, x: 0, y: 0 });
           gsap.set(camera, {
             autoAlpha: 1,
             x: 0,
@@ -337,14 +342,16 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
             autoAlpha: 0,
             x: travel.busStart.x,
             y: travel.busStart.y,
-            scale: 0.92,
+            scale: 0.72,
           });
-          gsap.set([mapPanel, finalMessage, boardingStatus, attentionSlot], {
+          gsap.set([mapPanel, boardingStatus, attentionSlot], {
             autoAlpha: 0,
             y: 14,
             scale: 0.96,
           });
           gsap.set([attentionPath, attentionMarker], { autoAlpha: 0 });
+          const attentionDrawStart = isDesktop ? 31 : 57;
+          const attentionSignalStart = isDesktop ? 45 : 65;
 
           const timeline = gsap.timeline({
             defaults: { ease: "none" },
@@ -352,7 +359,7 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
               id: "protected-journey-main",
               trigger: pinFrame,
               pin: true,
-              start: "top top",
+              start: () => "top top+=" + getPinOffset(),
               end: () => `+=${Math.round(window.innerHeight * travel.endMultiplier)}`,
               scrub: travel.scrub,
               anticipatePin: 1,
@@ -367,154 +374,149 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
 
           timeline
             .addLabel("intro", 0)
-            .addLabel("leaving-home", 10)
-            .to(routePath, { strokeDashoffset: routeLength * 0.84, duration: 16 }, 10)
-            .to(child, { ...travel.childHome, duration: 16, ease: "power1.inOut" }, 10)
-            .to(camera, { ...travel.cameraHome, duration: 16, ease: "power1.inOut" }, 10)
+            .addLabel("leaving-home", 5)
+            .to(routePath, { strokeDashoffset: routeLength * 0.84, duration: 13 }, 5)
+            .to(child, { ...travel.childHome, duration: 13, ease: "power1.inOut" }, 5)
+            .to(camera, { ...travel.cameraHome, duration: 13, ease: "power1.inOut" }, 5)
             .to(
               homeMarker,
-              { autoAlpha: 1, scale: 1, duration: 4, ease: "back.out(1.4)" },
-              13,
+              { autoAlpha: 1, scale: 1, duration: 3, ease: "back.out(1.4)" },
+              7,
             )
-            .addLabel("community-checkpoint", 26)
-            .to(routePath, { strokeDashoffset: routeLength * 0.64, duration: 18 }, 26)
-            .to(child, { ...travel.childStore, duration: 18, ease: "power1.inOut" }, 26)
-            .to(camera, { ...travel.cameraStore, duration: 18, ease: "power1.inOut" }, 26)
-            .to(communityZone, { scale: 1.05, duration: 4, ease: "power2.out" }, 29)
+            .addLabel("community-checkpoint", 18)
+            .to(routePath, { strokeDashoffset: routeLength * 0.64, duration: 18 }, 18)
+            .to(child, { ...travel.childStore, duration: 18, ease: "power1.inOut" }, 18)
+            .to(camera, { ...travel.cameraStore, duration: 18, ease: "power1.inOut" }, 18)
+            .to(communityZone, { scale: 1.05, duration: 3, ease: "power2.out" }, 22)
             .to(
               checkpointWaves,
-              { autoAlpha: 0.42, scale: 1.42, duration: 7, stagger: 0.04 },
-              31,
+              { autoAlpha: 0.42, scale: 1.42, duration: 6, stagger: 0.04 },
+              24,
             )
             .to(
               communityMarker,
-              { autoAlpha: 1, scale: 1, duration: 4, ease: "back.out(1.4)" },
-              37,
+              { autoAlpha: 1, scale: 1, duration: 3, ease: "back.out(1.4)" },
+              31,
             )
-            .to(communityZone, { scale: 1, duration: 4, ease: "power2.out" }, 42)
-            .addLabel("community-hold", 44)
-            .addLabel("boarding", 62)
-            .to(routePath, { strokeDashoffset: routeLength * 0.46, duration: 16 }, 62)
+            .to(communityZone, { scale: 1, duration: 3, ease: "power2.out" }, 33)
+            .addLabel("boarding", 36)
+            .to(routePath, { strokeDashoffset: routeLength * 0.46, duration: 17 }, 36)
             .to(
               child,
-              { ...travel.childBoarding, duration: 16, ease: "power1.inOut" },
-              62,
+              { ...travel.childBoarding, duration: 17, ease: "power1.inOut" },
+              36,
             )
-            .to(camera, { ...travel.cameraBus, duration: 16, ease: "power1.inOut" }, 62)
+            .to(camera, { ...travel.cameraBus, duration: 17, ease: "power1.inOut" }, 36)
             .to(
               bus,
               {
                 autoAlpha: 1,
                 ...travel.busBoarding,
-                scale: 1,
-                duration: 7,
+                scale: 0.78,
+                duration: 6,
                 ease: "power2.out",
               },
-              65,
+              39,
             )
             .to(
               boardingStatus,
-              { autoAlpha: 1, y: 0, scale: 1, duration: 5, ease: "power2.out" },
-              67,
+              { autoAlpha: 1, y: 0, scale: 1, duration: 4, ease: "power2.out" },
+              41,
             )
             .to(
               boardingMarker,
-              { autoAlpha: 1, scale: 1, duration: 4, ease: "back.out(1.4)" },
-              71,
+              { autoAlpha: 1, scale: 1, duration: 3, ease: "back.out(1.4)" },
+              47,
             )
-            .to(child, { autoAlpha: 0, scale: 0.72, duration: 3 }, 75)
-            .addLabel("bus-route", 78)
-            .to(routePath, { strokeDashoffset: routeLength * 0.2, duration: 28 }, 78)
-            .to(bus, { ...travel.busSchool, duration: 28, ease: "power1.inOut" }, 78)
+            .to(child, { autoAlpha: 0, scale: 0.72, duration: 3 }, 50)
+            .addLabel("bus-route", 53)
+            .to(routePath, { strokeDashoffset: routeLength * 0.2, duration: 26 }, 53)
+            .to(bus, { ...travel.busSchool, duration: 26, ease: "power1.inOut" }, 53)
             .to(
               camera,
-              { ...travel.cameraSchool, duration: 28, ease: "power1.inOut" },
-              78,
+              { ...travel.cameraSchool, duration: 24, ease: "power1.inOut" },
+              53,
             )
-            .to(attentionPath, { autoAlpha: 0.9, duration: 3 }, 82)
-            .to(attentionPath, { strokeDashoffset: 0, duration: 12 }, 82)
+            .to(attentionPath, { autoAlpha: 0.9, duration: 3 }, attentionDrawStart)
+            .to(attentionPath, { strokeDashoffset: 0, duration: 18 }, attentionDrawStart)
             .to(
               attentionMarker,
-              { autoAlpha: 1, scale: 1, duration: 4, ease: "back.out(1.5)" },
-              91,
+              { autoAlpha: 1, scale: 1, duration: 3, ease: "back.out(1.5)" },
+              attentionSignalStart,
             )
             .to(
               attentionSlot,
-              { autoAlpha: 1, y: 0, scale: 1, duration: 5, ease: "power2.out" },
-              90,
+              { autoAlpha: 1, y: 0, scale: 1, duration: 4, ease: "power2.out" },
+              attentionSignalStart,
             )
-            .addLabel("school-arrival", 106)
-            .to(routePath, { strokeDashoffset: routeLength * 0.05, duration: 18 }, 106)
+            .addLabel("school-arrival", 79)
+            .to(routePath, { strokeDashoffset: routeLength * 0.05, duration: 19 }, 79)
             .to(
               bus,
               {
-                x: travel.busSchool.x + 42,
-                y: travel.busSchool.y + 42,
-                scale: 0.86,
+                x: travel.busSchool.x + scaled(42),
+                y: travel.busSchool.y + scaled(42),
+                scale: 0.7,
                 duration: 14,
                 ease: "power1.inOut",
               },
-              106,
+              79,
             )
             .to(
               [attentionPath, attentionMarker, attentionSlot],
-              { autoAlpha: 0.28, duration: 6 },
-              106,
+              { autoAlpha: 0.3, duration: 5 },
+              79,
             )
             .set(
               child,
               {
                 autoAlpha: 0,
                 ...travel.childSchoolExit,
-                scale: 0.82,
+                scale: 0.8,
               },
-              116,
+              89,
             )
             .to(
               child,
               {
                 autoAlpha: 1,
                 ...travel.childSchool,
-                scale: 0.82,
-                duration: 7,
+                scale: 0.8,
+                duration: 6,
                 ease: "power2.out",
               },
-              117,
+              90,
             )
             .to(
               schoolMarker,
-              { autoAlpha: 1, scale: 1, duration: 4, ease: "back.out(1.4)" },
-              117,
+              { autoAlpha: 1, scale: 1, duration: 3, ease: "back.out(1.4)" },
+              92,
             )
-            .addLabel("school-hold", 124)
-            .addLabel("camera-rise", 142)
-            .to(camera, { ...travel.cameraRise, duration: 14, ease: "power1.inOut" }, 142)
+            .addLabel("camera-rise", 98)
+            .to(camera, { ...travel.cameraRise, duration: 13, ease: "power1.inOut" }, 98)
             .to(
               [homeZone, communityZone, busStopZone, school],
-              { autoAlpha: 0.5, scale: 0.95, duration: 12 },
-              142,
+              { autoAlpha: 0.48, scale: 0.94, duration: 11 },
+              98,
             )
-            .to(
-              [copy, phone],
-              { autoAlpha: 0, y: 8, duration: 5, ease: "power2.in" },
-              153,
-            )
-            .addLabel("network-map", 156)
-            .to(routePath, { strokeDashoffset: 0, duration: 8 }, 156)
-            .to(camera, { autoAlpha: 0.32, duration: 8 }, 156)
+            .addLabel("network-map", 111)
+            .to(routePath, { strokeDashoffset: 0, duration: 8 }, 111)
+            .to(camera, { autoAlpha: 0.1, duration: 8 }, 111)
             .to(
               mapPanel,
-              { autoAlpha: 1, y: 0, scale: 1, duration: 7, ease: "power2.out" },
-              158,
+              {
+                autoAlpha: 1,
+                xPercent: -50,
+                yPercent: -48,
+                y: 0,
+                scale: 1,
+                duration: 7,
+                ease: "power2.out",
+              },
+              113,
             )
-            .to(
-              finalMessage,
-              { autoAlpha: 1, y: 0, scale: 1, duration: 7, ease: "power2.out" },
-              160,
-            )
-            .addLabel("final-hold", 170)
-            .to(root, { "--journey-progress": 1, duration: 0.1 }, 198);
-
+            .addLabel("final-hold", 123)
+            .to(root, { "--journey-progress": 1, duration: 0.1 }, 137);
           const refreshFrame = window.requestAnimationFrame(() => {
             ScrollTrigger.refresh();
           });

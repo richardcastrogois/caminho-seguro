@@ -3,7 +3,7 @@ import styles from "./protected-journey.module.css";
 
 const routePath =
   "M82 360 C170 330 238 190 330 190 C430 190 470 350 560 350 C650 350 690 190 780 190 C860 190 900 120 940 105";
-const attentionPath = "M405 245 C470 170 545 125 650 145";
+const attentionPath = "M330 190 C430 142 540 114 680 120";
 
 const mainMarkerPoints = [
   { id: "home-start", x: 82, y: 360 },
@@ -37,8 +37,8 @@ export function JourneyRoute() {
         d={attentionPath}
       />
       <g data-journey-attention-marker className={styles.attentionRouteMarker}>
-        <circle cx="650" cy="145" r="14" className={styles.attentionMarkerHalo} />
-        <circle cx="650" cy="145" r="6" className={styles.attentionMarker} />
+        <circle cx="680" cy="120" r="14" className={styles.attentionMarkerHalo} />
+        <circle cx="680" cy="120" r="6" className={styles.attentionMarker} />
       </g>
 
       {mainMarkerPoints.map((point) => {

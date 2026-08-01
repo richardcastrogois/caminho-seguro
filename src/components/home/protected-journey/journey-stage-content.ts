@@ -21,47 +21,46 @@ export type JourneyPhoneStatus = {
 
 export const journeyStageCopy: Record<JourneyStage, JourneyStageCopy> = {
   intro: {
-    eyebrow: "Jornada Protegida",
-    title: "Da casa a escola, a rede registra apenas o que importa.",
-    lead: "Role para acompanhar os checkpoints.",
+    eyebrow: "Inicio",
+    title: "Rede pronta.",
+    lead: "Role para iniciar.",
   },
   "leaving-home": {
     eyebrow: "07:15",
-    title: "Jornada iniciada.",
-    lead: "A familia recebe o primeiro evento, sem GPS continuo.",
+    title: "Trajeto iniciado.",
+    lead: "Sem GPS continuo.",
   },
   "community-checkpoint": {
     eyebrow: "07:21",
-    title: "Ponto seguro confirmou a passagem.",
-    lead: "A comunidade valida o momento sem acessar dados pessoais.",
+    title: "Ponto seguro validado.",
+    lead: "Evento confirmado pela comunidade.",
   },
   boarding: {
     eyebrow: "07:28",
-    title: "Embarque validado.",
-    lead: "O transporte e identificado e o responsavel recebe a confirmacao.",
+    title: "Embarque confirmado.",
+    lead: "Linha Escolar 04.",
   },
   "bus-route": {
     eyebrow: "Rota alternativa",
-    title: "Um caminho possivel ainda nao tem cobertura.",
-    lead: "Maria nao passou por ali; a rede sinaliza o ponto para reforco.",
+    title: "Alternativa sem cobertura.",
+    lead: "Maria segue pela rota principal.",
   },
   "school-arrival": {
     eyebrow: "07:46",
-    title: "Chegada confirmada pela escola.",
-    lead: "O ultimo evento encerra a jornada com seguranca.",
+    title: "Chegada confirmada.",
+    lead: "A escola encerra a jornada.",
   },
   "camera-rise": {
     eyebrow: "Visao da rede",
-    title: "Eventos isolados passam a formar uma rede de cuidado.",
-    lead: "Casa, comunidade, transporte e escola aparecem conectados.",
+    title: "Rede em contexto.",
+    lead: "Os eventos aparecem conectados.",
   },
   "network-map": {
     eyebrow: "Jornada concluida",
-    title: "A rede acompanhou o caminho sem vigiar a crianca.",
-    lead: "Somente eventos necessarios foram compartilhados.",
+    title: "Privacidade preservada.",
+    lead: "Somente eventos necessarios.",
   },
 };
-
 export const journeyPhoneNotifications: JourneyPhoneNotification[] = [
   {
     id: "started",

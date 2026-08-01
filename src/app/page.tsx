@@ -9,7 +9,6 @@ import {
   BellRing,
   BrainCircuit,
   Bluetooth,
-  CheckCircle2,
   EyeOff,
   Fingerprint,
   MapPinned,
@@ -99,14 +98,12 @@ const protectionSteps = [
   },
   {
     title: "Alerta na hora certa",
-    description:
-      "Se algo sai do esperado, o responsavel recebe um aviso claro.",
+    description: "Se algo sai do esperado, o responsavel recebe um aviso claro.",
     icon: BellRing,
   },
   {
     title: "Dados protegidos",
-    description:
-      "O codigo publico nao mostra nome, endereco nem dados sensiveis.",
+    description: "O codigo publico nao mostra nome, endereco nem dados sensiveis.",
     icon: ShieldCheck,
   },
 ];
@@ -171,7 +168,7 @@ export default function Home() {
           <div className="pointer-events-none absolute inset-x-0 top-0 h-180 bg-[linear-gradient(115deg,rgba(14,165,233,.14),rgba(23, 176, 203, 0.11)_45%,rgba(16,185,129,.14))]" />
 
           <div className="relative mx-auto grid max-w-7xl gap-6 px-4 pb-10 pt-[calc(var(--app-nav-offset)+0.50rem)] sm:gap-9 sm:px-6 sm:pb-14 lg:grid-cols-[0.94fr_1.06fr] lg:items-center lg:px-10 lg:pb-20">
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center lg:pt-10">
               <div
                 data-gsap="hero"
                 className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-white/95 px-4 py-2 b-2 text-sm font-semibold text-emerald-700 shadow-sm"
@@ -191,19 +188,16 @@ export default function Home() {
                 data-gsap="hero"
                 className="mt-6 max-w-2xl text-lg leading-8 text-slate-600"
               >
-                Um MVP para conectar familia, escola, transporte, servicos publicos e
+                Um serviço para conectar familia, escola, transporte, servicos publicos e
                 comunidade em torno de eventos de protecao infantil. A proposta e simples:
                 acompanhar sinais importantes sem acompanhar cada passo da crianca.
               </p>
-
-              <div data-gsap="metrics" className="mt-9 grid gap-3 sm:grid-cols-3">
-                <MetricCard value="0" label="dados pessoais no QR" />
-                <MetricCard value="7" label="atores da rede conectados" />
-                <MetricCard value="24h" label="eventos prontos para resposta" />
-              </div>
             </div>
 
-            <div data-gsap="visual">
+            <div
+              data-gsap="visual"
+              className="lg:mx-auto lg:w-[88%] [&_[data-network-visual]]:lg:min-h-[470px]"
+            >
               <ProtectionNetworkVisual />
             </div>
           </div>
@@ -267,8 +261,7 @@ export default function Home() {
                 Como funciona
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-                Veja o cenario na pratica. Clique nos passos para acompanhar cada
-                alerta.
+                Veja o cenario na pratica. Clique nos passos para acompanhar cada alerta.
               </h2>
             </div>
 
@@ -363,30 +356,6 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="relative border-b border-sky-100 py-10 sm:py-16">
-          <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:gap-8 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-10">
-            <div data-gsap-scroll="left">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
-                O que ele faz e nao faz
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-                O valor do produto esta no limite: ajudar sem expor.
-              </h2>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <TruthCard
-                title="Faz"
-                text="Registra eventos de protecao e notifica responsaveis, instituicoes e rede formal."
-                positive
-              />
-              <TruthCard
-                title="Nao faz"
-                text="Nao mostra dados pessoais no QR e nao acompanha GPS continuo da crianca."
-              />
-            </div>
-          </div>
-        </section>
-
         <section className="relative py-10 sm:py-16">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:gap-8 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:px-10">
             <div data-gsap-scroll="left" className="max-w-2xl">
@@ -464,41 +433,5 @@ export default function Home() {
         </section>
       </GsapReveal>
     </main>
-  );
-}
-
-function MetricCard({ value, label }: { value: string; label: string }) {
-  return (
-    <Card className="home-surface rounded-2xl border-sky-100 bg-white/90">
-      <CardContent className="p-4">
-        <p className="text-2xl font-semibold text-slate-950">{value}</p>
-        <p className="mt-1 text-sm leading-5 text-slate-500">{label}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function TruthCard({
-  title,
-  text,
-  positive = false,
-}: {
-  title: string;
-  text: string;
-  positive?: boolean;
-}) {
-  return (
-    <Card
-      data-gsap-scroll="up"
-      className={`rounded-2xl ${positive ? "border-emerald-200 bg-emerald-50" : "border-sky-200 bg-sky-50"}`}
-    >
-      <CardHeader>
-        <div className="flex items-center gap-2 text-slate-950">
-          <CheckCircle2 />
-          <CardTitle>{title}</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="leading-7 text-slate-700">{text}</CardContent>
-    </Card>
   );
 }

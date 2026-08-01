@@ -27,7 +27,7 @@
   align-items: end;
   justify-content: space-between;
   gap: 1rem;
-  padding: clamp(1.15rem, 3vw, 2rem) clamp(1rem, 4vw, 2.5rem) 0.35rem;
+  padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 4vw, 2.5rem) 1rem;
 }
 
 .sectionIntroCopy {
@@ -51,7 +51,7 @@
 }
 
 .sectionIntroCopy p {
-  margin-top: 0.3rem;
+  margin-top: 0.6rem;
   color: #40536d;
   font-size: clamp(0.82rem, 1.4vw, 0.95rem);
   line-height: 1.45;
@@ -67,9 +67,8 @@
 .pinFrame {
   position: relative;
   display: flex;
-  min-height: 100svh;
   align-items: flex-start;
-  padding: calc(var(--app-nav-offset, 5rem) + 0.15rem) 0 0.85rem;
+  padding: 0.9rem 0 0.8rem;
 }
 
 .inner {
@@ -83,11 +82,10 @@
 }
 
 .stage {
-  --journey-status-rail: 4.35rem;
-  --journey-copy-rail: 7.6rem;
+  --journey-copy-rail: 4.85rem;
   position: relative;
-  height: min(46rem, calc(100svh - var(--app-nav-offset, 5rem) - 0.75rem));
-  min-height: 34rem;
+  height: min(37rem, calc(100svh - var(--app-nav-offset, 5rem) - 0.75rem));
+  min-height: 27rem;
   overflow: hidden;
   border: 1px solid rgb(125 211 252 / 0.58);
   border-radius: clamp(1rem, 2vw, 1.5rem);
@@ -100,7 +98,7 @@
 
 .cameraLayer {
   position: absolute;
-  inset: var(--journey-status-rail) 0 var(--journey-copy-rail);
+  inset: var(--journey-copy-rail) 0 0;
   transform-origin: 50% 50%;
   will-change: transform;
 }
@@ -233,6 +231,13 @@
   left: 2%;
 }
 
+.homeZone > .checkpoint {
+  position: absolute;
+  bottom: -1.6rem;
+  left: 46%;
+  transform: translateX(-50%);
+}
+
 .communityZone {
   top: 9%;
   left: 26%;
@@ -283,7 +288,7 @@
 .busFigure {
   bottom: 15%;
   left: 54%;
-  width: clamp(10rem, 18vw, 14rem);
+  width: clamp(8rem, 13vw, 10.5rem);
 }
 
 .schoolFigure {
@@ -324,19 +329,20 @@
 }
 
 .copy {
-  bottom: 1rem;
-  left: 1rem;
-  width: min(28rem, calc(100% - 2rem));
-  border-radius: 1.1rem;
-  padding: clamp(0.85rem, 2vw, 1.1rem);
+  top: 0.7rem;
+  bottom: auto;
+  left: 0.7rem;
+  width: min(22rem, calc(100% - 1.4rem));
+  border-radius: 0.9rem;
+  padding: 0.55rem 0.7rem;
 }
 
 .copyViewport {
-  min-height: 5.9rem;
+  min-height: 3.4rem;
 }
 
 .copyMotionPanel {
-  max-width: 26rem;
+  max-width: 21rem;
 }
 
 .eyebrow {
@@ -348,20 +354,20 @@
 }
 
 .copy h2 {
-  margin-top: 0.3rem;
+  margin-top: 0.12rem;
   color: #020617;
-  font-size: clamp(1.2rem, 2.4vw, 1.7rem);
-  font-weight: 750;
+  font-size: clamp(0.95rem, 1.5vw, 1.08rem);
+  font-weight: 780;
   letter-spacing: 0;
-  line-height: 1.08;
+  line-height: 1.12;
 }
 
 .lead {
-  margin-top: 0.45rem;
-  max-width: 28rem;
+  margin-top: 0.16rem;
+  max-width: 21rem;
   color: #40536d;
-  font-size: clamp(0.78rem, 1.3vw, 0.9rem);
-  line-height: 1.45;
+  font-size: clamp(0.68rem, 1vw, 0.76rem);
+  line-height: 1.3;
 }
 
 .phone {
@@ -496,15 +502,15 @@
 }
 
 .schoolCheckpoint {
-  top: 34%;
+  top: 30%;
   right: 4%;
 }
 
 .attentionCheckpoint {
-  top: 12%;
+  top: 22%;
   right: auto;
   bottom: auto;
-  left: 58%;
+  left: 69%;
 }
 
 .checkpoint {
@@ -557,11 +563,7 @@
 }
 
 .checkpointWaves {
-  position: absolute;
-  inset: -0.3rem;
-  border: 1px solid currentColor;
-  border-radius: inherit;
-  opacity: 0.12;
+  display: none;
 }
 
 .checkpointBase {
@@ -628,35 +630,51 @@
 
 .mapPanel {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 50%;
+  left: 50%;
   z-index: 11;
-  width: min(20rem, 32%);
-  overflow: hidden;
-  border: 1px solid rgb(186 230 253 / 0.85);
-  border-radius: 1rem;
-  background: rgb(255 255 255 / 0.94);
-  box-shadow: 0 20px 50px rgb(8 47 73 / 0.13);
+  display: grid;
+  width: min(20rem, 34%);
+  justify-items: center;
+  gap: 0.55rem;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+  transform: translate(-50%, -48%);
   will-change: transform, opacity;
+}
+
+.mapPanel > p {
+  max-width: 18rem;
+  color: #020617;
+  font-size: clamp(0.95rem, 1.7vw, 1.25rem);
+  font-weight: 850;
+  line-height: 1.08;
 }
 
 .mapHeader {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.7rem;
+  gap: 0.5rem;
+  padding: 0.55rem;
 }
 
 .mapCanvas {
   position: relative;
+  display: grid;
+  place-items: center;
   min-height: 11rem;
-  overflow: hidden;
-  border-top: 1px solid rgb(226 232 240 / 0.85);
+  overflow: visible;
 }
 
 .mapCanvas img {
-  object-fit: cover;
-  opacity: 0.66;
+  display: block;
+  width: min(18rem, 100%);
+  object-fit: contain;
+  opacity: 0.96;
+  filter: drop-shadow(0 18px 34px rgb(8 47 73 / 0.12));
 }
 
 .mapOverlay {
@@ -856,6 +874,47 @@
   }
 }
 
+@media (min-width: 900px) {
+  .homeZone > .checkpoint {
+    bottom: 0.35rem;
+    left: calc(100% + 1.2rem);
+    min-width: 13.5rem;
+    max-width: 17rem;
+    transform: none;
+  }
+
+  .communityZone > .checkpoint {
+    position: absolute;
+    top: 54%;
+    right: calc(100% - 0.35rem);
+    min-width: 13rem;
+    max-width: 16rem;
+    transform: translateY(-50%);
+  }
+
+  .attentionCheckpoint {
+    top: 19%;
+    left: 45%;
+  }
+
+  .mapPanel {
+    width: min(25rem, 42%);
+    gap: 0.75rem;
+  }
+
+  .mapPanel > p {
+    max-width: 24rem;
+    font-size: clamp(1.1rem, 1.8vw, 1.55rem);
+  }
+
+  .mapCanvas {
+    min-height: 14rem;
+  }
+
+  .mapCanvas img {
+    width: min(24rem, 100%);
+  }
+}
 @media (max-width: 899px) {
   .sectionIntro {
     align-items: stretch;
@@ -867,7 +926,7 @@
   }
 
   .pinFrame {
-    padding-top: calc(var(--app-nav-offset, 5rem) + 0.25rem);
+    padding-top: 0.3rem;
   }
 
   .inner {
@@ -875,35 +934,35 @@
   }
 
   .stage {
-    --journey-status-rail: 4.2rem;
-    --journey-copy-rail: 7.25rem;
-    height: min(44rem, calc(100svh - var(--app-nav-offset, 5rem) - 0.5rem));
-    min-height: 34rem;
+    --journey-copy-rail: 4.7rem;
+    height: min(38rem, calc(100svh - var(--app-nav-offset, 5rem) - 0.5rem));
+    min-height: 29rem;
   }
 
   .cameraLayer {
     right: auto;
-    width: 68rem;
+    width: 56rem;
     max-width: none;
   }
 
   .copy {
-    bottom: 0.65rem;
-    left: 0.65rem;
-    width: calc(100% - 1.3rem);
-    padding: 0.75rem;
+    top: 0.55rem;
+    bottom: auto;
+    left: 0.55rem;
+    width: calc(100% - 1.1rem);
+    padding: 0.5rem 0.6rem;
   }
 
   .copyViewport {
-    min-height: 5.75rem;
+    min-height: 3.55rem;
   }
 
   .copy h2 {
-    font-size: clamp(1.05rem, 4.8vw, 1.35rem);
+    font-size: clamp(0.9rem, 3.2vw, 1rem);
   }
 
   .lead {
-    font-size: 0.78rem;
+    font-size: 0.7rem;
   }
 
   .phone {
@@ -914,27 +973,36 @@
   }
 
   .zone {
-    width: 12rem;
+    width: 10rem;
   }
 
   .communityZone {
-    width: 10.5rem;
+    width: 8.5rem;
   }
 
   .busStopZone {
-    width: 9.5rem;
+    width: 7.5rem;
   }
 
   .childFigure {
-    width: 5.2rem;
+    width: 4.25rem;
   }
 
   .busFigure {
-    width: 12rem;
+    width: 7.4rem;
   }
 
   .schoolFigure {
-    width: 16rem;
+    width: 13rem;
+  }
+
+  .routeBase,
+  .routeProgress {
+    stroke-width: 4;
+  }
+
+  .attentionRoute {
+    stroke-width: 3;
   }
 
   .boardingStatus {
@@ -942,20 +1010,14 @@
   }
 
   .attentionCheckpoint {
-    left: 62%;
+    top: 25%;
+    left: 73%;
   }
 
   .mapPanel {
-    top: 0.65rem;
-    right: 0.65rem;
-    width: calc(100% - 1.3rem);
-  }
-
-  .finalMessage {
-    right: 0.65rem;
-    bottom: 0.65rem;
-    left: 0.65rem;
-    width: auto;
+    top: 50%;
+    left: 50%;
+    width: min(13rem, 42%);
   }
 
   .mapCheckpoints {
@@ -963,7 +1025,7 @@
   }
 
   .mapCanvas {
-    min-height: 10rem;
+    min-height: 7.5rem;
   }
 
   .section[data-journey-reduced-motion="true"] .cameraLayer {
@@ -1006,8 +1068,46 @@
 @media (max-width: 520px) {
   .sectionIntro {
     display: grid;
-    gap: 0.7rem;
-    padding-top: 1rem;
+    gap: 0.55rem;
+    padding-top: 0.8rem;
+  }
+
+  .stage {
+    --journey-copy-rail: 4.55rem;
+    height: min(36rem, calc(100svh - var(--app-nav-offset, 5rem) - 0.35rem));
+    min-height: 29rem;
+  }
+
+  .cameraLayer {
+    width: 50rem;
+  }
+
+  .zone {
+    width: 8.8rem;
+  }
+
+  .communityZone {
+    width: 7.8rem;
+  }
+
+  .busStopZone {
+    width: 7rem;
+  }
+
+  .childFigure {
+    width: 3.8rem;
+  }
+
+  .busFigure {
+    width: 6.8rem;
+  }
+
+  .schoolFigure {
+    width: 11rem;
+  }
+
+  .homeZone > .checkpoint {
+    left: 72%;
   }
 
   .motionControl {
@@ -1031,7 +1131,7 @@
   }
 
   .copyViewport {
-    min-height: 6rem;
+    min-height: 3.35rem;
   }
 
   .checkpoint {
@@ -1042,8 +1142,12 @@
     display: none;
   }
 
+  .mapPanel {
+    width: min(11.5rem, 44%);
+  }
+
   .mapCanvas {
-    min-height: 10rem;
+    min-height: 8rem;
   }
 
   .section[data-journey-reduced-motion="true"] .stage {
@@ -1058,21 +1162,20 @@
 
 @media (max-width: 360px) {
   .stage {
-    --journey-status-rail: 4rem;
-    --journey-copy-rail: 7rem;
-    min-height: 33rem;
+    --journey-copy-rail: 4.45rem;
+    min-height: 28.5rem;
+  }
+
+  .cameraLayer {
+    width: 46rem;
   }
 
   .copy h2 {
-    font-size: 1.08rem;
+    font-size: 0.9rem;
   }
 
   .copyViewport {
-    min-height: 6.1rem;
-  }
-
-  .phoneStatus {
-    font-size: 0.66rem;
+    min-height: 3.3rem;
   }
 }
 

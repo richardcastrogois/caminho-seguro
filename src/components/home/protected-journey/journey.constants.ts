@@ -43,6 +43,11 @@ export const journeyAssets: Record<string, JourneyAsset> = {
     src: `${assetBase}/neighborhood.svg`,
     alt: "Mapa do bairro com pontos da rede de protecao.",
   },
+  finalMap: {
+    id: "final-map",
+    src: `${assetBase}/map.svg`,
+    alt: "Mapa sintetico com pontos conectados da rede de protecao.",
+  },
 };
 
 export const journeyCheckpoints: JourneyCheckpoint[] = [

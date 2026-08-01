@@ -1,4 +1,3 @@
-import { ArrowRight, MapPinned } from "lucide-react";
 import { JourneyBackground } from "./journey-background";
 import { JourneyBus } from "./journey-bus";
 import { JourneyChild } from "./journey-child";
@@ -8,7 +7,7 @@ import { JourneyCheckpoint } from "./journey-checkpoint";
 import { JourneyMap } from "./journey-map";
 import { JourneyRoute } from "./journey-route";
 import { JourneySchool } from "./journey-school";
-import { MotionActionLink } from "./motion-action-link";
+
 import type {
   CheckpointState,
   JourneyCheckpoint as JourneyCheckpointType,
@@ -52,15 +51,6 @@ export function JourneyScene({ checkpointStates, children }: JourneySceneProps) 
         <JourneyBus />
         <JourneySchool />
 
-        <div
-          className={styles.boardingStatus}
-          data-journey-boarding-status
-          aria-label="Estado do embarque"
-        >
-          <span>Transporte detectado</span>
-          <strong>Linha Escolar 04</strong>
-          <span>Embarque autorizado</span>
-        </div>
 
         <div
           className={styles.schoolCheckpoint}
@@ -88,22 +78,6 @@ export function JourneyScene({ checkpointStates, children }: JourneySceneProps) 
       </div>
 
       <JourneyMap />
-
-      <div className={styles.finalMessage} data-journey-final>
-        <p>Rede conectada</p>
-        <h3>Chegada confirmada com privacidade preservada.</h3>
-        <span>A rede compartilhou somente os eventos necessarios.</span>
-        <div className={styles.finalActions}>
-          <MotionActionLink href="#como-funciona">
-            Como funciona
-            <ArrowRight data-icon="inline-end" />
-          </MotionActionLink>
-          <MotionActionLink href="/rede" variant="outline">
-            <MapPinned data-icon="inline-start" />
-            Ver a rede
-          </MotionActionLink>
-        </div>
-      </div>
     </div>
   );
 }

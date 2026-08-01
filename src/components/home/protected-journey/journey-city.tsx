@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import { journeyAssets, journeyScenes } from "./journey.constants";
 import { JourneyCheckpoint } from "./journey-checkpoint";
 import type { JourneyCheckpoint as JourneyCheckpointType } from "./journey.types";
@@ -66,8 +66,9 @@ export function JourneyCity({ checkpointById }: JourneyCityProps) {
         <JourneyCheckpoint
           compact
           state={checkpointById.boarding.state}
-          label={checkpointById.boarding.shortLabel}
+          label="Linha Escolar 04"
           time={checkpointById.boarding.time}
+          dataJourneyBoardingStatus
         />
       </article>
     </div>
