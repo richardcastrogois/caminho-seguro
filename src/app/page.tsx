@@ -108,6 +108,29 @@ const protectionSteps = [
   },
 ];
 
+const architectureSteps = [
+  {
+    title: "Evento nasce na rede",
+    text: "QR, BLE, escola ou transporte registram apenas o que aconteceu.",
+    icon: QrCode,
+  },
+  {
+    title: "Aplicacao organiza",
+    text: "A API valida, salva no banco e entrega cada painel ao perfil certo.",
+    icon: Network,
+  },
+  {
+    title: "Prova sem expor",
+    text: "O sistema gera um hash do evento. Dados pessoais nao vao para a blockchain.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Blockchain confirma",
+    text: "A Solana Devnet guarda a evidencia para auditoria e verificacao posterior.",
+    icon: BadgeCheck,
+  },
+];
+
 const futureEvolutions = [
   {
     title: "IA para prevencao de riscos",
@@ -196,7 +219,7 @@ export default function Home() {
 
             <div
               data-gsap="visual"
-              className="lg:mx-auto lg:w-[88%] [&_[data-network-visual]]:lg:min-h-[470px]"
+              className="lg:mx-auto lg:w-[88%] **:data-network-visual:lg:min-h-117.5"
             >
               <ProtectionNetworkVisual />
             </div>
@@ -295,6 +318,76 @@ export default function Home() {
                   </Card>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        <section className="relative border-b border-sky-100 py-10 sm:py-16">
+          <div className="mx-auto grid max-w-7xl gap-7 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:px-10">
+            <div data-gsap-scroll="left" className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                Arquitetura confiavel
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
+                Blockchain entra como prova, nao como exposicao de dados.
+              </h2>
+              <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+                A rede registra eventos importantes, protege as informacoes sensiveis no
+                sistema e publica apenas uma evidencia verificavel na blockchain.
+              </p>
+            </div>
+
+            <div data-gsap-scroll="up" className="grid gap-4">
+              <Card className="overflow-hidden rounded-3xl border-sky-100 bg-slate-950 text-white shadow-[0_24px_64px_rgba(2,6,23,0.22)]">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {architectureSteps.map((step, index) => {
+                      const Icon = step.icon;
+                      return (
+                        <div
+                          key={step.title}
+                          className="rounded-2xl border border-white/10 bg-white/6 p-4"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="flex size-10 items-center justify-center rounded-xl bg-white text-slate-950">
+                              <Icon />
+                            </span>
+                            <span className="text-xs font-semibold text-slate-500">
+                              0{index + 1}
+                            </span>
+                          </div>
+                          <h3 className="mt-4 text-base font-semibold leading-5">
+                            {step.title}
+                          </h3>
+                          <p className="mt-2 text-sm leading-6 text-slate-300">
+                            {step.text}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-4 grid gap-3 rounded-2xl border border-emerald-300/25 bg-emerald-400/10 p-4 text-sm text-emerald-50 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-200">
+                        Dentro do sistema
+                      </span>
+                      <p className="mt-1 font-semibold">
+                        Evento completo e acesso por perfil
+                      </p>
+                    </div>
+                    <ArrowRight className="hidden text-emerald-200 sm:block" />
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-200">
+                        Na blockchain
+                      </span>
+                      <p className="mt-1 font-semibold">
+                        Hash verificavel, sem dados pessoais
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>

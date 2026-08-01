@@ -249,10 +249,10 @@ export function ProtectionNetworkVisual() {
     <div
       ref={scope}
       data-network-visual
-      className="relative min-h-[470px] overflow-hidden rounded-lg border border-sky-200/80 bg-white/88 shadow-[0_28px_70px_rgba(8,47,73,0.16)] backdrop-blur-sm sm:min-h-[540px]"
+      className="relative min-h-117.5 overflow-hidden rounded-lg border border-sky-200/80 bg-white/88 shadow-[0_28px_70px_rgba(8,47,73,0.16)] backdrop-blur-sm sm:min-h-135"
     >
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(224,242,254,.88),rgba(255,255,255,.35)_46%,rgba(209,250,229,.78))]" />
-      <div className="absolute inset-0 opacity-45 [background-image:linear-gradient(rgba(14,165,233,.13)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,.11)_1px,transparent_1px)] [background-size:42px_42px]" />
+      <div className="absolute inset-0 opacity-45 bg-[linear-gradient(rgba(14,165,233,.13)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,.11)_1px,transparent_1px)] bg-size-[42px_42px]" />
 
       <svg
         className="pointer-events-none absolute inset-0 z-10 h-full w-full"
@@ -275,15 +275,15 @@ export function ProtectionNetworkVisual() {
 
       <div
         data-network-anchor="center"
-        className="absolute left-1/2 top-[48%] z-30 flex size-[136px] -translate-x-1/2 -translate-y-1/2 will-change-transform items-center justify-center rounded-full border border-cyan-200 bg-[radial-gradient(circle_at_34%_24%,#ecfdf5_0%,#a7f3d0_26%,#0e7490_68%,#082f49_100%)] shadow-[0_20px_62px_rgba(8,145,178,0.34)] sm:size-[170px]"
+        className="absolute left-1/2 top-[48%] z-30 flex size-34 -translate-x-1/2 -translate-y-1/2 will-change-transform items-center justify-center rounded-full border border-cyan-200 bg-[radial-gradient(circle_at_34%_24%,#ecfdf5_0%,#a7f3d0_26%,#0e7490_68%,#082f49_100%)] shadow-[0_20px_62px_rgba(8,145,178,0.34)] sm:size-42.5"
       >
         <span
           data-network-pulse
-          className="absolute inset-[-12px] -z-10 rounded-full border border-emerald-300/90"
+          className="absolute -inset-3 -z-10 rounded-full border border-emerald-300/90"
         />
         <span
           data-network-pulse
-          className="absolute inset-[-26px] -z-10 rounded-full border border-sky-300/80"
+          className="absolute -inset-6.5 -z-10 rounded-full border border-sky-300/80"
         />
 
         <div className="text-center">
@@ -312,7 +312,7 @@ export function ProtectionNetworkVisual() {
             key={node.id}
             data-network-node
             data-network-anchor={node.id}
-            className={`absolute left-[var(--node-left)] top-[var(--node-top)] z-20 flex min-h-10 max-w-[42vw] items-center gap-2 truncate rounded-full border px-3 py-2 text-xs font-semibold shadow-lg will-change-transform sm:left-[var(--node-left-sm)] sm:top-[var(--node-top-sm)] sm:max-w-none sm:text-sm ${tone}`}
+            className={`absolute left-(--node-left) top-(--node-top) z-20 flex min-h-10 max-w-[42vw] items-center gap-2 truncate rounded-full border px-3 py-2 text-xs font-semibold shadow-lg will-change-transform sm:left-(--node-left-sm) sm:top-(--node-top-sm) sm:max-w-none sm:text-sm ${tone}`}
             style={
               {
                 "--node-left": node.mobileLeft,
