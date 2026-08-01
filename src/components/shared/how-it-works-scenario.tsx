@@ -3,15 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import {
-  BellRing,
-  Home,
-  Pause,
-  Play,
-  School,
-  ShieldCheck,
-  Users,
-} from "lucide-react";
+import { BellRing, Home, Pause, Play, School, ShieldCheck, Users } from "lucide-react";
 
 gsap.registerPlugin(useGSAP);
 
@@ -135,17 +127,19 @@ export function HowItWorksScenario() {
         const rootRect = root.getBoundingClientRect();
         const anchors = new Map<string, { x: number; y: number }>();
 
-        root.querySelectorAll<HTMLElement>("[data-scenario-anchor]").forEach((element) => {
-          const rect = element.getBoundingClientRect();
-          const id = element.dataset.scenarioAnchor;
+        root
+          .querySelectorAll<HTMLElement>("[data-scenario-anchor]")
+          .forEach((element) => {
+            const rect = element.getBoundingClientRect();
+            const id = element.dataset.scenarioAnchor;
 
-          if (id) {
-            anchors.set(id, {
-              x: rect.left - rootRect.left + rect.width / 2,
-              y: rect.top - rootRect.top + rect.height / 2,
-            });
-          }
-        });
+            if (id) {
+              anchors.set(id, {
+                x: rect.left - rootRect.left + rect.width / 2,
+                y: rect.top - rootRect.top + rect.height / 2,
+              });
+            }
+          });
 
         edgeElements.forEach((line) => {
           const from = anchors.get(line.dataset.from ?? "");
@@ -172,15 +166,12 @@ export function HowItWorksScenario() {
 
       const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      intro.from(
-        nodeElements,
-        {
-          autoAlpha: 0,
-          scale: 0.82,
-          duration: 0.55,
-          stagger: 0.12,
-        },
-      );
+      intro.from(nodeElements, {
+        autoAlpha: 0,
+        scale: 0.82,
+        duration: 0.55,
+        stagger: 0.12,
+      });
 
       intro.from(
         edgeElements,
@@ -251,8 +242,7 @@ export function HowItWorksScenario() {
           </marker>
         </defs>
         {edges.map((edge) => {
-          const isActive =
-            edge.to === activeStep.id || edge.from === activeStep.id;
+          const isActive = edge.to === activeStep.id || edge.from === activeStep.id;
 
           return (
             <line
@@ -325,7 +315,11 @@ export function HowItWorksScenario() {
           </p>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1.5" role="group" aria-label="Passos do cenário">
+        <div
+          className="flex shrink-0 items-center gap-1.5"
+          role="group"
+          aria-label="Passos do cenário"
+        >
           {scenarioSteps.map((step, index) => (
             <button
               key={step.id}

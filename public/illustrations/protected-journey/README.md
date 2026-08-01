@@ -23,33 +23,33 @@ Evidencias encontradas nos proprios SVGs:
 
 ## Assets selecionados
 
-| Nome original | Nome otimizado | Papel na jornada | Status | Observacoes |
-| --- | --- | --- | --- | --- |
-| `child-walking.svg` | `optimized/child-walking.svg` | Crianca em deslocamento | Usado | Pode ser movido como bloco. Se houver animacao de pernas/bracos, converter futuramente para componente React SVG. |
-| `house-old.svg` | `optimized/home.svg` | Casa/inicio do trajeto | Usado com ressalva | Unico asset de casa disponivel. Apesar do sufixo `old`, foi usado por necessidade funcional e deve ser substituido se surgir um `home.svg` mais consistente. |
-| `neighborhood.svg` | `optimized/neighborhood.svg` | Bairro/mapa contextual | Usado com cautela | Muito pesado e detalhado. Usar como bloco, referencia ou background controlado. Pode exigir versao simplificada depois. |
-| `community-store.svg` | `optimized/community-store.svg` | Ponto seguro da comunidade | Usado com cautela | Muito detalhado. Recomendado como bloco unico ou recorte visual, nao animacao interna ampla. |
-| `bus-stop.svg` | `optimized/bus-stop.svg` | Parada/checkpoint de transporte | Usado | Bom candidato para checkpoint visual do embarque. |
-| `school-bus.svg` | `optimized/school-bus.svg` | Transporte escolar | Usado | Pode ser movido como bloco. Rodas/porta exigiriam componente React SVG futuro. |
-| `school.svg` | `optimized/school.svg` | Chegada na escola | Usado | Destino final da jornada. Usar como bloco. |
+| Nome original         | Nome otimizado                  | Papel na jornada                | Status             | Observacoes                                                                                                                                                  |
+| --------------------- | ------------------------------- | ------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `child-walking.svg`   | `optimized/child-walking.svg`   | Crianca em deslocamento         | Usado              | Pode ser movido como bloco. Se houver animacao de pernas/bracos, converter futuramente para componente React SVG.                                            |
+| `house-old.svg`       | `optimized/home.svg`            | Casa/inicio do trajeto          | Usado com ressalva | Unico asset de casa disponivel. Apesar do sufixo `old`, foi usado por necessidade funcional e deve ser substituido se surgir um `home.svg` mais consistente. |
+| `neighborhood.svg`    | `optimized/neighborhood.svg`    | Bairro/mapa contextual          | Usado com cautela  | Muito pesado e detalhado. Usar como bloco, referencia ou background controlado. Pode exigir versao simplificada depois.                                      |
+| `community-store.svg` | `optimized/community-store.svg` | Ponto seguro da comunidade      | Usado com cautela  | Muito detalhado. Recomendado como bloco unico ou recorte visual, nao animacao interna ampla.                                                                 |
+| `bus-stop.svg`        | `optimized/bus-stop.svg`        | Parada/checkpoint de transporte | Usado              | Bom candidato para checkpoint visual do embarque.                                                                                                            |
+| `school-bus.svg`      | `optimized/school-bus.svg`      | Transporte escolar              | Usado              | Pode ser movido como bloco. Rodas/porta exigiriam componente React SVG futuro.                                                                               |
+| `school.svg`          | `optimized/school.svg`          | Chegada na escola               | Usado              | Destino final da jornada. Usar como bloco.                                                                                                                   |
 
 ## Assets mantidos apenas como referencia
 
-| Asset | Motivo |
-| --- | --- |
+| Asset                         | Motivo                                                                                                          |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `notifications-reference.svg` | A notificacao final deve ser preferencialmente HTML/CSS/React para responsividade, texto real e acessibilidade. |
-| `location-reference.svg` | Pode inspirar iconografia de localizacao, mas estados podem ser feitos com componentes React/SVG originais. |
-| `navigation-reference.svg` | Pode inspirar o mapa final, mas a interface final deve ser criada com camadas leves e controlaveis. |
-| `children-reference.svg` | Referencia humana alternativa; nao necessaria na primeira narrativa. |
-| `doctor-reference.svg` | Fora do fluxo principal casa -> checkpoints -> transporte -> escola. |
+| `location-reference.svg`      | Pode inspirar iconografia de localizacao, mas estados podem ser feitos com componentes React/SVG originais.     |
+| `navigation-reference.svg`    | Pode inspirar o mapa final, mas a interface final deve ser criada com camadas leves e controlaveis.             |
+| `children-reference.svg`      | Referencia humana alternativa; nao necessaria na primeira narrativa.                                            |
+| `doctor-reference.svg`        | Fora do fluxo principal casa -> checkpoints -> transporte -> escola.                                            |
 
 ## Assets descartados ou em reserva
 
-| Asset | Motivo |
-| --- | --- |
-| `bus-stop-old.svg` | Redundante; preferir `bus-stop.svg`. |
-| `school-bus-old.svg` | Redundante; preferir `school-bus.svg`. |
-| `school-old.svg` | Redundante e mais pesado; preferir `school.svg`. |
+| Asset                | Motivo                                           |
+| -------------------- | ------------------------------------------------ |
+| `bus-stop-old.svg`   | Redundante; preferir `bus-stop.svg`.             |
+| `school-bus-old.svg` | Redundante; preferir `school-bus.svg`.           |
+| `school-old.svg`     | Redundante e mais pesado; preferir `school.svg`. |
 
 ## Tratamento aplicado nas copias otimizadas
 

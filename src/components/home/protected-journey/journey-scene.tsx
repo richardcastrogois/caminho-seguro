@@ -51,7 +51,6 @@ export function JourneyScene({ checkpointStates, children }: JourneySceneProps) 
         <JourneyBus />
         <JourneySchool />
 
-
         <div
           className={styles.schoolCheckpoint}
           data-journey-checkpoint-slot="school-arrival"

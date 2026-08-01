@@ -41,8 +41,8 @@ export default async function AdminSimuladorPage() {
               Simular leitura do QR Code
             </h1>
             <p className="mt-2 max-w-3xl text-slate-600">
-              Dispare eventos reais com registro em blockchain para testar os
-              fluxos da plataforma.
+              Dispare eventos reais com registro em blockchain para testar os fluxos da
+              plataforma.
             </p>
           </div>
         </section>
