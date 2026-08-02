@@ -13,7 +13,7 @@ export function JourneyMap() {
           alt={journeyAssets.finalMap.alt}
           width={360}
           height={300}
-          sizes="(max-width: 640px) 12rem, 18rem"
+          sizes="(max-width: 640px) 18rem, (max-width: 899px) 22rem, 32rem"
           style={{ height: "auto" }}
         />
       </div>

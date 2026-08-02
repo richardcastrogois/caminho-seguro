@@ -12,6 +12,7 @@ type CheckpointStateMap = Record<string, CheckpointState>;
 
 type MatchMediaConditions = {
   isDesktop?: boolean;
+  isTablet?: boolean;
   isMobile?: boolean;
 };
 
@@ -247,22 +248,50 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
       mm.add(
         {
           isDesktop: "(min-width: 900px)",
-          isMobile: "(max-width: 899px)",
+          isTablet: "(min-width: 521px) and (max-width: 899px)",
+          isMobile: "(max-width: 520px)",
         },
         (context) => {
           const conditions = context.conditions as MatchMediaConditions;
           const isDesktop = Boolean(conditions.isDesktop);
-          const isCompactViewport = !isDesktop && window.innerHeight < 680;
+          const isTablet = Boolean(conditions.isTablet);
+          const isMobile = Boolean(conditions.isMobile);
+          const isCompactViewport = isMobile && window.innerHeight < 680;
+          const clampTabletCameraX = (x: number, scale: number) => {
+            if (!isTablet) {
+              return Math.round(x);
+            }
+
+            const cameraWidth = camera.offsetWidth;
+            const scaledWidth = cameraWidth * scale;
+
+            if (scaledWidth <= stage.clientWidth) {
+              return Math.round((stage.clientWidth - cameraWidth) / 2);
+            }
+
+            const scaleInset = (cameraWidth - scaledWidth) / 2;
+            const minX = stage.clientWidth - cameraWidth + scaleInset;
+            const maxX = -scaleInset;
+
+            return Math.round(gsap.utils.clamp(minX, maxX, x));
+          };
           const centerCameraOn = (element: HTMLElement, scale = 1) => {
             const cameraCenter = camera.offsetWidth / 2;
             const elementCenter = element.offsetLeft + element.offsetWidth / 2;
-
-            return Math.round(
+            const centeredX =
               stage.clientWidth / 2 -
-                ((elementCenter - cameraCenter) * scale + cameraCenter),
-            );
+              ((elementCenter - cameraCenter) * scale + cameraCenter);
+
+            return clampTabletCameraX(centeredX, scale);
           };
-          const centerCamera = Math.round((stage.clientWidth - camera.offsetWidth) / 2);
+          const tabletRiseScale = Math.max(
+            0.92,
+            stage.clientWidth / camera.offsetWidth,
+          );
+          const centerCamera = clampTabletCameraX(
+            (stage.clientWidth - camera.offsetWidth) / 2,
+            isTablet ? tabletRiseScale : 1,
+          );
           const distanceScale = isDesktop ? 1 : camera.offsetWidth / 1088;
           const scaled = (value: number) => Math.round(value * distanceScale);
           const getPinOffset = () => {
@@ -291,6 +320,44 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
                 endMultiplier: 5.2,
                 scrub: 0.55,
               }
+            : isTablet
+              ? {
+                  childHome: { x: scaled(72), y: scaled(-18) },
+                  childStore: { x: scaled(300), y: scaled(-184) },
+                  childBoarding: { x: scaled(520), y: scaled(-42) },
+                  childSchoolExit: { x: scaled(780), y: scaled(-206) },
+                  childSchool: { x: scaled(820), y: scaled(-238) },
+                  busStart: { x: scaled(120), y: scaled(-12) },
+                  busBoarding: { x: 0, y: scaled(-34) },
+                  busSchool: { x: scaled(300), y: scaled(-238) },
+                  cameraHome: {
+                    x: centerCameraOn(homeZone, 1),
+                    y: 0,
+                    scale: 1,
+                  },
+                  cameraStore: {
+                    x: centerCameraOn(communityZone, 1.02),
+                    y: 16,
+                    scale: 1.02,
+                  },
+                  cameraBus: {
+                    x: centerCameraOn(busStopZone, 1.02),
+                    y: -4,
+                    scale: 1.02,
+                  },
+                  cameraSchool: {
+                    x: centerCameraOn(school, 1),
+                    y: 24,
+                    scale: 1,
+                  },
+                  cameraRise: {
+                    x: centerCamera,
+                    y: 20,
+                    scale: tabletRiseScale,
+                  },
+                  endMultiplier: 4.4,
+                  scrub: 0.35,
+                }
             : {
                 childHome: { x: scaled(72), y: scaled(-4) },
                 childStore: { x: scaled(300), y: scaled(-160) },
@@ -350,8 +417,8 @@ export function useProtectedJourneyTimeline(staticMode: boolean) {
             scale: 0.96,
           });
           gsap.set([attentionPath, attentionMarker], { autoAlpha: 0 });
-          const attentionDrawStart = isDesktop ? 31 : 57;
-          const attentionSignalStart = isDesktop ? 45 : 65;
+          const attentionDrawStart = 31;
+          const attentionSignalStart = isDesktop ? 45 : 41;
 
           const timeline = gsap.timeline({
             defaults: { ease: "none" },
