@@ -23,42 +23,42 @@ export const journeyStageCopy: Record<JourneyStage, JourneyStageCopy> = {
   intro: {
     eyebrow: "Inicio",
     title: "Rede pronta.",
-    lead: "Role para iniciar.",
+    lead: "A rede registra eventos importantes sem rastrear cada passo da crianca.",
   },
   "leaving-home": {
     eyebrow: "07:15",
     title: "Trajeto iniciado.",
-    lead: "Sem GPS continuo.",
+    lead: "A saida de casa vira um evento seguro para a familia acompanhar.",
   },
   "community-checkpoint": {
     eyebrow: "07:21",
     title: "Ponto seguro validado.",
-    lead: "Evento confirmado pela comunidade.",
+    lead: "A comunidade confirma a passagem e reforca a protecao no trajeto.",
   },
   boarding: {
     eyebrow: "07:28",
     title: "Embarque confirmado.",
-    lead: "Linha Escolar 04.",
+    lead: "O transporte registra o embarque e envia contexto objetivo.",
   },
   "bus-route": {
     eyebrow: "Rota alternativa",
     title: "Alternativa sem cobertura.",
-    lead: "Maria segue pela rota principal.",
+    lead: "O sistema aponta lacunas sem expor a localizacao em tempo real.",
   },
   "school-arrival": {
     eyebrow: "07:46",
     title: "Chegada confirmada.",
-    lead: "A escola encerra a jornada.",
+    lead: "A escola confirma a chegada e encerra a jornada protegida.",
   },
   "camera-rise": {
     eyebrow: "Visao da rede",
     title: "Rede em contexto.",
-    lead: "Os eventos aparecem conectados.",
+    lead: "Os checkpoints aparecem conectados para mostrar o cuidado da rede.",
   },
   "network-map": {
     eyebrow: "Jornada concluida",
     title: "Privacidade preservada.",
-    lead: "Somente eventos necessarios.",
+    lead: "O responsavel ve somente os eventos necessarios para agir.",
   },
 };
 export const journeyPhoneNotifications: JourneyPhoneNotification[] = [

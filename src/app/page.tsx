@@ -1,14 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { ProtectedJourney } from "@/components/home/protected-journey";
 import {
   ArrowRight,
   BadgeCheck,
-  BellRing,
   BrainCircuit,
-  Bluetooth,
   EyeOff,
   Fingerprint,
   MapPinned,
@@ -21,7 +18,6 @@ import {
   Users,
 } from "lucide-react";
 import { GsapReveal } from "@/components/shared/gsap-reveal";
-import { HowItWorksScenario } from "@/components/shared/how-it-works-scenario";
 import { InteractiveParticleField } from "@/components/shared/interactive-particle-field";
 import { ProtectionNetworkVisual } from "@/components/shared/protection-network-visual";
 import {
@@ -30,12 +26,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -61,53 +55,27 @@ const productPillars = [
 
 const testSteps = [
   {
-    title: "Abra a Familia em uma aba",
-    text: "Use esta tela para acompanhar os eventos chegando no painel do responsavel.",
-    href: "/responsavel",
-    action: "Abrir Familia",
+    title: "Observar",
+    location: "Familia",
+    action: "Deixe o painel aberto para acompanhar Maria.",
+    watch: "Evento novo, horario e origem.",
     icon: Users,
   },
   {
-    title: "Em outra aba, simule uma acao",
-    text: "Use Escola para chegada BLE, Transporte para embarque ou QR para pedido publico de ajuda.",
-    href: "/escola",
-    action: "Testar Escola",
+    title: "Provocar",
+    location: "Escola, Transporte ou QR publico",
+    action: "Dispare uma chegada, embarque ou pedido de ajuda.",
+    watch: "O evento entra sem expor dados pessoais.",
     icon: School,
   },
   {
-    title: "Compare os limites de cada perfil",
-    text: "Troque o perfil privado e veja que cada ator recebe apenas o necessario para agir.",
-    href: "/login?next=/rede",
-    action: "Trocar perfil",
+    title: "Conferir",
+    location: "Rede, Admin ou Familia",
+    action: "Compare o que cada perfil consegue visualizar.",
+    watch: "Cada ator recebe apenas o necessario.",
     icon: Network,
   },
 ];
-
-const protectionSteps = [
-  {
-    title: "Identificacao simples",
-    description:
-      "Um cartao ou pulseira com codigo unico. Leitura por QR, NFC ou BLE, sem aplicativo.",
-    icon: QrCode,
-  },
-  {
-    title: "So os momentos que importam",
-    description:
-      "Saiu de casa, chegou na escola, entrou no transporte. Sem GPS continuo.",
-    icon: Bluetooth,
-  },
-  {
-    title: "Alerta na hora certa",
-    description: "Se algo sai do esperado, o responsavel recebe um aviso claro.",
-    icon: BellRing,
-  },
-  {
-    title: "Dados protegidos",
-    description: "O codigo publico nao mostra nome, endereco nem dados sensiveis.",
-    icon: ShieldCheck,
-  },
-];
-
 const architectureSteps = [
   {
     title: "Evento nasce na rede",
@@ -274,7 +242,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section
+        {/* <section
           id="como-funciona"
           className="relative border-b border-sky-100 py-10 sm:py-16"
         >
@@ -320,7 +288,7 @@ export default function Home() {
               })}
             </div>
           </div>
-        </section>
+        </section> */}
 
         <section className="relative border-b border-sky-100 py-10 sm:py-16">
           <div className="mx-auto grid max-w-7xl gap-7 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:px-10">
@@ -338,9 +306,64 @@ export default function Home() {
             </div>
 
             <div data-gsap-scroll="up" className="grid gap-4">
-              <Card className="overflow-hidden rounded-3xl border-sky-100 bg-slate-950 text-white shadow-[0_24px_64px_rgba(2,6,23,0.22)]">
-                <CardContent className="p-4 sm:p-5">
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Card className="overflow-visible border-0 bg-transparent text-white shadow-none lg:overflow-hidden lg:rounded-3xl lg:border-sky-100 lg:bg-slate-950 lg:shadow-[0_24px_64px_rgba(2,6,23,0.22)]">
+                <CardContent className="p-0 lg:p-5">
+                  <div className="lg:hidden">
+                    <div className="relative overflow-hidden rounded-2xl border border-white/10 [background:radial-gradient(circle_at_top,_rgba(16,185,129,0.18),_transparent_34%),linear-gradient(180deg,_rgba(15,23,42,0.96),_rgba(2,6,23,0.98))] px-3 py-4 shadow-[0_18px_44px_rgba(2,6,23,0.18)] sm:px-4 sm:py-5">
+                      <div
+                        aria-hidden="true"
+                        className="absolute left-1/2 top-7 h-[calc(100%-3.5rem)] w-px -translate-x-1/2 bg-linear-to-b from-sky-300 via-emerald-300 to-emerald-500/80"
+                      />
+
+                      <div className="relative grid gap-4">
+                        {architectureSteps.map((step, index) => {
+                          const Icon = step.icon;
+                          const isEven = index % 2 === 0;
+                          return (
+                            <div
+                              key={step.title}
+                              className={cn(
+                                "relative grid grid-cols-[1fr_2.75rem_1fr] items-center gap-2.5",
+                                isEven ? "text-left" : "text-right",
+                              )}
+                            >
+                              <div className={cn(isEven ? "order-1" : "order-3")}>
+                                <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-sky-300">
+                                  0{index + 1}
+                                </p>
+                                <h3 className="mt-1 text-sm font-semibold leading-5 text-white">
+                                  {step.title}
+                                </h3>
+                                <p className="mt-1 text-[0.72rem] leading-4 text-slate-300">
+                                  {step.text}
+                                </p>
+                              </div>
+
+                              <span className="order-2 relative z-10 mx-auto flex size-11 items-center justify-center rounded-full border border-emerald-200/40 bg-white text-slate-950 shadow-[0_12px_34px_rgba(16,185,129,0.24)]">
+                                <Icon className="size-4" />
+                              </span>
+
+                              <div
+                                aria-hidden="true"
+                                className={cn(
+                                  "h-px bg-gradient-to-r from-transparent via-sky-300/55 to-transparent",
+                                  isEven ? "order-3" : "order-1",
+                                )}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="mt-3 rounded-xl border border-emerald-300/30 bg-emerald-950/95 px-3 py-2.5 text-xs text-emerald-50 shadow-[0_14px_34px_rgba(2,44,34,0.16)]">
+                      <p className="font-semibold">Dados sensiveis ficam protegidos.</p>
+                      <p className="mt-1 text-xs leading-5 text-emerald-100/85">
+                        A blockchain recebe apenas uma evidencia verificavel.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="hidden gap-3 lg:grid lg:grid-cols-4">
                     {architectureSteps.map((step, index) => {
                       const Icon = step.icon;
                       return (
@@ -367,7 +390,7 @@ export default function Home() {
                     })}
                   </div>
 
-                  <div className="mt-4 grid gap-3 rounded-2xl border border-emerald-300/25 bg-emerald-400/10 p-4 text-sm text-emerald-50 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+                  <div className="mt-4 hidden gap-3 rounded-2xl border border-emerald-300/25 bg-emerald-400/10 p-4 text-sm text-emerald-50 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center">
                     <div>
                       <span className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-200">
                         Dentro do sistema
@@ -376,7 +399,7 @@ export default function Home() {
                         Evento completo e acesso por perfil
                       </p>
                     </div>
-                    <ArrowRight className="hidden text-emerald-200 sm:block" />
+                    <ArrowRight className="text-emerald-200" />
                     <div>
                       <span className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-200">
                         Na blockchain
@@ -402,53 +425,95 @@ export default function Home() {
                 Como testar
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-                Abra duas abas: uma acompanha, a outra provoca eventos no navegador
-                anonimo.
+                Siga um roteiro curto e veja a protecao funcionando.
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
-                Use a aba Familia como observatorio do responsavel. Na segunda aba, simule
-                Escola, Transporte ou QR publico. Assim voce acompanha os resultados sem
-                precisar de explicacao longa.
+              <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+                Use a navbar para alternar entre as telas. A demonstracao ideal e abrir
+                Familia, provocar um evento e conferir como cada perfil enxerga apenas o
+                necessario.
               </p>
             </div>
 
-            <div className="mt-10 grid gap-4 lg:grid-cols-3">
-              {testSteps.map((step) => {
-                const Icon = step.icon;
-                return (
-                  <Card
-                    key={step.title}
-                    data-gsap-scroll="up"
-                    className="home-surface rounded-2xl border-sky-100 bg-white/90"
-                  >
-                    <CardHeader>
-                      <div className="flex size-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-                        <Icon />
+            <Card
+              data-gsap-scroll="up"
+              className="home-surface mt-6 overflow-hidden rounded-2xl border-sky-100 bg-white/90 sm:mt-7"
+            >
+              <CardContent className="p-3 sm:p-4 lg:p-5">
+                <div className="grid gap-3 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-stretch">
+                  {testSteps.map((step, index) => {
+                    const Icon = step.icon;
+                    return (
+                      <div key={step.title} className="contents">
+                        <div className="relative rounded-xl border border-sky-100 bg-white/80 p-3 shadow-[0_12px_34px_rgba(14,116,144,0.07)] lg:min-h-48 lg:p-4">
+                          <div className="flex items-start gap-2.5 lg:block">
+                            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 lg:size-10">
+                              <Icon className="size-4" />
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center justify-between gap-3">
+                                <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-700">
+                                  0{index + 1}
+                                </p>
+                                <span className="rounded-full bg-slate-950 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white lg:hidden">
+                                  {step.title}
+                                </span>
+                              </div>
+                              <h3 className="mt-1.5 text-lg font-semibold leading-6 text-slate-950 lg:mt-3">
+                                {step.title}
+                              </h3>
+                            </div>
+                          </div>
+
+                          <div className="mt-3 grid gap-2 text-sm leading-5 text-slate-600">
+                            <div className="rounded-xl bg-sky-50/70 px-3 py-1.5">
+                              <span className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-sky-700">
+                                Onde
+                              </span>
+                              <p className="mt-0.5 font-semibold text-slate-950">
+                                {step.location}
+                              </p>
+                            </div>
+                            <div className="rounded-xl bg-emerald-50/70 px-3 py-1.5">
+                              <span className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-emerald-700">
+                                Fazer
+                              </span>
+                              <p className="mt-0.5 text-slate-700">{step.action}</p>
+                            </div>
+                            <div className="rounded-xl bg-white px-3 py-1.5 ring-1 ring-sky-100">
+                              <span className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+                                Olhar
+                              </span>
+                              <p className="mt-0.5 text-slate-700">{step.watch}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {index < testSteps.length - 1 ? (
+                          <div
+                            aria-hidden="true"
+                            className="flex items-center justify-center py-1 lg:px-1 lg:py-0"
+                          >
+                            <ArrowRight className="size-5 rotate-90 text-sky-500 lg:rotate-0" />
+                          </div>
+                        ) : null}
                       </div>
-                      <CardTitle className="text-xl text-slate-950">
-                        {step.title}
-                      </CardTitle>
-                      <CardDescription className="leading-6">{step.text}</CardDescription>
-                    </CardHeader>
-                    <CardFooter>
-                      <Link
-                        href={step.href}
-                        className={cn(
-                          buttonVariants({ variant: "outline", size: "lg" }),
-                          "w-full rounded-2xl bg-white",
-                        )}
-                      >
-                        {step.action}
-                        <ArrowRight data-icon="inline-end" />
-                      </Link>
-                    </CardFooter>
-                  </Card>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-3 grid gap-2 rounded-xl border border-emerald-200 bg-emerald-50/80 p-3 text-sm text-emerald-950 sm:grid-cols-[auto_1fr] sm:items-center">
+                  <span className="flex size-9 items-center justify-center rounded-lg bg-white text-emerald-700 shadow-sm">
+                    <ShieldCheck className="size-4" />
+                  </span>
+                  <p className="leading-6">
+                    O teste esta certo quando o responsavel recebe o evento, a rede ve o
+                    necessario e nenhum dado pessoal aparece no QR publico.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
-
         <section className="relative py-10 sm:py-16">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:gap-8 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:px-10">
             <div data-gsap-scroll="left" className="max-w-2xl">

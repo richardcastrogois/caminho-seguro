@@ -249,7 +249,7 @@ export function ProtectionNetworkVisual() {
     <div
       ref={scope}
       data-network-visual
-      className="relative min-h-117.5 overflow-hidden rounded-lg border border-sky-200/80 bg-white/88 shadow-[0_28px_70px_rgba(8,47,73,0.16)] backdrop-blur-sm sm:min-h-135"
+      className="relative min-h-117.5 overflow-hidden rounded-lg border border-sky-200/80 bg-white/88 shadow-[0_28px_70px_rgba(8,47,73,0.16)] backdrop-blur-sm sm:min-h-135 sm:max-lg:-mx-4 sm:max-lg:w-[calc(100%+2rem)] sm:max-lg:max-w-none"
     >
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(224,242,254,.88),rgba(255,255,255,.35)_46%,rgba(209,250,229,.78))]" />
       <div className="absolute inset-0 opacity-45 bg-[linear-gradient(rgba(14,165,233,.13)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,.11)_1px,transparent_1px)] bg-size-[42px_42px]" />
